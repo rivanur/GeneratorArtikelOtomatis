@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Artikel Otomatis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Marked.js untuk parsing Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="glass-header">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h1>Generator Artikel AI</h1>
+            </div>
+            <div class="api-key-container">
+                <input type="password" id="apiKey" placeholder="Masukkan Gemini API Key..." />
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Kolom Kiri: Input -->
+            <section class="input-panel glass-panel">
+                <h2>1. Pilih Sumber Konteks</h2>
+                
+                <div class="tabs">
+                    <button class="tab-btn active" data-target="manual_text">Teks Manual</button>
+                    <button class="tab-btn" data-target="web_url">URL Web</button>
+                    <button class="tab-btn" data-target="youtube_url">YouTube</button>
+                    <button class="tab-btn" data-target="document">Dokumen</button>
+                    <button class="tab-btn" data-target="local_video">Video Lokal</button>
+                </div>
+
+                <div class="tab-content">
+                    <div id="manual_text" class="tab-pane active">
+                        <textarea id="input_manual_text" placeholder="Ketik atau paste teks referensi di sini..."></textarea>
+                    </div>
+                    <div id="web_url" class="tab-pane">
+                        <input type="url" id="input_web_url" placeholder="https://example.com/artikel" />
+                    </div>
+                    <div id="youtube_url" class="tab-pane">
+                        <input type="url" id="input_youtube_url" placeholder="https://youtube.com/watch?v=..." />
+                    </div>
+                    <div id="document" class="tab-pane">
+                        <div class="file-upload">
+                            <input type="file" id="input_document" accept=".pdf,.txt,.docx" />
+                            <label for="input_document">Pilih File (PDF/TXT)</label>
+                        </div>
+                    </div>
+                    <div id="local_video" class="tab-pane">
+                        <div class="file-upload">
+                            <input type="file" id="input_local_video" accept="video/mp4,video/x-m4v,video/*" />
+                            <label for="input_local_video">Pilih Video (MP4)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h2>2. Pengaturan Gaya</h2>
+                    <select id="article_style">
+                        <option value="blog">Gaya Blog (Santai & Engaging)</option>
+                        <option value="berita">Gaya Berita (Formal & Objektif)</option>
+                        <option value="akademik">Gaya Akademik (Analitis)</option>
+                        <option value="seo">Gaya SEO (Optimasi Kata Kunci)</option>
+                    </select>
+                </div>
+
+                <button id="generateBtn" class="primary-btn">
+                    <span class="btn-text">Generate Artikel</span>
+                    <span class="loader hidden"></span>
+                </button>
+            </section>
+
+            <!-- Kolom Kanan: Hasil -->
+            <section class="result-panel glass-panel">
+                <div class="result-header">
+                    <h2>Hasil Artikel</h2>
+                    <button id="copyBtn" class="icon-btn" title="Salin ke Clipboard" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                </div>
+                <div id="result_content" class="result-content markdown-body">
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <p>Artikel yang dihasilkan akan muncul di sini.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
