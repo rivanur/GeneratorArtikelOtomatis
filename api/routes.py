@@ -74,21 +74,30 @@ async def generate_article(
             if not file:
                 raise HTTPException(status_code=400, detail="File dokumen tidak dilampirkan")
             content = await file.read()
-            if file.filename.endswith(".pdf"):
+            if file.filename.lower().endswith(".pdf"):
                 extracted_text = ContentExtractor.extract_from_pdf(content)
-            else:
+            elif file.filename.lower().endswith(".docx"):
+                extracted_text = ContentExtractor.extract_from_docx(content)
+            elif file.filename.lower().endswith(".txt") or file.filename.lower().endswith(".md"):
                 extracted_text = content.decode('utf-8', errors='ignore')
+            else:
+                raise HTTPException(status_code=400, detail="Format dokumen tidak didukung. Harap gunakan PDF, DOCX, TXT, atau MD.")
                 
         elif source_type == "local_video":
             if not file:
                 raise HTTPException(status_code=400, detail="File video lokal tidak dilampirkan")
-            # Simpan file sementara untuk diproses Gemini
-            ext = os.path.splitext(file.filename)[1] or '.mp4'
+            
+            allowed_extensions = (".mp4", ".mov", ".avi", ".webm", ".mpeg", ".mpg", ".wmv", ".flv")
+            ext = os.path.splitext(file.filename)[1].lower()
+            if ext not in allowed_extensions:
+                raise HTTPException(status_code=400, detail="Format video tidak didukung. Harap gunakan MP4, MOV, AVI, dll.")
+            
+            # Simpan file sementara untuk diproses Gemini dengan Streaming Chunk untuk hemat RAM
             temp_filepath = os.path.join(temp_dir, f"{uuid.uuid4()}{ext}")
             
             async with aiofiles.open(temp_filepath, 'wb') as out_file:
-                content = await file.read()
-                await out_file.write(content)
+                while chunk := await file.read(1024 * 1024):  # Baca 1MB per iterasi
+                    await out_file.write(chunk)
                 
             media_path = temp_filepath
             extracted_text = f"Tolong tonton video terlampir dan buatkan artikel berdasarkan kontennya. Nama file asli: {file.filename}"

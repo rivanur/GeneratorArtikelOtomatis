@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Fetch Initial Settings ---
     let savedAiModel = "gemini-2.5-flash";
-    
+
     fetch('http://localhost:8000/api/settings')
         .then(res => res.json())
         .then(data => {
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.add('active');
             const targetId = btn.getAttribute('data-target');
             document.getElementById(targetId).classList.add('active');
-            
+
             currentSourceType = targetId;
         });
     });
@@ -41,8 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnText = generateBtn.querySelector('.btn-text');
     const loader = generateBtn.querySelector('.loader');
     const resultContainer = document.getElementById('result_content');
+    const resultEditor = document.getElementById('result_editor');
     const copyBtn = document.getElementById('copyBtn');
-    
+    const editBtn = document.getElementById('editBtn');
+    const publishWpBtn = document.getElementById('publishWpBtn');
+
     let currentMarkdown = '';
 
     generateBtn.addEventListener('click', async () => {
@@ -66,11 +69,15 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (currentSourceType === 'document') {
             const fileInput = document.getElementById('input_document');
             if (fileInput.files.length === 0) return showToast('Pilih file dokumen terlebih dahulu.');
-            formData.append('file', fileInput.files[0]);
+            const file = fileInput.files[0];
+            if (file.size > 20 * 1024 * 1024) return showToast('Ukuran file dokumen maksimal 20 MB.');
+            formData.append('file', file);
         } else if (currentSourceType === 'local_video') {
             const fileInput = document.getElementById('input_local_video');
             if (fileInput.files.length === 0) return showToast('Pilih file video terlebih dahulu.');
-            formData.append('file', fileInput.files[0]);
+            const file = fileInput.files[0];
+            if (file.size > 500 * 1024 * 1024) return showToast('Ukuran file video maksimal 500 MB.');
+            formData.append('file', file);
         }
 
         // Set Loading State
@@ -78,7 +85,13 @@ document.addEventListener('DOMContentLoaded', () => {
         btnText.classList.add('hidden');
         loader.classList.remove('hidden');
         resultContainer.innerHTML = '<div class="empty-state"><p>Sedang memproses dengan AI... Mohon tunggu.</p></div>';
+        resultContainer.classList.remove('hidden');
+        resultEditor.classList.add('hidden');
         copyBtn.disabled = true;
+        editBtn.classList.add('hidden');
+        publishWpBtn.classList.add('hidden');
+        isEditing = false;
+        editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg><span>Edit</span>';
 
         try {
             const response = await fetch('http://localhost:8000/api/generate', {
@@ -96,12 +109,13 @@ document.addEventListener('DOMContentLoaded', () => {
             currentMarkdown = data.data;
             resultContainer.innerHTML = marked.parse(currentMarkdown);
             copyBtn.disabled = false;
-            document.getElementById('publishWpBtn').classList.remove('hidden');
-            
+            editBtn.classList.remove('hidden');
+            publishWpBtn.classList.remove('hidden');
+
             // Show Tokens
             document.getElementById('tokenCount').textContent = data.tokens_used;
             document.getElementById('tokenIndicator').classList.remove('hidden');
-            
+
         } catch (error) {
             console.error('Error:', error);
             showToast(error.message);
@@ -113,6 +127,36 @@ document.addEventListener('DOMContentLoaded', () => {
             generateBtn.disabled = false;
             btnText.classList.remove('hidden');
             loader.classList.add('hidden');
+        }
+    });
+
+    // --- Live Edit Logic ---
+    let isEditing = false;
+    editBtn.addEventListener('click', () => {
+        if (!currentMarkdown) return;
+
+        if (!isEditing) {
+            // Switch to Edit Mode
+            resultContainer.classList.add('hidden');
+            resultEditor.classList.remove('hidden');
+            resultEditor.value = currentMarkdown;
+            publishWpBtn.classList.add('hidden'); // Sembunyikan publish saat mengedit
+
+            editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg><span>Save & Preview</span>';
+            editBtn.style.background = "var(--primary)";
+            isEditing = true;
+        } else {
+            // Switch to Preview Mode
+            currentMarkdown = resultEditor.value;
+            resultContainer.innerHTML = marked.parse(currentMarkdown);
+
+            resultEditor.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+            publishWpBtn.classList.remove('hidden');
+
+            editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg><span>Edit</span>';
+            editBtn.style.background = "";
+            isEditing = false;
         }
     });
 
@@ -172,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ api_key: apiKey })
             });
             const data = await res.json();
-            
+
             if (res.ok) {
                 testStatusText.textContent = "✅ Koneksi Berhasil!";
                 testStatusText.className = "text-success";
@@ -248,16 +292,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- WordPress Publish Logic ---
-    const publishWpBtn = document.getElementById('publishWpBtn');
     publishWpBtn.addEventListener('click', async () => {
         if (!currentMarkdown) return;
-        
+
         // Coba ekstrak judul dari markdown (H1)
         const match = currentMarkdown.match(/^# (.*?)$/m);
         let title = match ? match[1].trim() : "Artikel AI Tanpa Judul";
-        
+
         // Konfirmasi cepat
-        if(!confirm(`Publikasikan draf artikel ke WordPress?\nJudul: ${title}`)) return;
+        if (!confirm(`Publikasikan draf artikel ke WordPress?\nJudul: ${title}`)) return;
 
         const originalText = publishWpBtn.querySelector('span').textContent;
         publishWpBtn.disabled = true;
@@ -273,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: fd
             });
             const data = await response.json();
-            
+
             if (response.ok) {
                 showToast(data.message || 'Berhasil di-publish ke WordPress!', true);
             } else {
@@ -298,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 label.style.borderColor = "var(--primary)";
                 label.style.background = "rgba(99, 102, 241, 0.05)";
             } else {
-                label.textContent = e.target.id === 'input_document' ? 'Pilih File (PDF/TXT)' : 'Pilih Video (MP4)';
+                label.textContent = e.target.id === 'input_document' ? 'Pilih File' : 'Pilih Video (Semua Format)';
                 label.style.color = "";
                 label.style.borderColor = "";
                 label.style.background = "";
@@ -311,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const toast = document.getElementById('toast');
         toast.textContent = message;
         toast.className = `toast ${isSuccess ? 'success' : ''}`;
-        
+
         setTimeout(() => {
             toast.classList.add('hidden');
         }, 3000);

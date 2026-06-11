@@ -2,6 +2,7 @@ import PyPDF2
 from bs4 import BeautifulSoup
 import requests
 import io
+import docx
 
 class ContentExtractor:
     @staticmethod
@@ -78,3 +79,16 @@ class ContentExtractor:
             return text.strip()
         except Exception as e:
             raise Exception(f"Gagal membaca PDF: {str(e)}")
+
+    @staticmethod
+    def extract_from_docx(file_bytes: bytes) -> str:
+        """Ekstrak teks dari bytes DOCX"""
+        try:
+            doc = docx.Document(io.BytesIO(file_bytes))
+            text = []
+            for para in doc.paragraphs:
+                if para.text.strip():
+                    text.append(para.text.strip())
+            return "\n\n".join(text)
+        except Exception as e:
+            raise Exception(f"Gagal membaca file Word: {str(e)}")
