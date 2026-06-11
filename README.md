@@ -46,33 +46,43 @@ Tunggu hingga proses unduhan dan instalasi selesai.
 
 ---
 
-## 🚀 Cara Menjalankan Server Aplikasi
+## 🚀 Cara Menjalankan Aplikasi (Arsitektur Terpisah)
 
-Setelah semua pustaka terinstal, Anda siap untuk menyalakan *backend* server.
+Sistem ini menggunakan arsitektur modern di mana **Backend** (API) dan **Frontend** (Antarmuka Web) berjalan secara terpisah. Anda harus menyalakan keduanya.
 
-1. Di terminal yang sama (pastikan posisi masih di folder `d:\GeneratorArtikelOtomatis`), jalankan perintah:
+### Langkah 1: Menyalakan Backend (API Server)
+1. Di terminal yang sama (pastikan posisi masih di folder `d:\GeneratorArtikelOtomatis` dan *virtual environment* aktif), jalankan perintah:
    ```bash
    python main.py
    ```
 2. Terminal akan menampilkan tulisan:
-   `🚀 Memulai server di http://localhost:8000`
+   `Memulai server di http://localhost:8000`
    *(Jangan tutup jendela terminal ini selama Anda masih menggunakan aplikasi).*
+
+### Langkah 2: Menyalakan Frontend (Antarmuka Web)
+Buka Terminal (Command Prompt) **BARU**, arahkan ke folder `d:\GeneratorArtikelOtomatis`, lalu jalankan:
+```bash
+python frontend.py
+```
+Aplikasi akan langsung terbuka di alamat **http://localhost:5500**.
+*(Seperti Backend, jangan tutup terminal ini selama Anda masih menggunakannya).*
 
 ---
 
 ## 💻 Cara Menggunakan Aplikasi
 
-1. Buka peramban internet (*browser*) seperti Google Chrome, Microsoft Edge, atau Firefox.
-2. Ketik alamat berikut di kolom URL dan tekan Enter:
-   **http://localhost:8000**
-3. Anda akan disambut oleh antarmuka premium "Generator Artikel AI".
-4. **Masukkan API Key:** Di pojok kanan atas, masukkan (atau *paste*) **Google Gemini API Key** yang sudah Anda siapkan sebelumnya.
-5. **Pilih Sumber:** Di panel sebelah kiri, pilih tipe sumber teks (Misal: Teks Manual, URL Web, atau unggah dokumen PDF).
-   *   *Contoh termudah:* Pilih tab **"URL Web"**, lalu tempel *link* ke suatu berita atau artikel Wikipedia.
-6. **Pilih Gaya:** Pilih gaya penulisan yang diinginkan pada menu *dropdown* (Misal: Gaya Blog, Gaya Berita).
-7. Klik tombol **"Generate Artikel"**.
-8. Sistem akan menampilkan animasi *loading* sementara AI sedang bekerja. Dalam beberapa detik, artikel lengkap dengan *formatting* yang rapi (Markdown) akan muncul di panel sebelah kanan!
-9. Anda dapat menyalin (*copy*) hasilnya dengan menekan tombol **Copy** di sudut kanan atas panel hasil artikel.
+1. Pastikan **Langkah 1 (Backend)** dan **Langkah 2 (Frontend)** di atas sudah dijalankan.
+2. Anda akan disambut oleh antarmuka premium "Generator Artikel AI" di layar *browser* Anda.
+3. **Pengaturan API Key & WordPress:** Klik tombol **⚙️ Pengaturan** (ikon roda gigi) di pojok kanan atas.
+   *   Masukkan **Google Gemini API Key**.
+   *   (Opsional) Masukkan URL WordPress, Username, dan Application Password jika ingin memublikasikan artikel langsung ke *website* Anda.
+   *   Klik **Simpan Pengaturan**.
+4. **Pilih Sumber:** Di panel sebelah kiri, pilih tipe sumber data yang ingin diekstrak (Misal: Teks Manual, URL Web, YouTube, Dokumen PDF, atau Video Lokal).
+   *   *Fitur Unggulan:* Pilih tab **"YouTube"** dan masukkan *link* video. Sistem akan otomatis mengunduh audionya dengan `yt-dlp` dan didengarkan langsung oleh AI.
+5. **Pilih Gaya:** Pilih gaya penulisan yang diinginkan pada menu *dropdown* (Misal: Gaya Blog, Gaya Berita).
+6. Klik tombol **"Generate Artikel"**.
+7. Sistem akan menampilkan animasi *loading* sementara AI sedang bekerja. Dalam beberapa detik, artikel lengkap dengan *formatting* yang rapi (Markdown) akan muncul di panel sebelah kanan!
+8. Anda dapat menyalin (*copy*) hasilnya dengan menekan tombol **Copy** di sudut kanan atas panel hasil artikel.
 
 ---
 

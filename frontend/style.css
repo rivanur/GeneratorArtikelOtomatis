@@ -63,6 +63,12 @@ body {
     color: var(--primary);
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
 .logo h1 {
     font-size: 1.25rem;
     font-weight: 600;
@@ -388,3 +394,31 @@ select {
         height: auto;
     }
 }
+
+
+/* Modal Styles */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 1; transition: opacity 0.3s; }
+.modal-overlay.hidden { display: none; opacity: 0; pointer-events: none; }
+.modal-content { width: 90%; max-width: 500px; padding: 1.5rem; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.modal-header h2 { font-size: 1.25rem; font-weight: 600; }
+.modal-tab-btn { padding: 0.5rem 1rem; border: none; background: none; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
+.modal-tab-btn.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+.tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.modal-tab-pane { display: none; }
+.modal-tab-pane.active { display: block; }
+.modal-footer { margin-top: 1.5rem; }
+.publish-btn { font-size: 0.85rem; padding: 0.4rem 0.8rem; height: 32px; display: flex; align-items: center; gap: 0.5rem; }
+.w-full { width: 100%; }
+
+
+
+/* Token & API Settings Styles */
+.input-with-button { display: flex; gap: 0.5rem; }
+.input-with-button input { flex: 1; }
+.secondary-btn { background: var(--surface-light); border: 1px solid rgba(255,255,255,0.1); color: var(--text-primary); border-radius: 8px; padding: 0.5rem 1rem; cursor: pointer; }
+.secondary-btn:hover { background: rgba(255,255,255,0.1); }
+.token-indicator { margin-top: 1rem; text-align: center; color: var(--text-muted); padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); }
+.text-success { color: var(--success); }
+.text-danger { color: var(--danger); }
+

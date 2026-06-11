@@ -2,32 +2,68 @@ import PyPDF2
 from bs4 import BeautifulSoup
 import requests
 import io
-import re
 
 class ContentExtractor:
     @staticmethod
     def extract_from_url(url: str) -> str:
-        """Ekstrak teks dari URL web"""
+        """Ekstrak teks dari URL web dengan sistem Multi-Layer Fallback"""
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+        }
+        
         try:
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-            }
-            response = requests.get(url, headers=headers, timeout=10)
-            response.raise_for_status()
-            
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # Hapus tag script dan style
-            for script in soup(["script", "style", "nav", "footer", "header"]):
-                script.extract()
+            # Layer 1: Identifikasi Tipe Konten (Cek PDF)
+            try:
+                head_resp = requests.head(url, headers=headers, timeout=10, allow_redirects=True)
+                content_type = head_resp.headers.get('Content-Type', '').lower()
                 
-            text = soup.get_text()
-            # Bersihkan spasi kosong berlebih
-            lines = (line.strip() for line in text.splitlines())
-            chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-            text = '\n'.join(chunk for chunk in chunks if chunk)
+                if 'application/pdf' in content_type:
+                    # Jika URL adalah PDF, unduh file dan gunakan extract_from_pdf
+                    pdf_resp = requests.get(url, headers=headers, timeout=30)
+                    pdf_resp.raise_for_status()
+                    text = ContentExtractor.extract_from_pdf(pdf_resp.content)
+                    if text and len(text) > 50:
+                        return text
+            except Exception as e:
+                pass # Lanjut ke metode biasa jika pengecekan gagal
+
+            # Layer 2: Jina Reader API (Primary Scraper)
+            text = ""
+            try:
+                jina_headers = headers.copy()
+                jina_headers['Accept'] = 'text/plain'
+                jina_url = f"https://r.jina.ai/{url}"
+                jina_resp = requests.get(jina_url, headers=jina_headers, timeout=25)
+                jina_resp.raise_for_status()
+                text = jina_resp.text
+            except Exception as e:
+                print(f"Jina API gagal: {str(e)}. Beralih ke Fallback.")
+
+            # Layer 3: BeautifulSoup Fallback (Secondary Scraper)
+            if not text or len(text.strip()) < 50:
+                try:
+                    bs_resp = requests.get(url, headers=headers, timeout=15)
+                    bs_resp.raise_for_status()
+                    soup = BeautifulSoup(bs_resp.text, 'html.parser')
+                    
+                    # Hapus tag script dan style
+                    for script in soup(["script", "style", "nav", "footer", "header"]):
+                        script.extract()
+                        
+                    raw_text = soup.get_text()
+                    lines = (line.strip() for line in raw_text.splitlines())
+                    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+                    text = '\n'.join(chunk for chunk in chunks if chunk)
+                except Exception as e:
+                    print(f"BeautifulSoup Fallback gagal: {str(e)}")
+
+            # Layer 4: Validasi Konten Akhir
+            if not text or len(text.strip()) < 50:
+                raise Exception("Konten terlalu pendek, kosong, atau URL dilindungi dengan sangat ketat (CAPTCHA/Paywall).")
+
             return text
-            
+
         except Exception as e:
             raise Exception(f"Gagal mengekstrak teks dari URL: {str(e)}")
 
@@ -42,22 +78,3 @@ class ContentExtractor:
             return text.strip()
         except Exception as e:
             raise Exception(f"Gagal membaca PDF: {str(e)}")
-
-    @staticmethod
-    def extract_youtube_info(url: str) -> str:
-        """
-        Versi dummy untuk prototipe jurnal.
-        Pada sistem asli, ini akan mengunduh audio dan menjalankan Speech-to-Text.
-        """
-        # Ekstrak ID video
-        video_id_match = re.search(r"(?:v=|\/)([0-9A-Za-z_-]{11}).*", url)
-        video_id = video_id_match.group(1) if video_id_match else "unknown"
-        
-        return f"[Transkrip Simulasi untuk Video YouTube ID: {video_id}]\nIni adalah simulasi teks hasil ekstraksi audio (Speech-to-Text) dari video YouTube {url}. Di lingkungan produksi, teks ini berasal dari FFmpeg dan model STT seperti Whisper."
-
-    @staticmethod
-    def extract_local_video_info(filename: str) -> str:
-        """
-        Versi dummy untuk prototipe jurnal.
-        """
-        return f"[Transkrip Simulasi untuk Video Lokal: {filename}]\nIni adalah simulasi teks hasil ekstraksi audio dari file video lokal. Di lingkungan produksi, audio diekstrak menggunakan FFmpeg dan diproses dengan STT."

@@ -6,3 +6,6 @@ requests
 python-multipart
 PyPDF2
 pydantic
+yt-dlp
+
+aiofiles
