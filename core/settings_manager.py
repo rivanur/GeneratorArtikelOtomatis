@@ -9,7 +9,12 @@ class SettingsManager:
         if not os.path.exists(SETTINGS_FILE):
             default_settings = {
                 "api_key": "",
-                "ai_model": "gemini-2.5-flash",
+                "ai_model": "auto",
+                "ai_provider": "gemini",
+                "hf_api_key": "",
+                "hf_model": "auto",
+                "groq_api_key": "",
+                "groq_model": "auto",
                 "wp_url": "",
                 "wp_username": "",
                 "wp_app_password": ""
@@ -42,3 +47,15 @@ class SettingsManager:
     @staticmethod
     def get_api_key() -> str:
         return SettingsManager.get_settings().get("api_key", "")
+
+    @staticmethod
+    def get_ai_provider() -> str:
+        return SettingsManager.get_settings().get("ai_provider", "gemini")
+
+    @staticmethod
+    def get_hf_api_key() -> str:
+        return SettingsManager.get_settings().get("hf_api_key", "")
+
+    @staticmethod
+    def get_hf_model() -> str:
+        return SettingsManager.get_settings().get("hf_model", "mistralai/Mistral-7B-Instruct-v0.3")

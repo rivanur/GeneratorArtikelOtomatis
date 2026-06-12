@@ -1,15 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Fetch Initial Settings ---
     let savedAiModel = "gemini-2.5-flash";
+    let savedHfModel = "mistralai/Mistral-7B-Instruct-v0.3";
+    let savedGroqModel = "llama-3.1-8b-instant";
 
     fetch('http://localhost:8000/api/settings')
         .then(res => res.json())
         .then(data => {
+            if (data.ai_provider) {
+                document.getElementById('setting_ai_provider').value = data.ai_provider;
+                toggleProviderSettings(data.ai_provider);
+            }
             if (data.api_key) {
                 document.getElementById('setting_api_key').value = data.api_key;
                 if (data.ai_model) savedAiModel = data.ai_model;
-                // Auto load models if key is available
-                loadAvailableModels(data.api_key, savedAiModel);
+                if (data.ai_provider === 'gemini') loadAvailableModels(data.api_key, savedAiModel, 'gemini');
+            }
+            if (data.hf_api_key) {
+                document.getElementById('setting_hf_api_key').value = data.hf_api_key;
+                if (data.hf_model) savedHfModel = data.hf_model;
+                if (data.ai_provider === 'huggingface') loadAvailableModels(data.hf_api_key, savedHfModel, 'huggingface');
+            }
+            if (data.groq_api_key) {
+                document.getElementById('setting_groq_api_key').value = data.groq_api_key;
+                if (data.groq_model) savedGroqModel = data.groq_model;
+                if (data.ai_provider === 'groq') loadAvailableModels(data.groq_api_key, savedGroqModel, 'groq');
             }
             if (data.wp_url) document.getElementById('setting_wp_url').value = data.wp_url;
             if (data.wp_username) document.getElementById('setting_wp_user').value = data.wp_username;
@@ -250,11 +265,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- AI Provider UI Toggle ---
+    const providerSelect = document.getElementById('setting_ai_provider');
+    const geminiSettings = document.getElementById('gemini_settings_group');
+    const hfSettings = document.getElementById('hf_settings_group');
+    const groqSettings = document.getElementById('groq_settings_group');
+
+    function toggleProviderSettings(provider) {
+        geminiSettings.classList.add('hidden');
+        hfSettings.classList.add('hidden');
+        groqSettings.classList.add('hidden');
+        
+        if (provider === 'gemini') geminiSettings.classList.remove('hidden');
+        else if (provider === 'huggingface') hfSettings.classList.remove('hidden');
+        else if (provider === 'groq') groqSettings.classList.remove('hidden');
+    }
+
+    providerSelect.addEventListener('change', (e) => {
+        toggleProviderSettings(e.target.value);
+    });
+
     // --- API Key & Model Logic ---
     const testApiBtn = document.getElementById('testApiBtn');
     const testStatusText = document.getElementById('testStatusText');
     const modelSelectGroup = document.getElementById('modelSelectGroup');
     const modelSelect = document.getElementById('setting_ai_model');
+
+    const testHfApiBtn = document.getElementById('testHfApiBtn');
+    const testHfStatusText = document.getElementById('testHfStatusText');
+    const hfModelSelectGroup = document.getElementById('hfModelSelectGroup');
+    const hfModelSelect = document.getElementById('setting_hf_model');
+
+    const testGroqApiBtn = document.getElementById('testGroqApiBtn');
+    const testGroqStatusText = document.getElementById('testGroqStatusText');
+    const groqModelSelectGroup = document.getElementById('groqModelSelectGroup');
+    const groqModelSelect = document.getElementById('setting_groq_model');
 
     testApiBtn.addEventListener('click', async () => {
         const apiKey = document.getElementById('setting_api_key').value.trim();
@@ -273,14 +318,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('http://localhost:8000/api/test-key', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ api_key: apiKey })
+                body: JSON.stringify({ api_key: apiKey, provider: "gemini" })
             });
             const data = await res.json();
 
             if (res.ok) {
                 testStatusText.textContent = "✅ Koneksi Berhasil!";
                 testStatusText.className = "text-success";
-                loadAvailableModels(apiKey, savedAiModel);
+                loadAvailableModels(apiKey, savedAiModel, "gemini");
             } else {
                 testStatusText.textContent = "❌ " + (data.detail || "Gagal terkoneksi");
                 testStatusText.className = "text-danger";
@@ -294,24 +339,114 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    async function loadAvailableModels(apiKey, selectedModel = null) {
+    testHfApiBtn.addEventListener('click', async () => {
+        const apiKey = document.getElementById('setting_hf_api_key').value.trim();
+        if (!apiKey) {
+            testHfStatusText.textContent = "Hugging Face Token kosong!";
+            testHfStatusText.className = "text-danger";
+            return;
+        }
+
+        testHfApiBtn.disabled = true;
+        testHfApiBtn.textContent = "Testing...";
+        testHfStatusText.textContent = "Menghubungi Hugging Face...";
+        testHfStatusText.className = "";
+
+        try {
+            const res = await fetch('http://localhost:8000/api/test-key', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ api_key: apiKey, provider: "huggingface" })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                testHfStatusText.textContent = "✅ Koneksi Token Berhasil!";
+                testHfStatusText.className = "text-success";
+                loadAvailableModels(apiKey, savedHfModel, "huggingface");
+            } else {
+                testHfStatusText.textContent = "❌ " + (data.detail || "Gagal terkoneksi");
+                testHfStatusText.className = "text-danger";
+            }
+        } catch (e) {
+            testHfStatusText.textContent = "❌ Gagal jaringan";
+            testHfStatusText.className = "text-danger";
+        } finally {
+            testHfApiBtn.disabled = false;
+            testHfApiBtn.textContent = "Test";
+        }
+    });
+
+    testGroqApiBtn.addEventListener('click', async () => {
+        const apiKey = document.getElementById('setting_groq_api_key').value.trim();
+        if (!apiKey) {
+            testGroqStatusText.textContent = "Groq API Key kosong!";
+            testGroqStatusText.className = "text-danger";
+            return;
+        }
+
+        testGroqApiBtn.disabled = true;
+        testGroqApiBtn.textContent = "Testing...";
+        testGroqStatusText.textContent = "Menghubungi Groq...";
+        testGroqStatusText.className = "";
+
+        try {
+            const res = await fetch('http://localhost:8000/api/test-key', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ api_key: apiKey, provider: "groq" })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                testGroqStatusText.textContent = "✅ Koneksi Berhasil!";
+                testGroqStatusText.className = "text-success";
+                loadAvailableModels(apiKey, savedGroqModel, "groq");
+            } else {
+                testGroqStatusText.textContent = "❌ " + (data.detail || "Gagal terkoneksi");
+                testGroqStatusText.className = "text-danger";
+            }
+        } catch (e) {
+            testGroqStatusText.textContent = "❌ Gagal jaringan";
+            testGroqStatusText.className = "text-danger";
+        } finally {
+            testGroqApiBtn.disabled = false;
+            testGroqApiBtn.textContent = "Test";
+        }
+    });
+
+    async function loadAvailableModels(apiKey, selectedModel = null, provider = "gemini") {
         try {
             const res = await fetch('http://localhost:8000/api/models', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ api_key: apiKey })
+                body: JSON.stringify({ api_key: apiKey, provider: provider })
             });
             const data = await res.json();
             if (res.ok && data.models.length > 0) {
-                modelSelect.innerHTML = '';
+                let targetSelect, targetGroup;
+                if (provider === "gemini") { targetSelect = modelSelect; targetGroup = modelSelectGroup; }
+                else if (provider === "huggingface") { targetSelect = hfModelSelect; targetGroup = hfModelSelectGroup; }
+                else if (provider === "groq") { targetSelect = groqModelSelect; targetGroup = groqModelSelectGroup; }
+                
+                targetSelect.innerHTML = '';
                 data.models.forEach(m => {
                     const opt = document.createElement('option');
                     opt.value = m.name;
                     opt.textContent = m.display_name || m.name;
-                    if (m.name === selectedModel) opt.selected = true;
-                    modelSelect.appendChild(opt);
+                    
+                    // Menonaktifkan model yang tidak didukung (jika ada flag is_supported dari backend)
+                    if (m.hasOwnProperty('is_supported') && !m.is_supported) {
+                        opt.disabled = true;
+                    }
+
+                    // Hanya tandai selected jika model tersebut didukung
+                    if (m.name === selectedModel && (!m.hasOwnProperty('is_supported') || m.is_supported)) {
+                        opt.selected = true;
+                    }
+                    targetSelect.appendChild(opt);
                 });
-                modelSelectGroup.classList.remove('hidden');
+                targetGroup.classList.remove('hidden');
             }
         } catch (e) {
             console.error("Gagal memuat model", e);
@@ -320,8 +455,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     saveSettingsBtn.addEventListener('click', async () => {
         const payload = {
+            ai_provider: document.getElementById('setting_ai_provider').value,
             api_key: document.getElementById('setting_api_key').value.trim(),
             ai_model: document.getElementById('setting_ai_model').value || 'gemini-2.5-flash',
+            hf_api_key: document.getElementById('setting_hf_api_key').value.trim(),
+            hf_model: document.getElementById('setting_hf_model').value || 'mistralai/Mistral-7B-Instruct-v0.3',
+            groq_api_key: document.getElementById('setting_groq_api_key').value.trim(),
+            groq_model: document.getElementById('setting_groq_model').value || 'llama-3.1-8b-instant',
             wp_url: document.getElementById('setting_wp_url').value.trim(),
             wp_username: document.getElementById('setting_wp_user').value.trim(),
             wp_app_password: document.getElementById('setting_wp_pwd').value.trim()

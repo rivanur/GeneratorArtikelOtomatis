@@ -21,14 +21,25 @@ async def generate_article(
 ):
     try:
         # 1. Pilih & Konfigurasi API LLM
-        api_key = SettingsManager.get_api_key()
         settings = SettingsManager.get_settings()
-        ai_model = settings.get("ai_model", "gemini-2.5-flash")
+        ai_provider = settings.get("ai_provider", "gemini")
         
-        if not api_key:
-            raise HTTPException(status_code=400, detail="Gemini API Key belum diatur. Silakan buka menu Pengaturan ⚙️.")
+        if ai_provider == "gemini":
+            api_key = settings.get("api_key", "")
+            ai_model = settings.get("ai_model", "auto")
+        elif ai_provider == "huggingface":
+            api_key = settings.get("hf_api_key", "")
+            ai_model = settings.get("hf_model", "auto")
+        elif ai_provider == "groq":
+            api_key = settings.get("groq_api_key", "")
+            ai_model = settings.get("groq_model", "auto")
+        else:
+            raise HTTPException(status_code=400, detail="Provider AI tidak valid.")
             
-        generator = AIGenerator(api_key=api_key, model_name=ai_model)
+        if not api_key:
+            raise HTTPException(status_code=400, detail=f"{ai_provider.capitalize()} API Key belum diatur. Silakan buka menu Pengaturan ⚙️.")
+            
+        generator = AIGenerator(provider=ai_provider, api_key=api_key, model_name=ai_model)
         
         # 2. Ekstraksi & Parsing Teks Otomatis
         extracted_text = ""
@@ -159,10 +170,12 @@ async def publish_to_wordpress(title: str = Form(...), content: str = Form(...))
 @router.post("/test-key")
 async def test_api_key(payload: dict = Body(...)):
     api_key = payload.get("api_key")
+    provider = payload.get("provider", "gemini")
+    
     if not api_key:
         raise HTTPException(status_code=400, detail="API Key kosong")
     
-    is_valid = AIGenerator.test_api_key(api_key)
+    is_valid = AIGenerator.test_api_key(provider, api_key)
     if is_valid:
         return {"status": "success", "message": "Koneksi API Key Berhasil!"}
     raise HTTPException(status_code=400, detail="API Key Tidak Valid atau Kuota Habis")
@@ -170,8 +183,10 @@ async def test_api_key(payload: dict = Body(...)):
 @router.post("/models")
 async def get_models(payload: dict = Body(...)):
     api_key = payload.get("api_key")
+    provider = payload.get("provider", "gemini")
+    
     if not api_key:
         raise HTTPException(status_code=400, detail="API Key kosong")
         
-    models = AIGenerator.get_available_models(api_key)
+    models = AIGenerator.get_available_models(provider, api_key)
     return {"status": "success", "models": models}

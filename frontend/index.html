@@ -174,19 +174,70 @@
                 <div class="tab-content">
                     <div id="setting_ai" class="modal-tab-pane active">
                         <div class="form-group">
-                            <label>Gemini API Key</label>
-                            <div class="input-with-button">
-                                <input type="password" id="setting_api_key" placeholder="AIzaSy..." />
-                                <button id="testApiBtn" class="secondary-btn">Test</button>
-                            </div>
-                            <small id="testStatusText">Dapatkan key di Google AI Studio.</small>
-                        </div>
-                        <div class="form-group hidden" id="modelSelectGroup">
-                            <label>Pilih Model AI</label>
-                            <select id="setting_ai_model">
-                                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                            <label>Penyedia AI (AI Provider)</label>
+                            <select id="setting_ai_provider">
+                                <option value="gemini">Google Gemini (Recommended)</option>
+                                <option value="groq">Groq (Super Cepat & Gratis)</option>
+                                <option value="huggingface">Hugging Face (Teks Saja)</option>
                             </select>
-                            <small>Pilih model yang akan digunakan untuk menulis artikel.</small>
+                        </div>
+                        
+                        <!-- Gemini Settings Group -->
+                        <div id="gemini_settings_group">
+                            <div class="form-group">
+                                <label>Gemini API Key</label>
+                                <div class="input-with-button">
+                                    <input type="password" id="setting_api_key" placeholder="AIzaSy..." />
+                                    <button id="testApiBtn" class="secondary-btn">Test</button>
+                                </div>
+                                <small id="testStatusText">Dapatkan key di Google AI Studio.</small>
+                            </div>
+                            <div class="form-group hidden" id="modelSelectGroup">
+                                <label>Pilih Model Gemini</label>
+                                <select id="setting_ai_model">
+                                    <option value="auto">✨ Otomatis (Rekomendasi Terbaik)</option>
+                                    <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- HuggingFace Settings Group -->
+                        <div id="hf_settings_group" class="hidden">
+                            <div class="form-group">
+                                <label>Hugging Face Access Token</label>
+                                <div class="input-with-button">
+                                    <input type="password" id="setting_hf_api_key" placeholder="hf_..." />
+                                    <button id="testHfApiBtn" class="secondary-btn">Test</button>
+                                </div>
+                                <small id="testHfStatusText">Dapatkan token di huggingface.co/settings/tokens.</small>
+                            </div>
+                            <div class="form-group hidden" id="hfModelSelectGroup">
+                                <label>Pilih Model Hugging Face</label>
+                                <select id="setting_hf_model">
+                                    <option value="auto">✨ Otomatis (Rekomendasi Terbaik)</option>
+                                    <option value="mistralai/Mistral-7B-Instruct-v0.3">Mistral 7B Instruct v0.3</option>
+                                </select>
+                                <small>Hanya model yang mendukung Inference API yang didukung.</small>
+                            </div>
+                        </div>
+
+                        <!-- Groq Settings Group -->
+                        <div id="groq_settings_group" class="hidden">
+                            <div class="form-group">
+                                <label>Groq API Key</label>
+                                <div class="input-with-button">
+                                    <input type="password" id="setting_groq_api_key" placeholder="gsk_..." />
+                                    <button id="testGroqApiBtn" class="secondary-btn">Test</button>
+                                </div>
+                                <small id="testGroqStatusText">Dapatkan key gratis di console.groq.com/keys.</small>
+                            </div>
+                            <div class="form-group hidden" id="groqModelSelectGroup">
+                                <label>Pilih Model Groq</label>
+                                <select id="setting_groq_model">
+                                    <option value="auto">✨ Otomatis (Rekomendasi Terbaik)</option>
+                                    <option value="llama-3.1-8b-instant">Llama 3.1 (8B) - Sangat Cepat</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div id="setting_wp" class="modal-tab-pane">
@@ -213,7 +264,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=6"></script>
+    <script src="app.js?v=10"></script>
 </body>
 
 </html>
