@@ -165,7 +165,7 @@ body {
 }
 
 /* Inputs */
-textarea, input[type="url"], select {
+textarea, input[type="text"], input[type="url"], input[type="password"], select {
     width: 100%;
     background: rgba(0,0,0,0.2);
     border: 1px solid var(--panel-border);
@@ -226,6 +226,11 @@ select {
     background-repeat: no-repeat;
     background-position: right 1rem center;
     background-size: 1em;
+}
+
+select option {
+    background-color: var(--bg-color);
+    color: var(--text-main);
 }
 
 .settings-section {
@@ -404,12 +409,12 @@ select {
 .modal-header h2 { font-size: 1.25rem; font-weight: 600; }
 .modal-tab-btn { padding: 0.5rem 1rem; border: none; background: none; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
 .modal-tab-btn.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
-.tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.modal-body .tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .modal-tab-pane { display: none; }
 .modal-tab-pane.active { display: block; }
 .modal-footer { margin-top: 1.5rem; }
-.publish-btn { font-size: 0.85rem; padding: 0.4rem 0.8rem; height: 32px; display: flex; align-items: center; gap: 0.5rem; }
-.edit-btn { font-size: 0.85rem; padding: 0.4rem 0.8rem; height: 32px; display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.1); border: 1px solid transparent; color: white; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.publish-btn { font-size: 0.95rem; font-weight: 500; padding: 0 1.2rem; height: 40px; display: flex; align-items: center; gap: 0.5rem; }
+.edit-btn { font-size: 0.95rem; font-weight: 500; padding: 0 1.2rem; height: 40px; display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
 .edit-btn:hover { background: rgba(255,255,255,0.2); }
 .w-full { width: 100%; }
 
@@ -429,3 +434,66 @@ select {
 .text-success { color: var(--success); }
 .text-danger { color: var(--danger); }
 
+/* Progress Bar Styles */
+.progress-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 10px;
+    transition: width 0.3s ease-out;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+.progress-fill.success {
+    background: linear-gradient(90deg, #10b981, #34d399);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.progress-text {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+}
+
+.progress-percentage {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Form Group Styles */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--text-main);
+    font-size: 0.95rem;
+}
+
+.form-group small {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}

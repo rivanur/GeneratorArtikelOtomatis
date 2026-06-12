@@ -84,7 +84,18 @@ document.addEventListener('DOMContentLoaded', () => {
         generateBtn.disabled = true;
         btnText.classList.add('hidden');
         loader.classList.remove('hidden');
-        resultContainer.innerHTML = '<div class="empty-state"><p>Sedang memproses dengan AI... Mohon tunggu.</p></div>';
+        
+        resultContainer.innerHTML = `
+            <div class="empty-state">
+                <div class="progress-container">
+                    <p id="progress_text" class="progress-text">Menyiapkan data...</p>
+                    <div class="progress-bar-bg">
+                        <div id="progress_fill" class="progress-fill"></div>
+                    </div>
+                    <p id="progress_percentage" class="progress-percentage">0%</p>
+                </div>
+            </div>`;
+            
         resultContainer.classList.remove('hidden');
         resultEditor.classList.add('hidden');
         copyBtn.disabled = true;
@@ -92,6 +103,43 @@ document.addEventListener('DOMContentLoaded', () => {
         publishWpBtn.classList.add('hidden');
         isEditing = false;
         editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg><span>Edit</span>';
+
+        // --- Fake Progress Logic ---
+        let progress = 0;
+        const progressFill = document.getElementById('progress_fill');
+        const progressText = document.getElementById('progress_text');
+        const progressPercentage = document.getElementById('progress_percentage');
+        
+        const statusMessages = [
+            "Menyedot data referensi...",
+            "Memahami konteks kalimat...",
+            "Membangun kerangka artikel...",
+            "Merangkai kata demi kata...",
+            "Menyempurnakan tata bahasa AI...",
+            "Hampir selesai, mohon bersabar..."
+        ];
+        
+        let statusIndex = 0;
+        
+        // Interval for progress bar
+        const progressInterval = setInterval(() => {
+            // Asymptotic progress towards 95%
+            let increment = Math.random() * 5;
+            if (progress > 80) increment = Math.random() * 1;
+            if (progress > 90) increment = Math.random() * 0.2;
+            
+            progress += increment;
+            if (progress > 95) progress = 95;
+            
+            progressFill.style.width = `${progress}%`;
+            progressPercentage.textContent = `${Math.floor(progress)}%`;
+        }, 800);
+
+        // Interval for status text
+        const textInterval = setInterval(() => {
+            statusIndex = (statusIndex + 1) % statusMessages.length;
+            progressText.textContent = statusMessages[statusIndex];
+        }, 4000);
 
         try {
             const response = await fetch('http://localhost:8000/api/generate', {
@@ -105,7 +153,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.detail || 'Terjadi kesalahan pada server');
             }
 
-            // Success
+            // Success - Snap to 100%
+            clearInterval(progressInterval);
+            clearInterval(textInterval);
+            progressFill.style.width = '100%';
+            progressFill.classList.add('success');
+            progressPercentage.textContent = '100%';
+            progressText.textContent = 'Selesai! Memuat hasil...';
+            
+            // Wait 500ms for user to see 100% completion before showing text
+            await new Promise(resolve => setTimeout(resolve, 500));
+
             currentMarkdown = data.data;
             resultContainer.innerHTML = marked.parse(currentMarkdown);
             copyBtn.disabled = false;
@@ -118,6 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Error:', error);
+            clearInterval(progressInterval);
+            clearInterval(textInterval);
             showToast(error.message);
             resultContainer.innerHTML = `<div class="empty-state" style="color: var(--danger)">
                 <p>Gagal menghasilkan artikel: ${error.message}</p>
