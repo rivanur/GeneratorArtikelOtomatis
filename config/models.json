@@ -1,0 +1,31 @@
+{
+  "huggingface": [
+    {
+      "name": "mistralai/Mistral-7B-Instruct-v0.3",
+      "display_name": "Mistral 7B Instruct v0.3"
+    },
+    {
+      "name": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "display_name": "Mixtral 8x7B Instruct"
+    },
+    {
+      "name": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "display_name": "Llama 3 (8B Instruct)"
+    },
+    {
+      "name": "Qwen/Qwen2-72B-Instruct",
+      "display_name": "Qwen2 72B Instruct"
+    },
+    {
+      "name": "google/gemma-1.1-7b-it",
+      "display_name": "Gemma 1.1 7B IT"
+    }
+  ],
+  "groq_priority_keywords": [
+    "llama-3.3",
+    "llama-3.1",
+    "llama3",
+    "mixtral",
+    "gemma2"
+  ]
+}

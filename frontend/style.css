@@ -358,11 +358,15 @@ select option {
     margin-top: 1.5em;
     margin-bottom: 0.5em;
     color: white;
+    font-weight: 600;
 }
 
 .markdown-body h1 { font-size: 2em; border-bottom: 1px solid var(--panel-border); padding-bottom: 0.3em; }
-.markdown-body p { margin-bottom: 1em; }
+.markdown-body h2 { font-size: 1.5em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3em; }
+.markdown-body h3 { font-size: 1.25em; }
+.markdown-body p { margin-bottom: 1em; line-height: 1.6; }
 .markdown-body ul, .markdown-body ol { margin-bottom: 1em; padding-left: 2em; }
+.markdown-body li { margin-bottom: 0.5em; }
 .markdown-body strong { color: white; }
 
 /* Toast */

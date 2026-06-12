@@ -24,6 +24,61 @@ class AIGenerator:
             elif self.provider == "groq":
                 self.groq_client = Groq(api_key=self.api_key)
 
+    @staticmethod
+    def _search_web(query: str, max_results: int = 6) -> str:
+        try:
+            from ddgs import DDGS
+            import requests
+            from bs4 import BeautifulSoup
+            import concurrent.futures
+            
+            results = DDGS().text(query, max_results=max_results)
+            if not results:
+                return "Tidak ada hasil pencarian terbaru."
+                
+            search_context = f"HASIL PENCARIAN WEB UNTUK '{query}':\n\n"
+            
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Referer': 'https://www.google.com/'
+            }
+            
+            def fetch_and_parse(res):
+                title = res.get('title', '')
+                snippet = res.get('body', '')
+                href = res.get('href', '')
+                
+                full_text = snippet # Fallback to snippet
+                
+                if href:
+                    try:
+                        response = requests.get(href, headers=headers, timeout=5)
+                        if response.status_code == 200:
+                            soup = BeautifulSoup(response.text, 'html.parser')
+                            paragraphs = soup.find_all('p')
+                            article_text = " ".join([p.get_text(strip=True) for p in paragraphs])
+                            words = article_text.split()
+                            if len(words) > 20:
+                                full_text = " ".join(words[:150]) # Batasi 150 kata per artikel agar tidak melebihi limit token AI
+                    except Exception:
+                        pass # Abaikan error timeout/blokir, kembali ke snippet
+                
+                return f"Sumber ({title}) [URL: {href}]:\n{full_text}\n\n"
+                
+            # Gunakan ThreadPoolExecutor agar scraping puluhan website bisa berjalan paralel (bersamaan)
+            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+                scraped_results = list(executor.map(fetch_and_parse, results))
+                
+            for res_text in scraped_results:
+                search_context += res_text
+                
+            return search_context
+        except Exception as e:
+            print(f"Web search error: {str(e)}")
+            return f"Gagal melakukan pencarian web: {str(e)}"
+
     def generate_article(self, source_context: str, style: str = "blog", custom_prompt: str = "", media_path: str = None) -> dict:
         """
         Kompilasi prompt terstruktur dan kirim ke API LLM (Gemini atau Hugging Face)
@@ -35,50 +90,67 @@ class AIGenerator:
         if self.provider in ["huggingface", "groq"] and media_path:
             raise Exception(f"{self.provider.capitalize()} API saat ini tidak mendukung pemrosesan file media (Video/Audio) secara langsung. Harap gunakan Gemini untuk sumber media.")
 
-        # Tentukan Persona berdasarkan Gaya
-        style_lower = style.lower()
-        if "blog" in style_lower or "santai" in style_lower:
-            persona = "seorang blogger kreatif dan *storyteller* yang asyik. Gunakan gaya bahasa kasual, bersahabat, sedikit humoris, dan menggunakan istilah kekinian yang mudah dipahami (seperti sapaan santai)."
-        elif "akademik" in style_lower or "analitis" in style_lower:
-            persona = "seorang peneliti akademis bergelar Profesor. Gunakan bahasa Indonesia baku yang sangat formal, objektif, logis, terstruktur ketat, dan gunakan istilah ilmiah yang relevan."
-        elif "seo" in style_lower or "optimasi" in style_lower:
-            persona = "seorang pakar SEO Copywriter kelas atas. Tulisan Anda harus persuasif, mudah dipindai mata (*scannable*), mengoptimalkan kepadatan kata kunci secara natural, dan sangat memikat audiens."
-        else: # Default (Berita/Formal)
-            persona = "seorang jurnalis investigatif senior berkaliber tinggi. Gunakan bahasa Indonesia jurnalistik yang lugas, padat, netral, objektif, dan informatif tanpa opini pribadi."
-
+        # Deteksi apakah source_context terlalu pendek (kata kunci pencarian)
+        words = source_context.split()
+        if len(words) < 20 and not source_context.startswith("http"):
+            search_results = self._search_web(source_context)
+            source_context = f"Topik Kueri: {source_context}\n\n{search_results}"
+            
+        import datetime
+        current_date = datetime.datetime.now().strftime("%d %B %Y")
+            
         base_prompt = f"""
-PERAN ANDA:
-Anda adalah {persona}
+INSTRUKSI GAYA PENULISAN:
+Tulis artikel ini dengan gaya bahasa: {style}
 
-TUGAS:
-Buatlah sebuah artikel berkualitas tinggi dalam Bahasa Indonesia berdasarkan data referensi berikut.
+KONTEKS WAKTU:
+Hari ini adalah tanggal: {current_date}
 
-=== REFERENSI SUMBER ===
+TUGAS ANDA:
+Tulis artikel SEO-friendly yang terstruktur dengan baik berdasarkan sumber referensi berikut:
+
+SUMBER REFERENSI:
 {source_context[:10000]}
 ========================
 
-=== PENGATURAN TAMBAHAN ===
+=== PENGATURAN TAMBAHAN (WAJIB DIPATUHI) ===
 - Instruksi Khusus: {custom_prompt if custom_prompt else "Tidak ada."}
 
-=== INSTRUKSI MUTLAK & FORMAT ===
-1. PERTahankan peran Anda ({persona}) dari awal hingga akhir tulisan! JANGAN gunakan gaya bahasa robotik atau *template* standar AI. Buat tulisan senatural mungkin seperti buatan manusia.
-2. Buat satu judul (maksimal 70 karakter) yang sangat memikat di baris PALING PERTAMA dengan format Heading 1 (# Judul).
-3. Tulis isi artikel dengan format Markdown lengkap yang rapi dan terstruktur. Gunakan paragraf pendek agar mudah dibaca.
-4. Gunakan heading (## atau ###), cetak tebal (**bold**), dan list peluru/angka jika diperlukan untuk menonjolkan poin penting.
-5. Artikel harus komprehensif, mengalir secara natural, dan sesuai dengan data referensi.
-6. HANYA berikan hasil artikelnya saja (Markdown mentah), JANGAN ADA teks pengantar, penutup, atau basa-basi AI (seperti "Berikut adalah artikelnya...").
+1. FORMAT & STRUKTUR (GAYA JURNALISTIK):
+   - Baris pertama WAJIB berupa Judul Utama menggunakan H1 (`# Judul Artikel yang Menarik`).
+   - Tulis layaknya artikel berita/blog profesional dengan paragraf pembuka (lead), isi (body) yang mengalir, dan paragraf penutup yang natural.
+   - Gunakan paragraf yang panjang dan mengalir dengan baik. Jangan membuat artikel yang terlihat seperti poin-poin presentasi.
+   - Gunakan subjudul (## H2 atau ### H3) HANYA untuk memisahkan bagian utama yang panjang (jangan gunakan subjudul untuk setiap 1-2 kalimat).
+   - Gunakan cetak tebal (**bold**) pada entitas penting (nama pemain, tim, skor, stadion).
+
+2. KUALITAS TULISAN & SEO:
+   - Tulis ulang informasi secara natural (parafrase), jangan menyalin mentah-mentah dari sumber referensi.
+   - HINDARI kata-kata klise khas AI seperti "Kesimpulannya", "Pada akhirnya", "Penting untuk dicatat", atau "Sebagai kesimpulan".
+   - HINDARI identitas AI seperti "Sebagai asisten AI", "Berikut adalah artikelnya", atau "Berdasarkan referensi di atas".
+
+3. ATURAN ANTI-HALUSINASI (KODE MERAH):
+   - JIKA data referensi TIDAK memuat informasi (misal skor atau jadwal belum ada), Anda WAJIB menyatakan bahwa "Informasi detail belum tersedia saat ini".
+   - DILARANG KERAS mengarang, menebak, atau memalsukan fakta/skor demi melengkapi artikel!
+
+4. ISOLASI OUTPUT:
+   - HANYA keluarkan hasil artikel dalam format Markdown mentah.
+   - JANGAN ADA teks pembuka sebelum judul utama.
+   - JANGAN ADA teks penutup/basa-basi setelah kalimat terakhir artikel.
+
+--- MULAI ARTIKEL DI BAWAH INI ---
 """
         models_to_try = [self.model_name]
         
         if self.model_name == "auto" or not self.model_name:
             available_models = self.get_available_models(self.provider, self.api_key)
             valid_models = [m["name"] for m in available_models if m["name"] != "auto" and m.get("is_supported", True)]
-            models_to_try = valid_models[:3]
+            models_to_try = valid_models
             
             if not models_to_try:
                 raise Exception(f"Tidak ada model cadangan yang tersedia untuk provider {self.provider.capitalize()}")
 
         last_error = None
+        primary_error = None
         for i, current_model in enumerate(models_to_try):
             try:
                 if self.model_name == "auto" or not self.model_name:
@@ -132,7 +204,8 @@ Buatlah sebuah artikel berkualitas tinggi dalam Bahasa Indonesia berdasarkan dat
                     response = self.groq_client.chat.completions.create(
                         messages=[{"role": "user", "content": base_prompt}],
                         model=current_model,
-                        max_tokens=2048
+                        max_tokens=2048,
+                        temperature=0.5
                     )
                     generated_text = response.choices[0].message.content
                     token_count = response.usage.total_tokens
@@ -146,10 +219,13 @@ Buatlah sebuah artikel berkualitas tinggi dalam Bahasa Indonesia berdasarkan dat
                 }
             except Exception as e:
                 last_error = str(e)
+                if i == 0:
+                    primary_error = last_error
                 print(f"Model {current_model} gagal: {last_error}. Mencoba model selanjutnya...")
                 continue
                 
-        raise Exception(f"Gagal melakukan generasi artikel dengan {self.provider.capitalize()} setelah mencoba semua model cadangan. Error terakhir: {last_error}")
+        error_to_show = primary_error if primary_error else last_error
+        raise Exception(f"Gagal melakukan generasi artikel dengan {self.provider.capitalize()}. Error utama: {error_to_show}")
 
     @staticmethod
     def test_api_key(provider: str, api_key: str) -> bool:
@@ -179,9 +255,31 @@ Buatlah sebuah artikel berkualitas tinggi dalam Bahasa Indonesia berdasarkan dat
         return False
 
     @staticmethod
+    def _load_models_config():
+        import json
+        import os
+        config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'models.json')
+        try:
+            with open(config_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Gagal memuat config/models.json: {e}")
+            return {
+                "huggingface": [
+                    {"name": "mistralai/Mistral-7B-Instruct-v0.3", "display_name": "Mistral 7B Instruct v0.3"},
+                    {"name": "meta-llama/Meta-Llama-3-8B-Instruct", "display_name": "Llama 3 (8B Instruct)"}
+                ],
+                "groq_priority_keywords": [
+                    "llama-3.3", "llama-3.1", "llama3", "mixtral", "gemma2"
+                ]
+            }
+
+    @staticmethod
     def get_available_models(provider: str, api_key: str = "") -> list:
         provider = provider.lower()
         auto_option = {"name": "auto", "display_name": "✨ Otomatis (Rekomendasi Terbaik)", "is_supported": True}
+        
+        config = AIGenerator._load_models_config()
         
         if provider == "gemini":
             try:
@@ -197,18 +295,23 @@ Buatlah sebuah artikel berkualitas tinggi dalam Bahasa Indonesia berdasarkan dat
             except Exception:
                 return [auto_option]
         elif provider == "huggingface":
-            return [
-                auto_option,
-                {"name": "mistralai/Mistral-7B-Instruct-v0.3", "display_name": "Mistral 7B Instruct v0.3"},
-                {"name": "mistralai/Mixtral-8x7B-Instruct-v0.1", "display_name": "Mixtral 8x7B Instruct"},
-                {"name": "meta-llama/Meta-Llama-3-8B-Instruct", "display_name": "Llama 3 (8B Instruct)"},
-                {"name": "Qwen/Qwen2-72B-Instruct", "display_name": "Qwen2 72B Instruct"},
-                {"name": "google/gemma-1.1-7b-it", "display_name": "Gemma 1.1 7B IT"}
-            ]
+            hf_models = config.get("huggingface", [])
+            return [auto_option] + hf_models
         elif provider == "groq":
             try:
                 client = Groq(api_key=api_key)
                 models = [auto_option]
+                
+                priority_keywords = config.get("groq_priority_keywords", ["llama-3.3", "llama-3.1", "llama3", "mixtral"])
+                
+                def get_priority(model_name):
+                    model_name_lower = model_name.lower()
+                    for i, keyword in enumerate(priority_keywords):
+                        if keyword in model_name_lower:
+                            return i
+                    return 999
+                
+                fetched_models = []
                 for m in client.models.list().data:
                     # Filter model audio (whisper) agar tidak bisa dipilih
                     is_supported = "whisper" not in m.id.lower()
@@ -217,14 +320,20 @@ Buatlah sebuah artikel berkualitas tinggi dalam Bahasa Indonesia berdasarkan dat
                     if not is_supported:
                         display_name += " (Hanya Audio - Tidak Didukung)"
                         
-                    models.append({
+                    fetched_models.append({
                         "name": m.id,
                         "display_name": display_name,
                         "is_supported": is_supported
                     })
                 
-                # Urutkan: auto selalu di atas, lalu yang didukung, lalu abjad
-                models.sort(key=lambda x: (x["name"] != "auto", not x["is_supported"], x["name"]))
+                # Urutkan: prioritas keyword > didukung > abjad
+                fetched_models.sort(key=lambda x: (
+                    get_priority(x["name"]),
+                    not x["is_supported"],
+                    x["name"]
+                ))
+                
+                models.extend(fetched_models)
                 return models
             except Exception:
                 return [auto_option]
