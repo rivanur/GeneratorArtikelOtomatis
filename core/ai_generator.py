@@ -87,8 +87,27 @@ class AIGenerator:
         if not self.api_key:
             return "**Error:** API Key tidak disetel atau tidak valid."
         
-        if self.provider in ["huggingface", "groq"] and media_path:
-            raise Exception(f"{self.provider.capitalize()} API saat ini tidak mendukung pemrosesan file media (Video/Audio) secara langsung. Harap gunakan Gemini untuk sumber media.")
+        if self.provider == "huggingface" and media_path:
+            raise Exception("Huggingface API saat ini tidak mendukung pemrosesan file media karena limitasi server. Harap gunakan Gemini atau Groq.")
+
+        if self.provider == "groq" and media_path:
+            try:
+                import os
+                config = AIGenerator._load_models_config()
+                whisper_model = config.get("groq_whisper_model", "whisper-large-v3")
+                
+                with open(media_path, "rb") as audio_file:
+                    transcription = self.groq_client.audio.transcriptions.create(
+                        file=(os.path.basename(media_path), audio_file.read()),
+                        model=whisper_model,
+                        response_format="text"
+                    )
+                # Ambil teks transkripsi
+                transcribed_text = str(transcription)
+                source_context = f"{source_context}\n\n[HASIL TRANSKRIPSI VIDEO/AUDIO DARI GROQ WHISPER]:\n{transcribed_text}"
+                media_path = None # Set None agar tidak memicu logika media upload Gemini di bawah
+            except Exception as e:
+                raise Exception(f"Gagal memproses media menggunakan Groq Whisper: {str(e)}")
 
         # Deteksi apakah source_context terlalu pendek (kata kunci pencarian)
         words = source_context.split()
@@ -99,19 +118,12 @@ class AIGenerator:
         import datetime
         current_date = datetime.datetime.now().strftime("%d %B %Y")
             
-        base_prompt = f"""
+        system_prompt = f"""
 INSTRUKSI GAYA PENULISAN:
 Tulis artikel ini dengan gaya bahasa: {style}
 
 KONTEKS WAKTU:
 Hari ini adalah tanggal: {current_date}
-
-TUGAS ANDA:
-Tulis artikel SEO-friendly yang terstruktur dengan baik berdasarkan sumber referensi berikut:
-
-SUMBER REFERENSI:
-{source_context[:10000]}
-========================
 
 === PENGATURAN TAMBAHAN (WAJIB DIPATUHI) ===
 - Instruksi Khusus: {custom_prompt if custom_prompt else "Tidak ada."}
@@ -136,7 +148,15 @@ SUMBER REFERENSI:
    - HANYA keluarkan hasil artikel dalam format Markdown mentah.
    - JANGAN ADA teks pembuka sebelum judul utama.
    - JANGAN ADA teks penutup/basa-basi setelah kalimat terakhir artikel.
+"""
 
+        user_prompt = f"""
+TUGAS ANDA:
+Tulis artikel SEO-friendly yang terstruktur dengan baik berdasarkan sumber referensi berikut:
+
+SUMBER REFERENSI:
+{source_context[:10000]}
+========================
 --- MULAI ARTIKEL DI BAWAH INI ---
 """
         models_to_try = [self.model_name]
@@ -155,7 +175,7 @@ SUMBER REFERENSI:
             try:
                 if self.model_name == "auto" or not self.model_name:
                     if self.provider == "gemini":
-                        self.model = genai.GenerativeModel(current_model)
+                        self.model = genai.GenerativeModel(current_model, system_instruction=system_prompt)
                     elif self.provider == "huggingface":
                         self.hf_client = InferenceClient(model=current_model, token=self.api_key)
                         
@@ -178,31 +198,37 @@ SUMBER REFERENSI:
                         except Exception as me:
                             raise Exception(f"Gagal mengunggah/memproses media: {str(me)}")
                     
-                    content_parts.append(base_prompt)
+                    content_parts.append(user_prompt)
                     response = self.model.generate_content(content_parts)
                     generated_text = response.text
                     token_count = response.usage_metadata.total_token_count
                     
                 elif self.provider == "huggingface":
                     try:
-                        messages = [{"role": "user", "content": base_prompt}]
+                        messages = [
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt}
+                        ]
                         response = self.hf_client.chat_completion(messages=messages, max_tokens=2048)
                         generated_text = response.choices[0].message.content
                     except Exception as e:
                         error_str = str(e).lower()
                         if "not a chat model" in error_str or "model_not_supported" in error_str:
                             try:
-                                formatted_prompt = f"[INST] {base_prompt} [/INST]"
+                                formatted_prompt = f"[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{user_prompt} [/INST]"
                                 generated_text = self.hf_client.text_generation(prompt=formatted_prompt, max_new_tokens=2048)
                             except Exception as inner_e:
                                 raise Exception(f"Chat error: {str(e)} | Teks error: {str(inner_e)}")
                         else:
                             raise e
-                    token_count = int(len(base_prompt.split()) * 1.3)
+                    token_count = int(len((system_prompt + user_prompt).split()) * 1.3)
                     
                 elif self.provider == "groq":
                     response = self.groq_client.chat.completions.create(
-                        messages=[{"role": "user", "content": base_prompt}],
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt}
+                        ],
                         model=current_model,
                         max_tokens=2048,
                         temperature=0.5

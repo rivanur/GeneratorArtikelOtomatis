@@ -27,5 +27,6 @@
     "llama3",
     "mixtral",
     "gemma2"
-  ]
+  ],
+  "groq_whisper_model": "whisper-large-v3"
 }
