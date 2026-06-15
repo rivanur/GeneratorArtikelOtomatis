@@ -60,6 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyBtn = document.getElementById('copyBtn');
     const editBtn = document.getElementById('editBtn');
     const publishWpBtn = document.getElementById('publishWpBtn');
+    const uploadFallbackBtn = document.getElementById('uploadFallbackBtn');
+    const fallbackImageInput = document.getElementById('fallbackImageInput');
 
     let currentMarkdown = '';
 
@@ -99,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         generateBtn.disabled = true;
         btnText.classList.add('hidden');
         loader.classList.remove('hidden');
-        
+
         resultContainer.innerHTML = `
             <div class="empty-state">
                 <div class="progress-container">
@@ -110,12 +112,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p id="progress_percentage" class="progress-percentage">0%</p>
                 </div>
             </div>`;
-            
+
         resultContainer.classList.remove('hidden');
         resultEditor.classList.add('hidden');
         copyBtn.disabled = true;
         editBtn.classList.add('hidden');
         publishWpBtn.classList.add('hidden');
+        uploadFallbackBtn.classList.add('hidden');
         isEditing = false;
         editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg><span>Edit</span>';
 
@@ -124,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const progressFill = document.getElementById('progress_fill');
         const progressText = document.getElementById('progress_text');
         const progressPercentage = document.getElementById('progress_percentage');
-        
+
         const statusMessages = [
             "Menyedot data referensi...",
             "Memahami konteks kalimat...",
@@ -133,19 +136,19 @@ document.addEventListener('DOMContentLoaded', () => {
             "Menyempurnakan tata bahasa AI...",
             "Hampir selesai, mohon bersabar..."
         ];
-        
+
         let statusIndex = 0;
-        
+
         // Interval for progress bar
         const progressInterval = setInterval(() => {
             // Asymptotic progress towards 95%
             let increment = Math.random() * 5;
             if (progress > 80) increment = Math.random() * 1;
             if (progress > 90) increment = Math.random() * 0.2;
-            
+
             progress += increment;
             if (progress > 95) progress = 95;
-            
+
             progressFill.style.width = `${progress}%`;
             progressPercentage.textContent = `${Math.floor(progress)}%`;
         }, 800);
@@ -175,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             progressFill.classList.add('success');
             progressPercentage.textContent = '100%';
             progressText.textContent = 'Selesai! Memuat hasil...';
-            
+
             // Wait 500ms for user to see 100% completion before showing text
             await new Promise(resolve => setTimeout(resolve, 500));
 
@@ -184,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
             copyBtn.disabled = false;
             editBtn.classList.remove('hidden');
             publishWpBtn.classList.remove('hidden');
+            uploadFallbackBtn.classList.remove('hidden');
 
             // Show Tokens
             document.getElementById('tokenCount').textContent = data.tokens_used;
@@ -245,6 +249,61 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- Upload Fallback Image Logic ---
+    uploadFallbackBtn.addEventListener('click', () => {
+        fallbackImageInput.click();
+    });
+
+    fallbackImageInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            uploadFallbackBtn.disabled = true;
+            uploadFallbackBtn.style.opacity = '0.5';
+
+            const response = await fetch('http://localhost:8000/api/upload-image', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.detail || 'Gagal upload gambar');
+
+            const markdownImage = `\n![Gambar Cover](http://localhost:8000${data.image_url})\n`;
+
+            // Masukkan gambar di baris kedua setelah H1
+            const lines = currentMarkdown.split('\n');
+            let insertIndex = 0;
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].startsWith('# ')) {
+                    insertIndex = i + 1;
+                    break;
+                }
+            }
+            lines.splice(insertIndex, 0, markdownImage);
+            currentMarkdown = lines.join('\n');
+
+            if (isEditing) {
+                resultEditor.value = currentMarkdown;
+            } else {
+                resultContainer.innerHTML = marked.parse(currentMarkdown);
+            }
+
+            showToast('Gambar berhasil disisipkan!', true);
+        } catch (error) {
+            console.error(error);
+            showToast(error.message);
+        } finally {
+            uploadFallbackBtn.disabled = false;
+            uploadFallbackBtn.style.opacity = '1';
+            fallbackImageInput.value = ''; // reset
+        }
+    });
+
     // --- Settings Modal Logic ---
     const settingsModal = document.getElementById('settingsModal');
     const settingsBtn = document.getElementById('settingsBtn');
@@ -275,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         geminiSettings.classList.add('hidden');
         hfSettings.classList.add('hidden');
         groqSettings.classList.add('hidden');
-        
+
         if (provider === 'gemini') geminiSettings.classList.remove('hidden');
         else if (provider === 'huggingface') hfSettings.classList.remove('hidden');
         else if (provider === 'groq') groqSettings.classList.remove('hidden');
@@ -428,13 +487,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (provider === "gemini") { targetSelect = modelSelect; targetGroup = modelSelectGroup; }
                 else if (provider === "huggingface") { targetSelect = hfModelSelect; targetGroup = hfModelSelectGroup; }
                 else if (provider === "groq") { targetSelect = groqModelSelect; targetGroup = groqModelSelectGroup; }
-                
+
                 targetSelect.innerHTML = '';
                 data.models.forEach(m => {
                     const opt = document.createElement('option');
                     opt.value = m.name;
                     opt.textContent = m.display_name || m.name;
-                    
+
                     // Menonaktifkan model yang tidak didukung (jika ada flag is_supported dari backend)
                     if (m.hasOwnProperty('is_supported') && !m.is_supported) {
                         opt.disabled = true;

@@ -6,6 +6,35 @@ import docx
 
 class ContentExtractor:
     @staticmethod
+    def extract_image_from_url(url: str) -> str:
+        """Ekstrak URL gambar utama dari web (og:image)"""
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+        try:
+            resp = requests.get(url, headers=headers, timeout=10)
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            
+            # Coba cari og:image
+            og_image = soup.find('meta', property='og:image')
+            if og_image and og_image.get('content'):
+                return og_image['content']
+                
+            # Coba cari twitter:image
+            twitter_image = soup.find('meta', property='twitter:image')
+            if twitter_image and twitter_image.get('content'):
+                return twitter_image['content']
+                
+            # Fallback ke img pertama yang masuk akal
+            for img in soup.find_all('img'):
+                src = img.get('src')
+                if src and ('http' in src) and not any(x in src.lower() for x in ['logo', 'icon', 'avatar']):
+                    return src
+        except:
+            pass
+        return None
+
+    @staticmethod
     def extract_from_url(url: str) -> str:
         """Ekstrak teks dari URL web dengan sistem Multi-Layer Fallback"""
         headers = {

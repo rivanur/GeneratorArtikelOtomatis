@@ -44,8 +44,11 @@ async def generate_article(
         # 2. Ekstraksi & Parsing Teks Otomatis
         extracted_text = ""
         media_path = None
+        extracted_image_url = None
         temp_dir = os.path.join(os.path.dirname(__file__), "..", "data", "temp")
+        uploads_dir = os.path.join(os.path.dirname(__file__), "..", "data", "uploads")
         os.makedirs(temp_dir, exist_ok=True)
+        os.makedirs(uploads_dir, exist_ok=True)
         
         if source_type == "manual_text":
             if not manual_text:
@@ -56,6 +59,7 @@ async def generate_article(
             if not url:
                 raise HTTPException(status_code=400, detail="URL Web tidak boleh kosong")
             extracted_text = ContentExtractor.extract_from_url(url)
+            extracted_image_url = ContentExtractor.extract_image_from_url(url)
             
         elif source_type == "youtube_url":
             if not url:
@@ -78,6 +82,17 @@ async def generate_article(
                 )
                 media_path = temp_audio_path
                 extracted_text = f"Tolong dengarkan audio dari video YouTube terlampir dan buatkan artikel berdasarkan kontennya. URL asli: {url}"
+                
+                # Unduh URL thumbnail via yt-dlp
+                try:
+                    thumb_result = subprocess.run(
+                        ["yt-dlp", "--get-thumbnail", url],
+                        check=True, capture_output=True, text=True
+                    )
+                    if thumb_result.stdout:
+                        extracted_image_url = thumb_result.stdout.strip()
+                except:
+                    pass
             except subprocess.CalledProcessError as e:
                 raise HTTPException(status_code=400, detail=f"Gagal mengunduh audio YouTube: {e.stderr.decode('utf-8', errors='ignore')}")
             
@@ -113,6 +128,19 @@ async def generate_article(
             media_path = temp_filepath
             extracted_text = f"Tolong tonton video terlampir dan buatkan artikel berdasarkan kontennya. Nama file asli: {file.filename}"
             
+            # Ekstrak 1 frame sebagai gambar
+            thumb_filename = f"{uuid.uuid4()}_thumb.jpg"
+            thumb_path = os.path.join(uploads_dir, thumb_filename)
+            try:
+                subprocess.run(
+                    ["ffmpeg", "-i", media_path, "-vframes", "1", "-ss", "00:00:03", "-y", thumb_path],
+                    check=True, capture_output=True
+                )
+                if os.path.exists(thumb_path):
+                    extracted_image_url = f"http://localhost:8000/api/uploads/{thumb_filename}"
+            except:
+                pass
+            
         else:
             raise HTTPException(status_code=400, detail="Tipe sumber tidak valid")
 
@@ -120,7 +148,53 @@ async def generate_article(
         if not extracted_text and not media_path:
             raise HTTPException(status_code=400, detail="Gagal mengekstrak teks atau media dari sumber")
 
-        result_data = generator.generate_article(source_context=extracted_text, style=style, media_path=media_path)
+        result_data = generator.generate_article(
+            source_context=extracted_text, 
+            style=style, 
+            media_path=media_path
+        )
+
+        final_text = result_data["text"]
+        
+        # 1. Pembersihan Regex: Hapus tag <think>...</think> (Sering digunakan oleh model DeepSeek di Groq/HuggingFace)
+        import re
+        final_text = re.sub(r'<think>.*?</think>', '', final_text, flags=re.DOTALL).strip()
+        
+        # 2. Pembersihan Isolasi: Hapus semua basa-basi AI sebelum Judul Utama (H1)
+        # Karena kita sudah memerintahkan AI agar baris pertama WAJIB '# ', semua teks sebelum '# ' adalah sampah/gumaman.
+        if '# ' in final_text:
+            final_text = final_text[final_text.find('# '):]
+            
+        # 3. Fallback Gambar: Jika gambar gagal ditarik dari sumber, cari ilustrasi di DuckDuckGo!
+        if not extracted_image_url:
+            article_title = "Ilustrasi Artikel"
+            for line in final_text.split('\n'):
+                if line.startswith('# '):
+                    article_title = line.replace('# ', '').strip()
+                    # Bersihkan karakter aneh dari judul agar pencarian aman
+                    article_title = re.sub(r'[^\w\s-]', '', article_title)
+                    break
+            
+            try:
+                from ddgs import DDGS
+                print(f"Mencari gambar ilustrasi untuk: {article_title}")
+                results = list(DDGS().images(article_title, max_results=1))
+                if results and len(results) > 0:
+                    extracted_image_url = results[0].get('image')
+                    print(f"Gambar ditemukan: {extracted_image_url}")
+            except Exception as e:
+                print(f"Gagal mencari gambar ilustrasi: {e}")
+            
+        # 4. Injeksi Gambar Langsung (Bypass AI)
+        if extracted_image_url:
+            lines = final_text.split('\n')
+            insert_index = 0
+            for i, line in enumerate(lines):
+                if line.startswith('# '):
+                    insert_index = i + 1
+                    break
+            lines.insert(insert_index, f"\n![Gambar Utama]({extracted_image_url})\n")
+            final_text = "\n".join(lines)
 
         # Bersihkan file temp lokal
         if media_path and os.path.exists(media_path):
@@ -131,7 +205,7 @@ async def generate_article(
 
         return {
             "status": "success",
-            "data": result_data["text"],
+            "data": final_text,
             "tokens_used": result_data["tokens_used"]
         }
 
@@ -190,3 +264,24 @@ async def get_models(payload: dict = Body(...)):
         
     models = AIGenerator.get_available_models(provider, api_key)
     return {"status": "success", "models": models}
+
+@router.post("/upload-image")
+async def upload_image(file: UploadFile = File(...)):
+    try:
+        uploads_dir = os.path.join(os.path.dirname(__file__), "..", "data", "uploads")
+        os.makedirs(uploads_dir, exist_ok=True)
+        
+        ext = os.path.splitext(file.filename)[1].lower()
+        if ext not in [".jpg", ".jpeg", ".png", ".webp", ".gif"]:
+            raise HTTPException(status_code=400, detail="Format gambar tidak didukung")
+            
+        filename = f"{uuid.uuid4()}{ext}"
+        filepath = os.path.join(uploads_dir, filename)
+        
+        async with aiofiles.open(filepath, 'wb') as out_file:
+            while chunk := await file.read(1024 * 1024):
+                await out_file.write(chunk)
+                
+        return {"status": "success", "image_url": f"/api/uploads/{filename}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

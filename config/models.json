@@ -28,5 +28,10 @@
     "mixtral",
     "gemma2"
   ],
+  "gemini_priority_keywords": [
+    "gemini-2.5-flash",
+    "gemini-1.5-flash",
+    "gemini-flash"
+  ],
   "groq_whisper_model": "whisper-large-v3"
 }

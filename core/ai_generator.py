@@ -311,13 +311,42 @@ SUMBER REFERENSI:
             try:
                 genai.configure(api_key=api_key)
                 models = [auto_option]
+                
+                priority_keywords = config.get("gemini_priority_keywords", ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-flash"])
+                
+                def get_gemini_priority(model_name):
+                    model_name_lower = model_name.lower()
+                    for i, keyword in enumerate(priority_keywords):
+                        if keyword in model_name_lower:
+                            return i
+                    return 999
+                    
+                fetched_models = []
                 for m in genai.list_models():
                     if 'generateContent' in m.supported_generation_methods:
-                        models.append({
-                            "name": m.name.replace('models/', ''),
-                            "display_name": m.display_name
+                        model_name = m.name.replace('models/', '')
+                        
+                        # Filter model 'thinking' agar tidak dipilih oleh mode auto
+                        is_supported = "thinking" not in model_name.lower()
+                        
+                        display_name = m.display_name
+                        if not is_supported:
+                            display_name += " (Mode Thinking - Sangat Lambat)"
+                            
+                        fetched_models.append({
+                            "name": model_name,
+                            "display_name": display_name,
+                            "is_supported": is_supported
                         })
-                return models
+                
+                # Urutkan: prioritas keyword > didukung > abjad
+                fetched_models.sort(key=lambda x: (
+                    get_gemini_priority(x["name"]),
+                    not x["is_supported"],
+                    x["name"]
+                ))
+                
+                return models + fetched_models
             except Exception:
                 return [auto_option]
         elif provider == "huggingface":

@@ -15,30 +15,28 @@ class WordPressPublisher:
 
     def _markdown_to_html(self, markdown_text: str) -> str:
         """
-        Konversi basic markdown ke HTML untuk dipublish.
-        (Di produksi nyata, bisa gunakan library Python-Markdown, 
-        tapi kita gunakan Regex sederhana untuk prototipe ini)
+        Konversi markdown ke HTML menggunakan library yang stabil untuk WordPress.
+        Juga menghapus Judul (H1) pertama agar tidak bentrok (double) dengan Judul Pos bawaan WordPress.
         """
-        html = markdown_text
+        try:
+            from markdown_it import MarkdownIt
+        except ImportError:
+            raise Exception("Library markdown-it-py tidak ditemukan. Harap pastikan sudah terinstall.")
+
+        # 1. Hapus Judul H1 Pertama (Karena sudah diisi ke field 'title' di WP)
+        lines = markdown_text.split('\n')
+        if lines and lines[0].startswith('# '):
+            lines = lines[1:]  # Buang baris pertama (Judul)
         
-        # Headers
-        html = re.sub(r'^### (.*?)$', r'<h3>\1</h3>', html, flags=re.MULTILINE)
-        html = re.sub(r'^## (.*?)$', r'<h2>\1</h2>', html, flags=re.MULTILINE)
-        html = re.sub(r'^# (.*?)$', r'<h1>\1</h1>', html, flags=re.MULTILINE)
+        cleaned_markdown = '\n'.join(lines).strip()
+
+        # 2. Konversi sisa Markdown ke HTML yang sempurna
+        md = MarkdownIt()
+        html = md.render(cleaned_markdown)
         
-        # Bold and Italic
-        html = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html)
-        html = re.sub(r'\*(.*?)\*', r'<em>\1</em>', html)
+        # 3. Batasi ukuran gambar agar rapi di WordPress
+        html = html.replace('<img ', '<img style="max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto;" ')
         
-        # Paragraphs (simple split by double newline)
-        paragraphs = html.split('\n\n')
-        html = ""
-        for p in paragraphs:
-            if not p.strip().startswith('<h'):
-                html += f"<p>{p.strip().replace(chr(10), '<br>')}</p>\n"
-            else:
-                html += f"{p.strip()}\n"
-                
         return html
 
     def publish_article(self, title: str, markdown_content: str, status: str = "draft") -> dict:
