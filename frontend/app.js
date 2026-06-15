@@ -109,10 +109,93 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Auto-continue lists in the raw textarea
+    resultEditor.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const start = this.selectionStart;
+            const text = this.value;
+            // Dapatkan baris saat ini
+            const lineStart = text.lastIndexOf('\n', start - 1) + 1;
+            const lineText = text.substring(lineStart, start);
+            
+            // Cek apakah baris ini dimulai dengan bullet (- , * , + ) atau angka (1. )
+            const match = lineText.match(/^(\s*)([-*+]|\d+\.)\s+(.*)$/);
+            
+            if (match) {
+                e.preventDefault();
+                const indent = match[1];
+                let bullet = match[2];
+                const content = match[3];
+
+                // Jika barisnya hanya bullet kosong, Enter kedua akan menghapus bullet tersebut
+                if (!content.trim()) {
+                    this.setRangeText('\n', lineStart, start, 'end');
+                    return;
+                }
+                
+                // Jika itu list angka, otomatis tambahkan angkanya
+                if (/^\d+\.$/.test(bullet)) {
+                    bullet = parseInt(bullet, 10) + 1 + '.';
+                }
+                
+                const replacement = `\n${indent}${bullet} `;
+                if (!document.execCommand('insertText', false, replacement)) {
+                    this.setRangeText(replacement, start, start, 'end');
+                }
+            }
+        }
+        
+        // Tab key for indentation
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const replacement = "    "; // 4 spaces
+            
+            if (!document.execCommand('insertText', false, replacement)) {
+                this.setRangeText(replacement, start, end, 'end');
+            }
+        }
+        
+        // Ctrl+B for Bold
+        if (e.ctrlKey && (e.key === 'b' || e.key === 'B')) {
+            e.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const selected = this.value.substring(start, end);
+            const replacement = `**${selected || 'teks tebal'}**`;
+            
+            if (!document.execCommand('insertText', false, replacement)) {
+                this.setRangeText(replacement, start, end, 'end');
+            }
+            if (!selected) {
+                const newPos = start + 2;
+                this.setSelectionRange(newPos, newPos);
+            }
+        }
+        
+        // Ctrl+I for Italic
+        if (e.ctrlKey && (e.key === 'i' || e.key === 'I')) {
+            e.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const selected = this.value.substring(start, end);
+            const replacement = `*${selected || 'teks miring'}*`;
+            
+            if (!document.execCommand('insertText', false, replacement)) {
+                this.setRangeText(replacement, start, end, 'end');
+            }
+            if (!selected) {
+                const newPos = start + 1;
+                this.setSelectionRange(newPos, newPos);
+            }
+        }
+    });
+
     const copyBtn = document.getElementById('copyBtn');
     const exportDropdownContainer = document.getElementById('exportDropdownContainer');
     const editBtn = document.getElementById('editBtn');
-    const publishWpBtn = document.getElementById('publishWpBtn');
+    const publishWpContainer = document.getElementById('publishWpContainer');
     const uploadFallbackBtn = document.getElementById('uploadFallbackBtn');
     const fallbackImageInput = document.getElementById('fallbackImageInput');
 
@@ -171,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         copyBtn.disabled = true;
         copyBtn.classList.add('hidden');
         editBtn.classList.add('hidden');
-        publishWpBtn.classList.add('hidden');
+        publishWpContainer.classList.add('hidden');
         exportDropdownContainer.classList.add('hidden');
         uploadFallbackBtn.classList.add('hidden');
         isEditing = false;
@@ -242,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
             copyBtn.disabled = false;
             copyBtn.classList.remove('hidden');
             editBtn.classList.remove('hidden');
-            publishWpBtn.classList.remove('hidden');
+            publishWpContainer.classList.remove('hidden');
             exportDropdownContainer.classList.remove('hidden');
             uploadFallbackBtn.classList.remove('hidden');
 
@@ -276,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resultContainer.classList.add('hidden');
             editorWrapper.classList.remove('hidden');
             resultEditor.value = currentMarkdown;
-            publishWpBtn.classList.add('hidden'); // Sembunyikan publish saat mengedit
+            publishWpContainer.classList.add('hidden'); // Sembunyikan publish saat mengedit
             exportDropdownContainer.classList.add('hidden'); // Sembunyikan ekspor
 
             editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg><span>Save & Preview</span>';
@@ -288,7 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resultContainer.innerHTML = marked.parse(currentMarkdown);
             editorWrapper.classList.add('hidden');
             resultContainer.classList.remove('hidden');
-            publishWpBtn.classList.remove('hidden');
+            publishWpContainer.classList.remove('hidden');
             exportDropdownContainer.classList.remove('hidden');
 
             editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg><span>Edit</span>';
@@ -695,23 +778,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- WordPress Publish Logic ---
-    publishWpBtn.addEventListener('click', async () => {
+    async function publishToWordPress(status) {
         if (!currentMarkdown) return;
 
         // Coba ekstrak judul dari markdown (H1)
         const match = currentMarkdown.match(/^# (.*?)$/m);
         let title = match ? match[1].trim() : "Artikel AI Tanpa Judul";
 
+        const statusLabel = status === 'publish' ? 'Langsung (Live)' : 'sebagai Draft';
         // Konfirmasi cepat
-        if (!confirm(`Publikasikan draf artikel ke WordPress?\nJudul: ${title}`)) return;
+        if (!confirm(`Publikasikan artikel ke WordPress ${statusLabel}?\nJudul: ${title}`)) return;
 
-        const originalText = publishWpBtn.querySelector('span').textContent;
-        publishWpBtn.disabled = true;
-        publishWpBtn.querySelector('span').textContent = 'Mem-publish...';
+        const publishDropdownBtn = document.getElementById('publishDropdownBtn');
+        const originalText = publishDropdownBtn.querySelector('span').textContent;
+        publishDropdownBtn.disabled = true;
+        publishDropdownBtn.querySelector('span').textContent = 'Mem-publish...';
 
         const fd = new FormData();
         fd.append('title', title);
         fd.append('content', currentMarkdown);
+        fd.append('status', status);
 
         try {
             const response = await fetch('http://localhost:8000/api/publish/wordpress', {
@@ -721,16 +807,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (response.ok) {
-                showToast(data.message || 'Berhasil di-publish ke WordPress!', true);
+                showToast(data.message || `Berhasil di-publish ke WordPress (${status})!`, true);
             } else {
                 showToast(data.detail || 'Gagal publish.');
             }
         } catch (err) {
             showToast('Gagal terhubung ke server.');
         } finally {
-            publishWpBtn.disabled = false;
-            publishWpBtn.querySelector('span').textContent = originalText;
+            publishDropdownBtn.disabled = false;
+            publishDropdownBtn.querySelector('span').textContent = originalText;
         }
+    }
+
+    document.getElementById('publishDraftBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        publishToWordPress('draft');
+    });
+
+    document.getElementById('publishLiveBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        publishToWordPress('publish');
     });
 
     // --- File Input UI Update ---

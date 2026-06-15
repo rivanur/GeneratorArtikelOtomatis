@@ -224,7 +224,7 @@ async def update_settings(settings: dict = Body(...)):
     raise HTTPException(status_code=500, detail="Gagal menyimpan pengaturan")
 
 @router.post("/publish/wordpress")
-async def publish_to_wordpress(title: str = Form(...), content: str = Form(...)):
+async def publish_to_wordpress(title: str = Form(...), content: str = Form(...), status: str = Form("draft")):
     settings = SettingsManager.get_settings()
     wp_url = settings.get("wp_url")
     username = settings.get("wp_username")
@@ -234,10 +234,11 @@ async def publish_to_wordpress(title: str = Form(...), content: str = Form(...))
         raise HTTPException(status_code=400, detail="Kredensial WordPress belum diisi. Silakan cek menu Pengaturan ⚙️.")
         
     publisher = WordPressPublisher(wp_url, username, app_pwd)
-    result = publisher.publish_article(title=title, markdown_content=content, status="draft")
+    result = publisher.publish_article(title=title, markdown_content=content, status=status)
     
     if result.get("success"):
-        return {"status": "success", "message": "Artikel berhasil di-draft di WordPress!"}
+        status_msg = "di-publish (Live)" if status == "publish" else "disimpan sebagai draf"
+        return {"status": "success", "message": f"Artikel berhasil {status_msg} di WordPress!"}
     else:
         raise HTTPException(status_code=500, detail=result.get("error"))
 
