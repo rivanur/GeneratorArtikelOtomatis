@@ -285,3 +285,21 @@ async def upload_image(file: UploadFile = File(...)):
         return {"status": "success", "image_url": f"/api/uploads/{filename}"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+from core.document_exporter import DocumentExporter
+from fastapi.responses import FileResponse
+
+@router.post("/export/word")
+async def export_word(title: str = Form(...), content: str = Form(...)):
+    try:
+        filepath = DocumentExporter.export_to_word(title, content)
+        if not os.path.exists(filepath):
+            raise HTTPException(status_code=500, detail="Gagal membuat dokumen Word")
+            
+        return FileResponse(
+            path=filepath,
+            filename=os.path.basename(filepath),
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

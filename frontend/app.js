@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultContainer = document.getElementById('result_content');
     const resultEditor = document.getElementById('result_editor');
     const copyBtn = document.getElementById('copyBtn');
+    const exportDropdownContainer = document.getElementById('exportDropdownContainer');
     const editBtn = document.getElementById('editBtn');
     const publishWpBtn = document.getElementById('publishWpBtn');
     const uploadFallbackBtn = document.getElementById('uploadFallbackBtn');
@@ -116,8 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
         resultContainer.classList.remove('hidden');
         resultEditor.classList.add('hidden');
         copyBtn.disabled = true;
+        copyBtn.classList.add('hidden');
         editBtn.classList.add('hidden');
         publishWpBtn.classList.add('hidden');
+        exportDropdownContainer.classList.add('hidden');
         uploadFallbackBtn.classList.add('hidden');
         isEditing = false;
         editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg><span>Edit</span>';
@@ -185,8 +188,10 @@ document.addEventListener('DOMContentLoaded', () => {
             currentMarkdown = data.data;
             resultContainer.innerHTML = marked.parse(currentMarkdown);
             copyBtn.disabled = false;
+            copyBtn.classList.remove('hidden');
             editBtn.classList.remove('hidden');
             publishWpBtn.classList.remove('hidden');
+            exportDropdownContainer.classList.remove('hidden');
             uploadFallbackBtn.classList.remove('hidden');
 
             // Show Tokens
@@ -220,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resultEditor.classList.remove('hidden');
             resultEditor.value = currentMarkdown;
             publishWpBtn.classList.add('hidden'); // Sembunyikan publish saat mengedit
+            exportDropdownContainer.classList.add('hidden'); // Sembunyikan ekspor
 
             editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg><span>Save & Preview</span>';
             editBtn.style.background = "var(--primary)";
@@ -232,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resultEditor.classList.add('hidden');
             resultContainer.classList.remove('hidden');
             publishWpBtn.classList.remove('hidden');
+            exportDropdownContainer.classList.remove('hidden');
 
             editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg><span>Edit</span>';
             editBtn.style.background = "";
@@ -247,6 +254,78 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(err => {
             showToast('Gagal menyalin teks.');
         });
+    });
+
+    // --- Export Logic ---
+    const exportDropdownBtn = document.getElementById('exportDropdownBtn');
+    
+    // Download PDF (Print Method)
+    document.getElementById('exportPdfBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        window.print();
+    });
+
+    // Download Word (.docx)
+    document.getElementById('exportWordBtn').addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (!currentMarkdown) return;
+
+        showToast("Sedang merakit dokumen Word...", true);
+        const titleMatch = currentMarkdown.match(/^# (.*)$/m);
+        const title = titleMatch ? titleMatch[1] : "Artikel";
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', currentMarkdown);
+
+        try {
+            const response = await fetch('http://localhost:8000/api/export/word', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error("Gagal mengekspor dokumen Word");
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title.substring(0, 30)}.docx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            showToast("Berhasil mengunduh dokumen Word!", true);
+        } catch (error) {
+            console.error(error);
+            showToast(error.message);
+        }
+    });
+
+    // Download TXT
+    document.getElementById('exportTxtBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!currentMarkdown) return;
+        const blob = new Blob([currentMarkdown], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "artikel_mentah.txt";
+        a.click();
+        window.URL.revokeObjectURL(url);
+    });
+
+    // Download MD
+    document.getElementById('exportMdBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!currentMarkdown) return;
+        const blob = new Blob([currentMarkdown], { type: 'text/markdown' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "artikel_mentah.md";
+        a.click();
+        window.URL.revokeObjectURL(url);
     });
 
     // --- Upload Fallback Image Logic ---
