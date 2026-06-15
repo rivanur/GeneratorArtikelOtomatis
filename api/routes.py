@@ -288,14 +288,24 @@ async def upload_image(file: UploadFile = File(...)):
 
 from core.document_exporter import DocumentExporter
 from fastapi.responses import FileResponse
+from fastapi import BackgroundTasks
+
+def remove_file(path: str):
+    try:
+        if os.path.exists(path):
+            os.remove(path)
+    except Exception:
+        pass
 
 @router.post("/export/word")
-async def export_word(title: str = Form(...), content: str = Form(...)):
+async def export_word(background_tasks: BackgroundTasks, title: str = Form(...), content: str = Form(...)):
     try:
         filepath = DocumentExporter.export_to_word(title, content)
         if not os.path.exists(filepath):
             raise HTTPException(status_code=500, detail="Gagal membuat dokumen Word")
             
+        background_tasks.add_task(remove_file, filepath)
+        
         return FileResponse(
             path=filepath,
             filename=os.path.basename(filepath),
