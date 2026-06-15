@@ -618,3 +618,46 @@ select option {
         margin: 2cm;
     }
 }
+
+/* Custom Native Toolbar */
+.custom-toolbar {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background-color: var(--surface-light);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px 8px 0 0;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.toolbar-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-main);
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.toolbar-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.toolbar-separator {
+    width: 1px;
+    height: 20px;
+    background-color: var(--panel-border);
+    margin: 0 0.5rem;
+}
+
+.markdown-editor {
+    border-top: none !important;
+    border-radius: 0 0 8px 8px !important;
+    height: 65vh; /* Keep fixed height for native smooth scrolling */
+    min-height: auto;
+}

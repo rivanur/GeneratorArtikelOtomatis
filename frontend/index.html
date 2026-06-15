@@ -101,12 +101,14 @@
                     <h2>Hasil Artikel</h2>
                     <div class="header-actions">
                         <button id="uploadFallbackBtn" class="icon-btn hidden" title="Unggah Gambar Cover (Fallback)">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                                 <circle cx="8.5" cy="8.5" r="1.5"></circle>
                                 <polyline points="21 15 16 10 5 21"></polyline>
                             </svg>
-                            <input type="file" id="fallbackImageInput" accept="image/*" class="hidden" style="display:none;" />
+                            <input type="file" id="fallbackImageInput" accept="image/*" class="hidden"
+                                style="display:none;" />
                         </button>
                         <button id="copyBtn" class="icon-btn hidden" title="Salin ke Clipboard" disabled>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -125,12 +127,13 @@
                         </button>
                         <div class="dropdown hidden" id="exportDropdownContainer">
                             <button id="exportDropdownBtn" class="secondary-btn" title="Ekspor Artikel">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="7 10 12 15 17 10"></polyline>
                                     <line x1="12" y1="15" x2="12" y2="3"></line>
                                 </svg>
-                                <span>Unduh ⬇️</span>
+                                <span>Unduh</span>
                             </button>
                             <div class="dropdown-content">
                                 <a href="#" id="exportPdfBtn">PDF (.pdf)</a>
@@ -164,8 +167,95 @@
                             <p>Artikel yang dihasilkan akan muncul di sini.</p>
                         </div>
                     </div>
-                    <textarea id="result_editor" class="markdown-editor hidden"
-                        placeholder="Edit markdown di sini..."></textarea>
+                    <div id="editor_wrapper" class="hidden">
+                        <div class="custom-toolbar">
+                            <button type="button" class="toolbar-btn" data-action="bold" title="Tebal (Ctrl+B)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+                                    <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+                                </svg>
+                            </button>
+                            <button type="button" class="toolbar-btn" data-action="italic" title="Miring (Ctrl+I)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="19" y1="4" x2="10" y2="4"></line>
+                                    <line x1="14" y1="20" x2="5" y2="20"></line>
+                                    <line x1="15" y1="4" x2="9" y2="20"></line>
+                                </svg>
+                            </button>
+                            <span class="toolbar-separator"></span>
+
+                            <!-- Format Dropdown -->
+                            <div class="dropdown">
+                                <button type="button" class="toolbar-btn" title="Format Judul">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 12h8"></path>
+                                        <path d="M4 18V6"></path>
+                                        <path d="M12 18V6"></path>
+                                        <path d="M17 12l3-2v8"></path>
+                                    </svg>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        style="margin-left: 2px;">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
+                                <div class="dropdown-content"
+                                    style="top: 100%; left: 0; right: auto; min-width: 140px;">
+                                    <a href="#" class="toolbar-dropdown-btn" data-action="h1">Judul Utama (H1)</a>
+                                    <a href="#" class="toolbar-dropdown-btn" data-action="h2">Subjudul (H2)</a>
+                                </div>
+                            </div>
+
+                            <span class="toolbar-separator"></span>
+
+                            <!-- List Dropdown -->
+                            <div class="dropdown">
+                                <button type="button" class="toolbar-btn" title="Daftar (List)">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                                    </svg>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        style="margin-left: 2px;">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
+                                <div class="dropdown-content"
+                                    style="top: 100%; left: 0; right: auto; min-width: 140px;">
+                                    <a href="#" class="toolbar-dropdown-btn" data-action="list">Daftar Bullet</a>
+                                    <a href="#" class="toolbar-dropdown-btn" data-action="ordered-list">Daftar Angka</a>
+                                </div>
+                            </div>
+
+                            <span class="toolbar-separator"></span>
+                            <button type="button" class="toolbar-btn" data-action="link" title="Tautan">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                </svg>
+                            </button>
+                            <button type="button" class="toolbar-btn" data-action="image" title="Gambar">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                        <textarea id="result_editor" class="markdown-editor"
+                            placeholder="Edit markdown di sini..."></textarea>
+                    </div>
                 </div>
                 <div id="tokenIndicator" class="token-indicator hidden">
                     <small>⚡ Artikel ini menghabiskan <span id="tokenCount">0</span> token.</small>
@@ -205,7 +295,7 @@
                                 <option value="huggingface">Hugging Face (Teks Saja)</option>
                             </select>
                         </div>
-                        
+
                         <!-- Gemini Settings Group -->
                         <div id="gemini_settings_group">
                             <div class="form-group">

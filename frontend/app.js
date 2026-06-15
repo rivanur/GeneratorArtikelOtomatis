@@ -57,6 +57,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const loader = generateBtn.querySelector('.loader');
     const resultContainer = document.getElementById('result_content');
     const resultEditor = document.getElementById('result_editor');
+    const editorWrapper = document.getElementById('editor_wrapper');
+    
+    // Custom Toolbar Logic
+    document.querySelectorAll('.toolbar-btn, .toolbar-dropdown-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            if(!btn.dataset.action) return; // Abaikan tombol toggle dropdown
+            e.preventDefault(); // Mencegah link <a> melompat ke atas halaman
+            
+            const action = btn.dataset.action;
+            const start = resultEditor.selectionStart;
+            const end = resultEditor.selectionEnd;
+            const text = resultEditor.value;
+            const selected = text.substring(start, end);
+            let replacement = selected;
+
+            switch(action) {
+                case 'bold': replacement = `**${selected || 'teks tebal'}**`; break;
+                case 'italic': replacement = `*${selected || 'teks miring'}*`; break;
+                case 'h1': replacement = `\n# ${selected || 'Judul Utama'}\n`; break;
+                case 'h2': replacement = `\n## ${selected || 'Subjudul'}\n`; break;
+                case 'link': 
+                    const url = prompt("Masukkan Tautan (URL):", "https://");
+                    if(url) replacement = `[${selected || 'Teks Tautan'}](${url})`;
+                    break;
+                case 'image': 
+                    const imgUrl = prompt("Masukkan Tautan Gambar (URL):", "https://");
+                    if(imgUrl) replacement = `![${selected || 'Deskripsi Gambar'}](${imgUrl})`;
+                    break;
+                case 'list': replacement = `\n- ${selected || 'Poin 1'}`; break;
+                case 'ordered-list': replacement = `\n1. ${selected || 'Poin 1'}`; break;
+            }
+
+            resultEditor.focus();
+            resultEditor.setSelectionRange(start, end);
+            
+            // Gunakan execCommand agar perubahan masuk ke history Undo (Ctrl+Z) browser
+            if (!document.execCommand('insertText', false, replacement)) {
+                // Fallback jika browser tidak mendukung
+                resultEditor.setRangeText(replacement, start, end, 'end');
+            }
+
+            // Pindahkan kursor ke tengah jika tidak ada teks yang diblok
+            if (!selected) {
+                let offset = action === 'bold' ? 2 : action === 'italic' ? 1 : 0;
+                if(action === 'h1' || action === 'h2' || action === 'list' || action === 'ordered-list') offset = replacement.length;
+                if(action === 'link' || action === 'image') offset = replacement.length;
+                const newCursorPos = start + offset;
+                resultEditor.setSelectionRange(newCursorPos, newCursorPos);
+            }
+        });
+    });
+
     const copyBtn = document.getElementById('copyBtn');
     const exportDropdownContainer = document.getElementById('exportDropdownContainer');
     const editBtn = document.getElementById('editBtn');
@@ -115,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
 
         resultContainer.classList.remove('hidden');
-        resultEditor.classList.add('hidden');
+        editorWrapper.classList.add('hidden');
         copyBtn.disabled = true;
         copyBtn.classList.add('hidden');
         editBtn.classList.add('hidden');
@@ -222,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isEditing) {
             // Switch to Edit Mode
             resultContainer.classList.add('hidden');
-            resultEditor.classList.remove('hidden');
+            editorWrapper.classList.remove('hidden');
             resultEditor.value = currentMarkdown;
             publishWpBtn.classList.add('hidden'); // Sembunyikan publish saat mengedit
             exportDropdownContainer.classList.add('hidden'); // Sembunyikan ekspor
@@ -231,11 +283,10 @@ document.addEventListener('DOMContentLoaded', () => {
             editBtn.style.background = "var(--primary)";
             isEditing = true;
         } else {
-            // Switch to Preview Mode
+            // Save and switch to Preview Mode
             currentMarkdown = resultEditor.value;
             resultContainer.innerHTML = marked.parse(currentMarkdown);
-
-            resultEditor.classList.add('hidden');
+            editorWrapper.classList.add('hidden');
             resultContainer.classList.remove('hidden');
             publishWpBtn.classList.remove('hidden');
             exportDropdownContainer.classList.remove('hidden');
