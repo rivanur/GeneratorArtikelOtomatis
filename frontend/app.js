@@ -275,16 +275,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const markdownImage = `\n![Gambar Cover](http://localhost:8000${data.image_url})\n`;
 
-            // Masukkan gambar di baris kedua setelah H1
             const lines = currentMarkdown.split('\n');
             let insertIndex = 0;
+            let foundOldImage = false;
+            
             for (let i = 0; i < lines.length; i++) {
                 if (lines[i].startsWith('# ')) {
                     insertIndex = i + 1;
+                    // Cek 3 baris ke bawah apakah sudah ada gambar lama
+                    for (let j = insertIndex; j < insertIndex + 3 && j < lines.length; j++) {
+                        if (lines[j].trim().startsWith('![')) {
+                            lines[j] = markdownImage; // Timpa gambar lama
+                            foundOldImage = true;
+                            break;
+                        }
+                    }
                     break;
                 }
             }
-            lines.splice(insertIndex, 0, markdownImage);
+            
+            // Jika artikel tadinya tidak punya gambar sama sekali, sisipkan baru
+            if (!foundOldImage) {
+                lines.splice(insertIndex, 0, markdownImage);
+            }
+            
             currentMarkdown = lines.join('\n');
 
             if (isEditing) {

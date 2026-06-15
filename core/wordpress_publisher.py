@@ -39,10 +39,67 @@ class WordPressPublisher:
         
         return html
 
+    def _upload_media(self, local_file_path: str) -> str:
+        """
+        Uploads a local image file to WordPress Media Library.
+        Returns the remote URL if successful, otherwise None.
+        """
+        import mimetypes
+        import os
+
+        if not os.path.exists(local_file_path):
+            print(f"File tidak ditemukan: {local_file_path}")
+            return None
+
+        media_url = f"{self.wp_url}/wp-json/wp/v2/media"
+        mime_type, _ = mimetypes.guess_type(local_file_path)
+        if not mime_type:
+            mime_type = "image/jpeg"
+
+        file_name = os.path.basename(local_file_path)
+        
+        headers = self._get_auth_header()
+        headers["Content-Disposition"] = f'attachment; filename="{file_name}"'
+        headers["Content-Type"] = mime_type
+
+        try:
+            with open(local_file_path, "rb") as f:
+                response = requests.post(media_url, headers=headers, data=f, timeout=30)
+                
+            if response.status_code in [200, 201]:
+                return response.json().get("source_url")
+            else:
+                print(f"Gagal upload media: {response.status_code} - {response.text}")
+                return None
+        except Exception as e:
+            print(f"Exception saat upload media: {e}")
+            return None
+
     def publish_article(self, title: str, markdown_content: str, status: str = "draft") -> dict:
         """Publikasikan artikel ke WordPress REST API"""
+        import os
+        import re
+
         if not self.wp_url or not self.username or not self.app_password:
             return {"success": False, "error": "Kredensial WordPress belum diatur di Pengaturan."}
+
+        # 1. Pindai tautan localhost dan unggah ke WordPress
+        local_image_matches = re.finditer(r'!\[.*?\]\((.*?/api/uploads/([^)]+))\)', markdown_content)
+        images_to_delete = []
+        
+        for match in local_image_matches:
+            full_url = match.group(1)
+            filename = match.group(2)
+            # Asumsikan path data/uploads/
+            local_path = os.path.abspath(os.path.join("data", "uploads", filename))
+            
+            if os.path.exists(local_path):
+                # Upload ke WP
+                wp_url = self._upload_media(local_path)
+                if wp_url:
+                    # Ganti tautan di Markdown
+                    markdown_content = markdown_content.replace(full_url, wp_url)
+                    images_to_delete.append(local_path)
 
         api_url = f"{self.wp_url}/wp-json/wp/v2/posts"
         html_content = self._markdown_to_html(markdown_content)
@@ -63,6 +120,13 @@ class WordPressPublisher:
             )
             
             if response.status_code in [200, 201]:
+                # Operasi Sapu Bersih (Auto-Cleanup)
+                for path in images_to_delete:
+                    try:
+                        os.remove(path)
+                    except Exception as e:
+                        print(f"Gagal menghapus file sisa: {e}")
+                
                 return {"success": True, "data": response.json()}
             else:
                 return {

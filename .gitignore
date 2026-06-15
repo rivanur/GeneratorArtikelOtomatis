@@ -20,3 +20,4 @@ Thumbs.db
 # Project Specific
 data/settings.json
 data/temp/
+data/uploads/
