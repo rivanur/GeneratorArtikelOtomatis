@@ -338,6 +338,8 @@ document.addEventListener('DOMContentLoaded', () => {
             progressText.textContent = statusMessages[statusIndex];
         }, 4000);
 
+        const startTime = performance.now();
+
         try {
             const response = await fetch('http://localhost:8000/api/generate', {
                 method: 'POST',
@@ -370,9 +372,17 @@ document.addEventListener('DOMContentLoaded', () => {
             exportDropdownContainer.classList.remove('hidden');
             uploadFallbackBtn.classList.remove('hidden');
 
-            // Show Tokens
+            const endTime = performance.now();
+            const execTimeSeconds = ((endTime - startTime) / 1000).toFixed(1);
+            const wordCount = currentMarkdown.trim().split(/\s+/).filter(word => word.length > 0).length;
+            const readingTime = Math.ceil(wordCount / 200);
+
+            // Show Metrics
+            document.getElementById('wordCount').textContent = wordCount;
+            document.getElementById('readingTime').textContent = readingTime;
+            document.getElementById('execTime').textContent = execTimeSeconds;
             document.getElementById('tokenCount').textContent = data.tokens_used;
-            document.getElementById('tokenIndicator').classList.remove('hidden');
+            document.getElementById('metricsIndicator').classList.remove('hidden');
 
         } catch (error) {
             console.error('Error:', error);
@@ -415,6 +425,12 @@ document.addEventListener('DOMContentLoaded', () => {
             resultContainer.classList.remove('hidden');
             publishWpContainer.classList.remove('hidden');
             exportDropdownContainer.classList.remove('hidden');
+
+            // Update Metrics based on edited content
+            const wordCount = currentMarkdown.trim().split(/\s+/).filter(word => word.length > 0).length;
+            const readingTime = Math.ceil(wordCount / 200);
+            document.getElementById('wordCount').textContent = wordCount;
+            document.getElementById('readingTime').textContent = readingTime;
 
             editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg><span>Edit</span>';
             editBtn.style.background = "";

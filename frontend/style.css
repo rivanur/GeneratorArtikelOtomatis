@@ -73,7 +73,7 @@ body {
     backdrop-filter: var(--panel-backdrop);
     -webkit-backdrop-filter: var(--panel-backdrop);
     border: 1px solid var(--panel-border);
-    border-radius: 16px;
+    border-radius: 4px; /* Lancip / Sharp corners */
     box-shadow: var(--panel-shadow);
 }
 
@@ -110,7 +110,7 @@ body {
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid var(--panel-border);
     padding: 0.5rem 1rem;
-    border-radius: 8px;
+    border-radius: 2px;
     color: var(--text-main);
     width: 300px;
     transition: all 0.2s;
@@ -161,7 +161,7 @@ body {
     border: 1px solid transparent;
     color: var(--text-muted);
     padding: 0.5rem 1rem;
-    border-radius: 20px;
+    border-radius: 2px;
     cursor: pointer;
     font-size: 0.875rem;
     font-weight: 500;
@@ -199,7 +199,7 @@ textarea, input[type="text"], input[type="url"], input[type="password"], select 
     width: 100%;
     background: var(--input-bg);
     border: 1px solid var(--panel-border);
-    border-radius: 8px;
+    border-radius: 2px;
     padding: 1rem;
     color: var(--text-main);
     font-family: inherit;
@@ -239,7 +239,7 @@ textarea:focus, input[type="url"]:focus, select:focus {
     text-align: center;
     background: var(--input-bg);
     border: 1px dashed var(--panel-border);
-    border-radius: 8px;
+    border-radius: 2px;
     color: var(--text-muted);
     transition: all 0.2s;
 }
@@ -280,7 +280,7 @@ select option {
     color: white;
     border: none;
     padding: 1rem;
-    border-radius: 8px;
+    border-radius: 2px;
     font-weight: 600;
     font-size: 1rem;
     cursor: pointer;
@@ -349,7 +349,7 @@ select option {
     background: transparent;
     border: 1px solid var(--panel-border);
     color: var(--text-muted);
-    border-radius: 8px;
+    border-radius: 2px;
     width: 40px;
     height: 40px;
     display: flex;
@@ -416,7 +416,7 @@ select option {
     backdrop-filter: blur(10px);
     border-left: 4px solid var(--danger);
     padding: 1rem 1.5rem;
-    border-radius: 8px;
+    border-radius: 2px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     color: var(--text-main);
     z-index: 1000;
@@ -456,7 +456,7 @@ select option {
 .modal-tab-pane.active { display: block; }
 .modal-footer { margin-top: 1.5rem; }
 .publish-btn { font-size: 0.95rem; font-weight: 500; padding: 0 1.2rem; height: 40px; display: flex; align-items: center; gap: 0.5rem; }
-.edit-btn { font-size: 0.95rem; font-weight: 500; padding: 0 1.2rem; height: 40px; display: flex; align-items: center; gap: 0.5rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.edit-btn { font-size: 0.95rem; font-weight: 500; padding: 0 1.2rem; height: 40px; display: flex; align-items: center; gap: 0.5rem; border-radius: 2px; cursor: pointer; transition: all 0.2s; }
 .w-full { width: 100%; }
 
 /* Editor Styles */
@@ -469,9 +469,28 @@ select option {
 /* Token & API Settings Styles */
 .input-with-button { display: flex; gap: 0.5rem; }
 .input-with-button input { flex: 1; }
-.secondary-btn { background: var(--surface-light); border: 1px solid rgba(255,255,255,0.1); color: var(--text-primary); border-radius: 8px; padding: 0.5rem 1rem; cursor: pointer; }
+.secondary-btn { background: var(--surface-light); border: 1px solid rgba(255,255,255,0.1); color: var(--text-primary); border-radius: 2px; padding: 0.5rem 1rem; cursor: pointer; }
 .secondary-btn:hover { background: rgba(255,255,255,0.1); }
-.token-indicator { margin-top: 1rem; text-align: center; color: var(--text-muted); padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); }
+.metrics-indicator {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--panel-border);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem; /* Increase gap slightly for readability */
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.metric-text {
+    opacity: 0.8;
+}
+
+.metric-separator {
+    opacity: 0.3;
+}
 .text-success { color: var(--success); }
 .text-danger { color: var(--danger); }
 
@@ -487,7 +506,7 @@ select option {
     width: 100%;
     height: 8px;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    border-radius: 2px;
     overflow: hidden;
     margin-bottom: 1rem;
     position: relative;
@@ -497,7 +516,7 @@ select option {
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, var(--primary), var(--accent));
-    border-radius: 10px;
+    border-radius: 2px;
     transition: width 0.3s ease-out;
     box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
 }
@@ -543,7 +562,7 @@ select option {
     max-width: 100%;
     max-height: 400px;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 2px;
     margin: 20px auto;
     display: block;
 }
@@ -562,7 +581,7 @@ select option {
     min-width: 160px;
     box-shadow: 0px 8px 24px 0px rgba(0,0,0,0.15);
     z-index: 1000;
-    border-radius: 8px;
+    border-radius: 2px;
     border: 1px solid var(--panel-border);
     overflow: hidden;
 }
@@ -571,7 +590,7 @@ select option {
     color: var(--text-main);
     padding: 8px 12px;
     margin: 4px 8px;
-    border-radius: 6px;
+    border-radius: 2px;
     text-decoration: none;
     display: block;
     font-size: 0.9rem;
@@ -586,7 +605,7 @@ select option {
     background: var(--surface-light); 
     border: 1px solid var(--panel-border); 
     color: var(--text-main); 
-    border-radius: 8px; 
+    border-radius: 2px; 
     padding: 0.5rem 1rem; 
     cursor: pointer; 
     transition: background 0.2s;
@@ -663,7 +682,7 @@ select option {
     padding: 0.5rem;
     background-color: var(--surface-light);
     border: 1px solid var(--panel-border);
-    border-radius: 8px 8px 0 0;
+    border-radius: 2px 2px 0 0;
     align-items: center;
     position: sticky;
     top: 0;
@@ -675,7 +694,7 @@ select option {
     border: 1px solid transparent;
     color: var(--text-main);
     padding: 0.4rem 0.6rem;
-    border-radius: 4px;
+    border-radius: 2px;
     cursor: pointer;
     font-size: 0.9rem;
     transition: background 0.2s;
@@ -694,7 +713,7 @@ select option {
 
 .markdown-editor {
     border-top: none !important;
-    border-radius: 0 0 8px 8px !important;
+    border-radius: 0 0 2px 2px !important;
     height: 65vh; /* Keep fixed height for native smooth scrolling */
     min-height: auto;
 }

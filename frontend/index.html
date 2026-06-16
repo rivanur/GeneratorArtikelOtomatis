@@ -263,8 +263,14 @@
                             placeholder="Edit markdown di sini..."></textarea>
                     </div>
                 </div>
-                <div id="tokenIndicator" class="token-indicator hidden">
-                    <small>⚡ Artikel ini menghabiskan <span id="tokenCount">0</span> token.</small>
+                <div id="metricsIndicator" class="metrics-indicator hidden">
+                    <span title="Jumlah Kata" class="metric-text"><span id="wordCount">0</span> kata</span>
+                    <span class="metric-separator">•</span>
+                    <span title="Estimasi Waktu Baca" class="metric-text"><span id="readingTime">0</span> mnt baca</span>
+                    <span class="metric-separator">•</span>
+                    <span title="Waktu Eksekusi" class="metric-text"><span id="execTime">0.0</span> dtk</span>
+                    <span class="metric-separator">•</span>
+                    <span title="Penggunaan Token" class="metric-text"><span id="tokenCount">0</span> token</span>
                 </div>
             </section>
         </main>
