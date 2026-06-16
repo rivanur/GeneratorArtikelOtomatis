@@ -1,4 +1,45 @@
+// --- Theme Initialization ---
+const savedTheme = localStorage.getItem('app_theme') || 'system';
+
+function applyTheme(theme) {
+    if (theme === 'system') {
+        const isLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        if (isLight) {
+            document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+    } else if (theme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
+}
+
+applyTheme(savedTheme);
+
+// Listen to OS theme changes if 'system' is selected
+if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+        const currentTheme = localStorage.getItem('app_theme') || 'system';
+        if (currentTheme === 'system') {
+            applyTheme('system');
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Theme Selector Logic ---
+    const themeSelect = document.getElementById('setting_theme');
+    if (themeSelect) {
+        themeSelect.value = savedTheme;
+        themeSelect.addEventListener('change', (e) => {
+            const newTheme = e.target.value;
+            applyTheme(newTheme);
+            localStorage.setItem('app_theme', newTheme);
+        });
+    }
+
     // --- Fetch Initial Settings ---
     let savedAiModel = "gemini-2.5-flash";
     let savedHfModel = "mistralai/Mistral-7B-Instruct-v0.3";
@@ -364,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg><span>Save & Preview</span>';
             editBtn.style.background = "var(--primary)";
+            editBtn.style.color = "white";
             isEditing = true;
         } else {
             // Save and switch to Preview Mode
@@ -376,6 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             editBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg><span>Edit</span>';
             editBtn.style.background = "";
+            editBtn.style.color = "";
             isEditing = false;
         }
     });

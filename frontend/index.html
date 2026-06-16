@@ -287,8 +287,9 @@
 
             <div class="modal-body">
                 <div class="tabs">
-                    <button class="tab-btn modal-tab-btn active" data-target="setting_ai">Model AI</button>
-                    <button class="tab-btn modal-tab-btn" data-target="setting_wp">WordPress</button>
+                    <button class="modal-tab-btn active" data-target="setting_ai">Model AI</button>
+                    <button class="modal-tab-btn" data-target="setting_wp">WordPress</button>
+                    <button class="modal-tab-btn" data-target="setting_ui">Tampilan</button>
                 </div>
 
                 <div class="tab-content">
@@ -373,6 +374,16 @@
                             <label>Application Password</label>
                             <input type="password" id="setting_wp_pwd" placeholder="xxxx xxxx xxxx xxxx" />
                             <small>Buat di menu Users > Profile > Application Passwords di dasbor WordPress.</small>
+                        </div>
+                    </div>
+                    <div id="setting_ui" class="modal-tab-pane">
+                        <div class="form-group">
+                            <label>Tema Aplikasi</label>
+                            <select id="setting_theme">
+                                <option value="system">Default</option>
+                                <option value="dark">Dark Mode</option>
+                                <option value="light">Light Mode</option>
+                            </select>
                         </div>
                     </div>
                 </div>

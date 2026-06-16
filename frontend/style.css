@@ -8,6 +8,32 @@
     --primary-hover: #4f46e5;
     --accent: #8b5cf6;
     --danger: #ef4444;
+    --input-bg: rgba(0,0,0,0.2);
+    --surface-light: rgba(255,255,255,0.05);
+    --strong-color: #ffffff;
+    --toast-bg: var(--panel-bg);
+    --bg-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+    --panel-backdrop: blur(16px);
+    --panel-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+:root[data-theme="light"] {
+    --bg-color: #f8fafc;
+    --panel-bg: #ffffff;
+    --panel-border: #e2e8f0;
+    --text-main: #000000;
+    --text-muted: #333333;
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --accent: #3b82f6;
+    --danger: #ef4444;
+    --input-bg: #ffffff;
+    --surface-light: #f1f5f9;
+    --strong-color: #000000;
+    --toast-bg: #ffffff;
+    --bg-image: linear-gradient(135deg, #f6f8fb 0%, #e9eef5 100%);
+    --panel-backdrop: none;
+    --panel-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
 }
 
 * {
@@ -23,9 +49,7 @@ html {
 body {
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-color);
-    background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+    background-image: var(--bg-image);
     background-attachment: fixed;
     color: var(--text-main);
     min-height: 100vh;
@@ -46,10 +70,11 @@ body {
 /* Glassmorphism Utilities */
 .glass-header, .glass-panel {
     background: var(--panel-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: var(--panel-backdrop);
+    -webkit-backdrop-filter: var(--panel-backdrop);
     border: 1px solid var(--panel-border);
     border-radius: 16px;
+    box-shadow: var(--panel-shadow);
 }
 
 /* Header */
@@ -172,13 +197,13 @@ body {
 /* Inputs */
 textarea, input[type="text"], input[type="url"], input[type="password"], select {
     width: 100%;
-    background: rgba(0,0,0,0.2);
+    background: var(--input-bg);
     border: 1px solid var(--panel-border);
     border-radius: 8px;
     padding: 1rem;
     color: var(--text-main);
     font-family: inherit;
-    transition: border-color 0.2s;
+    transition: background 0.2s, border-color 0.2s;
 }
 
 textarea {
@@ -212,7 +237,7 @@ textarea:focus, input[type="url"]:focus, select:focus {
     display: block;
     padding: 2rem 1rem;
     text-align: center;
-    background: rgba(0,0,0,0.2);
+    background: var(--input-bg);
     border: 1px dashed var(--panel-border);
     border-radius: 8px;
     color: var(--text-muted);
@@ -366,30 +391,34 @@ select option {
 .markdown-body h1, .markdown-body h2, .markdown-body h3 {
     margin-top: 1.5em;
     margin-bottom: 0.5em;
-    color: white;
+    color: var(--text-main);
     font-weight: 600;
 }
 
 .markdown-body h1 { font-size: 2em; border-bottom: 1px solid var(--panel-border); padding-bottom: 0.3em; }
-.markdown-body h2 { font-size: 1.5em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3em; }
+.markdown-body h2 { font-size: 1.5em; border-bottom: 1px solid var(--panel-border); padding-bottom: 0.3em; }
 .markdown-body h3 { font-size: 1.25em; }
+
+.markdown-body h1:first-child, .markdown-body h2:first-child, .markdown-body h3:first-child {
+    margin-top: 0;
+}
 .markdown-body p { margin-bottom: 1em; line-height: 1.6; }
 .markdown-body ul, .markdown-body ol { margin-bottom: 1em; padding-left: 2em; }
 .markdown-body li { margin-bottom: 0.5em; }
-.markdown-body strong { color: white; }
+.markdown-body strong { color: var(--strong-color); }
 
 /* Toast */
 .toast {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    background: var(--panel-bg);
+    background: var(--toast-bg);
     backdrop-filter: blur(10px);
     border-left: 4px solid var(--danger);
     padding: 1rem 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    color: white;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    color: var(--text-main);
     z-index: 1000;
     animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -420,15 +449,14 @@ select option {
 .modal-content { width: 90%; max-width: 500px; padding: 1.5rem; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
 .modal-header h2 { font-size: 1.25rem; font-weight: 600; }
-.modal-tab-btn { padding: 0.5rem 1rem; border: none; background: none; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
-.modal-tab-btn.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+.modal-tab-btn { padding: 0.5rem 1rem; border: none; background: none; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; font-weight: 500; font-size: 0.95rem; transition: all 0.2s; }
+.modal-tab-btn.active { color: var(--text-main); border-bottom-color: var(--text-main); }
 .modal-body .tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .modal-tab-pane { display: none; }
 .modal-tab-pane.active { display: block; }
 .modal-footer { margin-top: 1.5rem; }
 .publish-btn { font-size: 0.95rem; font-weight: 500; padding: 0 1.2rem; height: 40px; display: flex; align-items: center; gap: 0.5rem; }
-.edit-btn { font-size: 0.95rem; font-weight: 500; padding: 0 1.2rem; height: 40px; display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
-.edit-btn:hover { background: rgba(255,255,255,0.2); }
+.edit-btn { font-size: 0.95rem; font-weight: 500; padding: 0 1.2rem; height: 40px; display: flex; align-items: center; gap: 0.5rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
 .w-full { width: 100%; }
 
 /* Editor Styles */
@@ -530,9 +558,9 @@ select option {
     display: none;
     position: absolute;
     right: 0;
-    background-color: #191c29; /* Solid color to prevent text bleeding */
+    background-color: var(--panel-bg);
     min-width: 160px;
-    box-shadow: 0px 8px 24px 0px rgba(0,0,0,0.5);
+    box-shadow: 0px 8px 24px 0px rgba(0,0,0,0.15);
     z-index: 1000;
     border-radius: 8px;
     border: 1px solid var(--panel-border);
@@ -551,12 +579,12 @@ select option {
 }
 
 .dropdown-content a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--surface-light);
 }
 
 .secondary-btn { 
-    background: transparent; 
-    border: 1px solid rgba(255,255,255,0.1); 
+    background: var(--surface-light); 
+    border: 1px solid var(--panel-border); 
     color: var(--text-main); 
     border-radius: 8px; 
     padding: 0.5rem 1rem; 
@@ -568,7 +596,7 @@ select option {
 }
 
 .secondary-btn:hover { 
-    background: rgba(255,255,255,0.1); 
+    background: var(--input-bg); 
 }
 
 .dropdown:hover .dropdown-content {
