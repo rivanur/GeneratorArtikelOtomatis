@@ -1,418 +1,131 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Artikel Otomatis</title>
+    <title>Generator Artikel AI - Buat Artikel Otomatis</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <!-- Marked.js untuk parsing Markdown -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="landing-style.css">
 </head>
-
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="glass-header">
-            <div class="logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                <h1>Generator Artikel AI</h1>
-            </div>
-            <div class="header-actions">
-                <button id="settingsBtn" class="icon-btn" title="Pengaturan">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <path
-                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
-                        </path>
-                    </svg>
-                </button>
-            </div>
-        </header>
 
-        <main class="main-content">
-            <!-- Kolom Kiri: Input -->
-            <section class="input-panel glass-panel">
-                <h2 data-i18n="source_context">Pilih Sumber Konteks</h2>
+    <!-- Navbar -->
+    <nav class="navbar glass">
+        <div class="logo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" />
+                <path d="M2 17L12 22L22 17" />
+                <path d="M2 12L12 17L22 12" />
+            </svg>
+            AutoArticle
+        </div>
+        <div>
+            <a href="app.html" class="btn-primary">Buka Dashboard</a>
+        </div>
+    </nav>
 
-                <div class="tabs">
-                    <button class="tab-btn active" data-target="manual_text" data-i18n="tab_manual">Teks Manual</button>
-                    <button class="tab-btn" data-target="web_url" data-i18n="tab_web">URL Web</button>
-                    <button class="tab-btn" data-target="youtube_url" data-i18n="tab_youtube">YouTube</button>
-                    <button class="tab-btn" data-target="document" data-i18n="tab_document">Dokumen</button>
-                    <button class="tab-btn" data-target="local_video" data-i18n="tab_video">Video Lokal</button>
-                </div>
-
-                <div class="tab-content">
-                    <div id="manual_text" class="tab-pane active">
-                        <textarea id="input_manual_text"
-                            placeholder="Ketik Topik Berita (misal: 'Berita MotoGP Hari Ini') atau paste teks referensi di sini..." data-i18n="placeholder_manual"></textarea>
-                    </div>
-                    <div id="web_url" class="tab-pane">
-                        <input type="url" id="input_web_url" placeholder="https://example.com/artikel" />
-                    </div>
-                    <div id="youtube_url" class="tab-pane">
-                        <input type="url" id="input_youtube_url" placeholder="https://youtube.com/watch?v=..." />
-                    </div>
-                    <div id="document" class="tab-pane">
-                        <div class="file-upload">
-                            <input type="file" id="input_document" accept=".pdf,.txt,.md,.docx" />
-                            <label for="input_document" data-i18n="label_file">Pilih File</label>
-                        </div>
-                    </div>
-                    <div id="local_video" class="tab-pane">
-                        <div class="file-upload">
-                            <input type="file" id="input_local_video" accept="video/mp4,video/x-m4v,video/*" />
-                            <label for="input_local_video" data-i18n="label_video">Pilih Video (Semua Format)</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <h2 data-i18n="article_settings">Pengaturan Artikel</h2>
-                    <select id="article_style" style="margin-bottom: 0.8rem;">
-                        <option value="blog" data-i18n="opt_style_blog">Gaya Blog (Santai & Engaging)</option>
-                        <option value="berita" data-i18n="opt_style_news">Gaya Berita (Formal & Objektif)</option>
-                        <option value="akademik" data-i18n="opt_style_academic">Gaya Akademik (Analitis)</option>
-                        <option value="seo" data-i18n="opt_style_seo">Gaya SEO (Optimasi Kata Kunci)</option>
-                    </select>
-                    <select id="article_language">
-                        <option value="Indonesia" data-i18n="opt_lang_id">Bahasa Indonesia</option>
-                        <option value="English" data-i18n="opt_lang_en">Bahasa Inggris (English)</option>
-                    </select>
-                </div>
-
-                <button id="generateBtn" class="primary-btn">
-                    <span class="btn-text" data-i18n="generate_btn">Generate Artikel</span>
-                    <span class="loader hidden"></span>
-                </button>
-            </section>
-
-            <!-- Kolom Kanan: Hasil -->
-            <section class="result-panel glass-panel">
-                <div class="result-header">
-                    <h2 data-i18n="result_header">Hasil Artikel</h2>
-                    <div class="header-actions">
-                        <button id="uploadFallbackBtn" class="icon-btn hidden" title="Unggah Gambar Cover (Fallback)">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
-                            </svg>
-                            <input type="file" id="fallbackImageInput" accept="image/*" class="hidden"
-                                style="display:none;" />
-                        </button>
-                        <button id="copyBtn" class="icon-btn hidden" title="Salin ke Clipboard" disabled>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                        </button>
-                        <button id="editBtn" class="secondary-btn edit-btn hidden">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
-                            <span data-i18n="btn_edit">Edit</span>
-                        </button>
-                        <div class="dropdown hidden" id="exportDropdownContainer">
-                            <button id="exportDropdownBtn" class="secondary-btn" title="Ekspor Artikel">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="7 10 12 15 17 10"></polyline>
-                                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                                </svg>
-                                <span data-i18n="btn_download">Unduh</span>
-                            </button>
-                            <div class="dropdown-content">
-                                <a href="#" id="exportPdfBtn">PDF (.pdf)</a>
-                                <a href="#" id="exportWordBtn">Word (.docx)</a>
-                                <a href="#" id="exportTxtBtn">Plain Text (.txt)</a>
-                                <a href="#" id="exportMdBtn">Markdown (.md)</a>
-                            </div>
-                        </div>
-                        <div id="publishWpContainer" class="dropdown hidden">
-                            <button id="publishDropdownBtn" class="primary-btn publish-btn">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="17 8 12 3 7 8"></polyline>
-                                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                                </svg>
-                                <span data-i18n="btn_publish">Publish</span>
-                            </button>
-                            <div class="dropdown-content">
-                                <a href="#" id="publishDraftBtn">Simpan sebagai Draft</a>
-                                <a href="#" id="publishLiveBtn">Publish Langsung</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="result-content-wrapper">
-                    <div id="result_content" class="result-content markdown-body">
-                        <div class="empty-state">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <polyline points="10 9 9 9 8 9"></polyline>
-                            </svg>
-                            <p data-i18n="empty_state">Artikel yang dihasilkan akan muncul di sini.</p>
-                        </div>
-                    </div>
-                    <div id="editor_wrapper" class="hidden">
-                        <div class="custom-toolbar">
-                            <button type="button" class="toolbar-btn" data-action="bold" title="Tebal (Ctrl+B)">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
-                                    <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
-                                </svg>
-                            </button>
-                            <button type="button" class="toolbar-btn" data-action="italic" title="Miring (Ctrl+I)">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="19" y1="4" x2="10" y2="4"></line>
-                                    <line x1="14" y1="20" x2="5" y2="20"></line>
-                                    <line x1="15" y1="4" x2="9" y2="20"></line>
-                                </svg>
-                            </button>
-                            <span class="toolbar-separator"></span>
-
-                            <!-- Format Dropdown -->
-                            <div class="dropdown">
-                                <button type="button" class="toolbar-btn" title="Format Judul">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M4 12h8"></path>
-                                        <path d="M4 18V6"></path>
-                                        <path d="M12 18V6"></path>
-                                        <path d="M17 12l3-2v8"></path>
-                                    </svg>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                        style="margin-left: 2px;">
-                                        <polyline points="6 9 12 15 18 9"></polyline>
-                                    </svg>
-                                </button>
-                                <div class="dropdown-content"
-                                    style="top: 100%; left: 0; right: auto; min-width: 140px;">
-                                    <a href="#" class="toolbar-dropdown-btn" data-action="h1">Judul Utama (H1)</a>
-                                    <a href="#" class="toolbar-dropdown-btn" data-action="h2">Subjudul (H2)</a>
-                                </div>
-                            </div>
-
-                            <span class="toolbar-separator"></span>
-
-                            <!-- List Dropdown -->
-                            <div class="dropdown">
-                                <button type="button" class="toolbar-btn" title="Daftar (List)">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="8" y1="6" x2="21" y2="6"></line>
-                                        <line x1="8" y1="12" x2="21" y2="12"></line>
-                                        <line x1="8" y1="18" x2="21" y2="18"></line>
-                                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                                    </svg>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                        style="margin-left: 2px;">
-                                        <polyline points="6 9 12 15 18 9"></polyline>
-                                    </svg>
-                                </button>
-                                <div class="dropdown-content"
-                                    style="top: 100%; left: 0; right: auto; min-width: 140px;">
-                                    <a href="#" class="toolbar-dropdown-btn" data-action="list">Daftar Bullet</a>
-                                    <a href="#" class="toolbar-dropdown-btn" data-action="ordered-list">Daftar Angka</a>
-                                </div>
-                            </div>
-
-                            <span class="toolbar-separator"></span>
-                            <button type="button" class="toolbar-btn" data-action="link" title="Tautan">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                                </svg>
-                            </button>
-                            <button type="button" class="toolbar-btn" data-action="image" title="Gambar">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                    <polyline points="21 15 16 10 5 21"></polyline>
-                                </svg>
-                            </button>
-                        </div>
-                        <textarea id="result_editor" class="markdown-editor"
-                            placeholder="Edit markdown di sini..."></textarea>
-                    </div>
-                </div>
-                <div id="metricsIndicator" class="metrics-indicator hidden">
-                    <span title="Jumlah Kata" class="metric-text"><span id="wordCount">0</span> kata</span>
-                    <span class="metric-separator">•</span>
-                    <span title="Estimasi Waktu Baca" class="metric-text"><span id="readingTime">0</span> mnt baca</span>
-                    <span class="metric-separator">•</span>
-                    <span title="Waktu Eksekusi" class="metric-text"><span id="execTime">0.0</span> dtk</span>
-                    <span class="metric-separator">•</span>
-                    <span title="Penggunaan Token" class="metric-text"><span id="tokenCount">0</span> token</span>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- Error Toast -->
-    <div id="toast" class="toast hidden"></div>
-
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="modal-overlay hidden">
-        <div class="modal-content glass-panel">
-            <div class="modal-header">
-                <h2 data-i18n="settings_title">Pengaturan Sistem</h2>
-                <button id="closeSettingsBtn" class="icon-btn"><svg width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg></button>
-            </div>
-
-            <div class="modal-body">
-                <div class="tabs">
-                    <button class="modal-tab-btn active" data-target="setting_ai" data-i18n="tab_model_ai">Model AI</button>
-                    <button class="modal-tab-btn" data-target="setting_wp" data-i18n="tab_wp">WordPress</button>
-                    <button class="modal-tab-btn" data-target="setting_ui" data-i18n="tab_ui">Tampilan</button>
-                </div>
-
-                <div class="tab-content">
-                    <div id="setting_ai" class="modal-tab-pane active">
-                        <div class="form-group">
-                            <label data-i18n="label_ai_provider">Penyedia AI (AI Provider)</label>
-                            <select id="setting_ai_provider">
-                                <option value="gemini" data-i18n="opt_prov_gemini">Google Gemini (Recommended)</option>
-                                <option value="groq" data-i18n="opt_prov_groq">Groq (Super Cepat & Gratis)</option>
-                                <option value="huggingface" data-i18n="opt_prov_hf">Hugging Face (Teks Saja)</option>
-                            </select>
-                        </div>
-
-                        <!-- Gemini Settings Group -->
-                        <div id="gemini_settings_group">
-                            <div class="form-group">
-                                <label data-i18n="label_gemini_key">Gemini API Key</label>
-                                <div class="input-with-button">
-                                    <input type="password" id="setting_api_key" placeholder="AIzaSy..." />
-                                    <button id="testApiBtn" class="secondary-btn" data-i18n="btn_test">Test</button>
-                                </div>
-                                <small id="testStatusText" data-i18n="hint_gemini_key">Dapatkan key di Google AI Studio.</small>
-                            </div>
-                            <div class="form-group hidden" id="modelSelectGroup">
-                                <label data-i18n="label_gemini_model">Pilih Model Gemini</label>
-                                <select id="setting_ai_model">
-                                    <option value="auto" data-i18n="opt_model_auto">✨ Otomatis (Rekomendasi Terbaik)</option>
-                                    <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- HuggingFace Settings Group -->
-                        <div id="hf_settings_group" class="hidden">
-                            <div class="form-group">
-                                <label data-i18n="label_hf_key">Hugging Face Access Token</label>
-                                <div class="input-with-button">
-                                    <input type="password" id="setting_hf_api_key" placeholder="hf_..." />
-                                    <button id="testHfApiBtn" class="secondary-btn" data-i18n="btn_test">Test</button>
-                                </div>
-                                <small id="testHfStatusText" data-i18n="hint_hf_key">Dapatkan token di huggingface.co/settings/tokens.</small>
-                            </div>
-                            <div class="form-group hidden" id="hfModelSelectGroup">
-                                <label data-i18n="label_hf_model">Pilih Model Hugging Face</label>
-                                <select id="setting_hf_model">
-                                    <option value="auto" data-i18n="opt_model_auto">✨ Otomatis (Rekomendasi Terbaik)</option>
-                                    <option value="mistralai/Mistral-7B-Instruct-v0.3">Mistral 7B Instruct v0.3</option>
-                                </select>
-                                <small data-i18n="hint_hf_model">Hanya model yang mendukung Inference API yang didukung.</small>
-                            </div>
-                        </div>
-
-                        <!-- Groq Settings Group -->
-                        <div id="groq_settings_group" class="hidden">
-                            <div class="form-group">
-                                <label data-i18n="label_groq_key">Groq API Key</label>
-                                <div class="input-with-button">
-                                    <input type="password" id="setting_groq_api_key" placeholder="gsk_..." />
-                                    <button id="testGroqApiBtn" class="secondary-btn" data-i18n="btn_test">Test</button>
-                                </div>
-                                <small id="testGroqStatusText" data-i18n="hint_groq_key">Dapatkan key gratis di console.groq.com/keys.</small>
-                            </div>
-                            <div class="form-group hidden" id="groqModelSelectGroup">
-                                <label data-i18n="label_groq_model">Pilih Model Groq</label>
-                                <select id="setting_groq_model">
-                                    <option value="auto" data-i18n="opt_model_auto">✨ Otomatis (Rekomendasi Terbaik)</option>
-                                    <option value="llama-3.1-8b-instant" data-i18n="opt_groq_llama">Llama 3.1 (8B) - Sangat Cepat</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="setting_wp" class="modal-tab-pane">
-                        <div class="form-group">
-                            <label data-i18n="label_wp_url">URL Website WordPress</label>
-                            <input type="url" id="setting_wp_url" placeholder="https://domain-kamu.com" />
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="label_wp_user">Username WordPress</label>
-                            <input type="text" id="setting_wp_user" placeholder="admin" />
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="label_wp_pwd">Application Password</label>
-                            <input type="password" id="setting_wp_pwd" placeholder="xxxx xxxx xxxx xxxx" />
-                            <small data-i18n="hint_wp_pwd">Buat di menu Users > Profile > Application Passwords di dasbor WordPress.</small>
-                        </div>
-                    </div>
-                    <div id="setting_ui" class="modal-tab-pane">
-                        <div class="form-group">
-                            <label data-i18n="label_ui_lang">Bahasa Antarmuka Aplikasi</label>
-                            <select id="ui_language">
-                                <option value="id">Bahasa Indonesia</option>
-                                <option value="en">English (Inggris)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="label_theme">Tema Aplikasi</label>
-                            <select id="setting_theme">
-                                <option value="system" data-i18n="opt_theme_sys">Default</option>
-                                <option value="dark" data-i18n="opt_theme_dark">Dark Mode</option>
-                                <option value="light" data-i18n="opt_theme_light">Light Mode</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button id="saveSettingsBtn" class="primary-btn w-full" data-i18n="save_settings_btn">Simpan Pengaturan</button>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Versi 1.0 Dirilis</div>
+            <h1>Buat Artikel SEO dalam <span>Hitungan Detik</span></h1>
+            <p>Tingkatkan produktivitas penulisan Anda. Ubah ide, video YouTube, atau dokumen mentah menjadi artikel yang terstruktur rapi, siap dipublikasikan ke blog WordPress Anda.</p>
+            <div class="hero-cta">
+                <a href="app.html" class="btn-primary">Mulai Gratis</a>
+                <a href="#features" class="btn-secondary">Lihat Fitur</a>
             </div>
         </div>
-    </div>
+        <div class="hero-image-container">
+            <img src="hero_image.png" alt="Orang sedang mengetik artikel dengan AI" />
+        </div>
+    </section>
 
-    <script src="app.js?v=10"></script>
+    <!-- Showcase Section (New Section with Article Image) -->
+    <section class="showcase">
+        <div class="showcase-container">
+            <div class="showcase-image">
+                <img src="articles_image.png" alt="Contoh artikel yang dihasilkan" />
+            </div>
+            <div class="showcase-content">
+                <h2>Kualitas Penulisan Profesional</h2>
+                <p>Tidak perlu khawatir dengan gaya penulisan yang kaku. AI kami dilatih untuk menghasilkan struktur artikel yang natural, enak dibaca, dan dioptimasi untuk mesin pencari (SEO). Anda juga dapat menyesuaikan gaya penulisan menjadi santai, formal, atau akademis.</p>
+                <p>Semua hasil artikel langsung bisa di-preview, diedit, dan diekspor ke berbagai format profesional seperti PDF, Word, atau Markdown.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-header">
+            <h2 class="section-title">Kenapa Memilih AutoArticle?</h2>
+            <p class="section-subtitle">Aplikasi yang dirancang khusus untuk mempermudah alur kerja content creator, jurnalis, dan mahasiswa.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card glass">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                </div>
+                <h3>Multi-Sumber Konteks</h3>
+                <p>Tidak hanya teks manual, Anda bisa menggunakan URL web, video YouTube, hingga dokumen lokal (PDF/Word) sebagai referensi.</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <h3>Proses Super Cepat</h3>
+                <p>Didukung oleh API AI modern yang teroptimasi, pembuatan artikel panjang hanya membutuhkan waktu beberapa detik saja.</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                </div>
+                <h3>Integrasi WordPress</h3>
+                <p>Kirim hasil artikel langsung ke blog WordPress Anda sebagai draf atau publikasikan secara langsung tanpa perlu copy-paste.</p>
+            </div>
+            <div class="feature-card glass">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </div>
+                <h3>Ekspor Fleksibel</h3>
+                <p>Simpan dan bagikan karya Anda dengan mudah dengan fitur unduh ke PDF, Word Document (.docx), dan Plain Text.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 AutoArticle AI. Solusi Content Generator.</p>
+    </footer>
+
+    <script>
+        // Simple scroll effect for navbar
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.navbar');
+            if (window.scrollY > 10) {
+                nav.style.background = 'rgba(15, 17, 26, 0.95)';
+                nav.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+            } else {
+                nav.style.background = 'rgba(25, 28, 41, 0.6)';
+                nav.style.boxShadow = 'var(--panel-shadow)';
+            }
+        });
+    </script>
 </body>
-
 </html>
