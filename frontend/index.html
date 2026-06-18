@@ -3,23 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Artikel AI - Buat Artikel Otomatis</title>
+    <title>LetterWrap - Buat Artikel Otomatis dengan AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="landing-style.css">
+    <link rel="stylesheet" href="landing-style.css?v=1.1">
+    <script>
+        // Set theme based on app settings or system preference
+        const savedTheme = localStorage.getItem('app_theme') || 'system';
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else if (savedTheme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
 </head>
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar glass">
+    <nav class="navbar">
         <div class="logo">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 2L2 7L12 12L22 7L12 2Z" />
                 <path d="M2 17L12 22L22 17" />
                 <path d="M2 12L12 17L22 12" />
             </svg>
-            AutoArticle
+            <span class="logo-text">Letter<span class="logo-highlight">Wrap</span></span>
         </div>
         <div>
             <a href="app.html" class="btn-primary">Buka Dashboard</a>
@@ -59,7 +72,7 @@
     <!-- Features Section -->
     <section id="features" class="features">
         <div class="section-header">
-            <h2 class="section-title">Kenapa Memilih AutoArticle?</h2>
+            <h2 class="section-title">Kenapa Memilih <span class="brand-name">Letter<span class="highlight">Wrap</span></span>?</h2>
             <p class="section-subtitle">Aplikasi yang dirancang khusus untuk mempermudah alur kerja content creator, jurnalis, dan mahasiswa.</p>
         </div>
         <div class="features-grid">
@@ -111,7 +124,7 @@
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2026 AutoArticle AI. Solusi Content Generator.</p>
+        <p>&copy; 2026 <span class="brand-name">Letter<span class="highlight">Wrap</span></span>. Solusi Content Generator Cerdas.</p>
     </footer>
 
     <script>
@@ -119,11 +132,11 @@
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('.navbar');
             if (window.scrollY > 10) {
-                nav.style.background = 'rgba(15, 17, 26, 0.95)';
-                nav.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
-            } else {
-                nav.style.background = 'rgba(25, 28, 41, 0.6)';
+                nav.style.background = 'var(--navbar-bg)';
                 nav.style.boxShadow = 'var(--panel-shadow)';
+            } else {
+                nav.style.background = 'var(--panel-bg)';
+                nav.style.boxShadow = 'none';
             }
         });
     </script>

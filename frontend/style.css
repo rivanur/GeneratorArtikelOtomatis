@@ -100,10 +100,30 @@ body {
 }
 
 .logo h1 {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.4rem;
+    font-weight: 700;
     color: var(--text-main);
-    letter-spacing: -0.025em;
+    letter-spacing: -0.03em;
+}
+
+.logo svg {
+    color: #8b5cf6;
+    stroke-width: 3;
+    filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));
+}
+
+.logo-highlight {
+    color: #8b5cf6;
+}
+
+.brand-name {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+}
+
+.brand-name .highlight {
+    color: #8b5cf6;
 }
 
 .api-key-container input {

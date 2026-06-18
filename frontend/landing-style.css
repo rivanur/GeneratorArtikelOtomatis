@@ -4,12 +4,25 @@
   --primary-hover: #4f46e5;
   --bg-color: #0f111a;
   --panel-bg: rgba(25, 28, 41, 0.6);
+  --navbar-bg: rgba(15, 17, 26, 0.95);
   --panel-border: rgba(255, 255, 255, 0.08);
   --text-main: #f0f2f5;
   --text-muted: #9aa0a6;
   --bg-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
   --panel-backdrop: blur(16px);
   --panel-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+:root[data-theme="light"] {
+  --bg-color: #f8fafc;
+  --panel-bg: rgba(255, 255, 255, 0.8);
+  --navbar-bg: rgba(255, 255, 255, 0.98);
+  --showcase-bg: rgba(0, 0, 0, 0.03);
+  --panel-border: rgba(0, 0, 0, 0.1);
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --bg-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%);
+  --panel-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
 }
 
 * {
@@ -47,22 +60,42 @@ body {
   top: 0;
   width: 100%;
   z-index: 100;
+  background: var(--navbar-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--panel-border);
   transition: all 0.3s ease;
 }
 
 .logo {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.4rem;
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   color: var(--text-main);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
 }
 
 .logo svg {
-  color: var(--primary);
+  color: #8b5cf6; /* Match the exact color of the 'Wrap' text */
+  stroke-width: 3; /* Thicker stroke to match the reference image */
+  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));
+}
+
+.logo-highlight {
+  color: #8b5cf6; /* Solid purple matching the logo */
+}
+
+/* Reusable inline brand text style */
+.brand-name {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+}
+
+.brand-name .highlight {
+  color: #8b5cf6;
 }
 
 .btn-primary {
@@ -112,10 +145,13 @@ body {
 }
 
 .hero-image-container img {
-  max-width: 100%;
-  border-radius: 4px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 12px;
   border: 1px solid var(--panel-border);
-  box-shadow: var(--panel-shadow);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .hero-badge {
@@ -240,7 +276,7 @@ body {
 /* Showcase Section (For the Articles Image) */
 .showcase {
   padding: 5rem 5%;
-  background: rgba(0,0,0,0.2);
+  background: var(--showcase-bg, rgba(0,0,0,0.2));
   border-top: 1px solid var(--panel-border);
   border-bottom: 1px solid var(--panel-border);
 }
