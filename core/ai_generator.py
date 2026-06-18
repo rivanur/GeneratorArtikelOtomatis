@@ -79,7 +79,7 @@ class AIGenerator:
             print(f"Web search error: {str(e)}")
             return f"Gagal melakukan pencarian web: {str(e)}"
 
-    def generate_article(self, source_context: str, style: str = "blog", custom_prompt: str = "", media_path: str = None) -> dict:
+    def generate_article(self, source_context: str, style: str = "blog", language: str = "Indonesia", custom_prompt: str = "", media_path: str = None) -> dict:
         """
         Kompilasi prompt terstruktur dan kirim ke API LLM (Gemini atau Hugging Face)
         Bisa menerima teks (source_context) atau file media (media_path)
@@ -119,6 +119,9 @@ class AIGenerator:
         current_date = datetime.datetime.now().strftime("%d %B %Y")
             
         system_prompt = f"""
+INSTRUKSI BAHASA:
+Tulis keseluruhan artikel secara natural menggunakan bahasa: {language}
+
 INSTRUKSI GAYA PENULISAN:
 Tulis artikel ini dengan gaya bahasa: {style}
 

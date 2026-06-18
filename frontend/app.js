@@ -28,6 +28,137 @@ if (window.matchMedia) {
     });
 }
 
+// --- UI Localization (i18n) Logic ---
+const translations = {
+    'id': {
+        'source_context': 'Pilih Sumber Konteks',
+        'tab_manual': 'Teks Manual',
+        'tab_web': 'URL Web',
+        'tab_youtube': 'YouTube',
+        'tab_document': 'Dokumen',
+        'tab_video': 'Video Lokal',
+        'placeholder_manual': "Ketik Topik Berita (misal: 'Berita MotoGP Hari Ini') atau paste teks referensi di sini...",
+        'label_file': 'Pilih File',
+        'label_video': 'Pilih Video (Semua Format)',
+        'article_settings': 'Pengaturan Artikel',
+        'generate_btn': 'Generate Artikel',
+        'result_header': 'Hasil Artikel',
+        'btn_edit': 'Edit',
+        'btn_download': 'Unduh',
+        'btn_publish': 'Publish',
+        'empty_state': 'Artikel yang dihasilkan akan muncul di sini.',
+        'settings_title': 'Pengaturan Sistem',
+        'tab_model_ai': 'Model AI',
+        'tab_wp': 'WordPress',
+        'tab_ui': 'Tampilan',
+        'label_ai_provider': 'Penyedia AI (AI Provider)',
+        'label_groq_model': 'Pilih Model Groq',
+        'hint_groq_key': 'Dapatkan key gratis di console.groq.com/keys.',
+        'label_wp_url': 'URL Website WordPress',
+        'label_wp_user': 'Username WordPress',
+        'label_wp_pwd': 'Application Password',
+        'label_ui_lang': 'Bahasa Antarmuka Aplikasi',
+        'label_theme': 'Tema Aplikasi',
+        'save_settings_btn': 'Simpan Pengaturan',
+        'opt_style_blog': 'Gaya Blog (Santai & Engaging)',
+        'opt_style_news': 'Gaya Berita (Formal & Objektif)',
+        'opt_style_academic': 'Gaya Akademik (Analitis)',
+        'opt_style_seo': 'Gaya SEO (Optimasi Kata Kunci)',
+        'opt_lang_id': 'Bahasa Indonesia',
+        'opt_lang_en': 'Bahasa Inggris (English)',
+        'opt_prov_gemini': 'Google Gemini (Recommended)',
+        'opt_prov_groq': 'Groq (Super Cepat & Gratis)',
+        'opt_prov_hf': 'Hugging Face (Teks Saja)',
+        'label_gemini_key': 'Gemini API Key',
+        'hint_gemini_key': 'Dapatkan key di Google AI Studio.',
+        'label_gemini_model': 'Pilih Model Gemini',
+        'opt_model_auto': '✨ Otomatis (Rekomendasi Terbaik)',
+        'label_hf_key': 'Hugging Face Access Token',
+        'hint_hf_key': 'Dapatkan token di huggingface.co/settings/tokens.',
+        'label_hf_model': 'Pilih Model Hugging Face',
+        'hint_hf_model': 'Hanya model yang mendukung Inference API yang didukung.',
+        'label_groq_key': 'Groq API Key',
+        'opt_groq_llama': 'Llama 3.1 (8B) - Sangat Cepat',
+        'hint_wp_pwd': 'Buat di menu Users > Profile > Application Passwords di dasbor WordPress.',
+        'opt_theme_sys': 'Default',
+        'opt_theme_dark': 'Dark Mode',
+        'opt_theme_light': 'Light Mode',
+        'btn_test': 'Test'
+    },
+    'en': {
+        'source_context': 'Select Context Source',
+        'tab_manual': 'Manual Text',
+        'tab_web': 'Web URL',
+        'tab_youtube': 'YouTube',
+        'tab_document': 'Document',
+        'tab_video': 'Local Video',
+        'placeholder_manual': "Type a News Topic (e.g., 'MotoGP News Today') or paste reference text here...",
+        'label_file': 'Choose File',
+        'label_video': 'Choose Video (Any Format)',
+        'article_settings': 'Article Settings',
+        'generate_btn': 'Generate Article',
+        'result_header': 'Generated Article',
+        'btn_edit': 'Edit',
+        'btn_download': 'Download',
+        'btn_publish': 'Publish',
+        'empty_state': 'The generated article will appear here.',
+        'settings_title': 'System Settings',
+        'tab_model_ai': 'AI Model',
+        'tab_wp': 'WordPress',
+        'tab_ui': 'Appearance',
+        'label_ai_provider': 'AI Provider',
+        'label_groq_model': 'Select Groq Model',
+        'hint_groq_key': 'Get a free key at console.groq.com/keys.',
+        'label_wp_url': 'WordPress Website URL',
+        'label_wp_user': 'WordPress Username',
+        'label_wp_pwd': 'Application Password',
+        'label_ui_lang': 'Application Interface Language',
+        'label_theme': 'Application Theme',
+        'save_settings_btn': 'Save Settings',
+        'opt_style_blog': 'Blog Style (Casual & Engaging)',
+        'opt_style_news': 'News Style (Formal & Objective)',
+        'opt_style_academic': 'Academic Style (Analytical)',
+        'opt_style_seo': 'SEO Style (Keyword Optimized)',
+        'opt_lang_id': 'Indonesian (Bahasa Indonesia)',
+        'opt_lang_en': 'English',
+        'opt_prov_gemini': 'Google Gemini (Recommended)',
+        'opt_prov_groq': 'Groq (Super Fast & Free)',
+        'opt_prov_hf': 'Hugging Face (Text Only)',
+        'label_gemini_key': 'Gemini API Key',
+        'hint_gemini_key': 'Get your key at Google AI Studio.',
+        'label_gemini_model': 'Select Gemini Model',
+        'opt_model_auto': '✨ Auto (Best Recommended)',
+        'label_hf_key': 'Hugging Face Access Token',
+        'hint_hf_key': 'Get token at huggingface.co/settings/tokens.',
+        'label_hf_model': 'Select Hugging Face Model',
+        'hint_hf_model': 'Only models that support Inference API are supported.',
+        'label_groq_key': 'Groq API Key',
+        'opt_groq_llama': 'Llama 3.1 (8B) - Super Fast',
+        'hint_wp_pwd': 'Create in Users > Profile > Application Passwords on WordPress dashboard.',
+        'opt_theme_sys': 'System Default',
+        'opt_theme_dark': 'Dark Mode',
+        'opt_theme_light': 'Light Mode',
+        'btn_test': 'Test'
+    }
+};
+
+const savedUiLang = localStorage.getItem('app_ui_lang') || 'id';
+
+function applyUILanguage(lang) {
+    if (!translations[lang]) return;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.placeholder = translations[lang][key];
+            } else {
+                el.textContent = translations[lang][key];
+            }
+        }
+    });
+}
+applyUILanguage(savedUiLang);
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- Theme Selector Logic ---
     const themeSelect = document.getElementById('setting_theme');
@@ -37,6 +168,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const newTheme = e.target.value;
             applyTheme(newTheme);
             localStorage.setItem('app_theme', newTheme);
+        });
+    }
+
+    // --- UI Language Selector Logic ---
+    const uiLangSelect = document.getElementById('ui_language');
+    if (uiLangSelect) {
+        uiLangSelect.value = savedUiLang;
+        uiLangSelect.addEventListener('change', (e) => {
+            const newLang = e.target.value;
+            applyUILanguage(newLang);
+            localStorage.setItem('app_ui_lang', newLang);
         });
     }
 
@@ -246,6 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData();
         formData.append('source_type', currentSourceType);
         formData.append('style', document.getElementById('article_style').value);
+        formData.append('language', document.getElementById('article_language').value);
 
         // Append input based on active tab
         if (currentSourceType === 'manual_text') {
@@ -282,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultContainer.innerHTML = `
             <div class="empty-state">
                 <div class="progress-container">
-                    <p id="progress_text" class="progress-text">Menyiapkan data...</p>
+                    <p id="progress_text" class="progress-text">${(localStorage.getItem('app_ui_lang') || 'id') === 'en' ? 'Preparing data...' : 'Menyiapkan data...'}</p>
                     <div class="progress-bar-bg">
                         <div id="progress_fill" class="progress-fill"></div>
                     </div>
@@ -307,7 +450,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const progressText = document.getElementById('progress_text');
         const progressPercentage = document.getElementById('progress_percentage');
 
-        const statusMessages = [
+        const currentUiLang = localStorage.getItem('app_ui_lang') || 'id';
+        const statusMessages = currentUiLang === 'en' ? [
+            "Extracting reference data...",
+            "Understanding sentence context...",
+            "Building article framework...",
+            "Stringing words together...",
+            "Perfecting AI grammar...",
+            "Almost done, please be patient..."
+        ] : [
             "Menyedot data referensi...",
             "Memahami konteks kalimat...",
             "Membangun kerangka artikel...",

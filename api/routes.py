@@ -15,6 +15,7 @@ router = APIRouter()
 async def generate_article(
     source_type: str = Form(...), # manual_text, web_url, youtube_url, document, local_video
     style: str = Form("blog"),
+    language: str = Form("Indonesia"),
     manual_text: Optional[str] = Form(None),
     url: Optional[str] = Form(None),
     file: Optional[UploadFile] = File(None)
@@ -151,6 +152,7 @@ async def generate_article(
         result_data = generator.generate_article(
             source_context=extracted_text, 
             style=style, 
+            language=language,
             media_path=media_path
         )
 

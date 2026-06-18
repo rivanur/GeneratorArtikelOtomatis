@@ -44,20 +44,20 @@
         <main class="main-content">
             <!-- Kolom Kiri: Input -->
             <section class="input-panel glass-panel">
-                <h2>Pilih Sumber Konteks</h2>
+                <h2 data-i18n="source_context">Pilih Sumber Konteks</h2>
 
                 <div class="tabs">
-                    <button class="tab-btn active" data-target="manual_text">Teks Manual</button>
-                    <button class="tab-btn" data-target="web_url">URL Web</button>
-                    <button class="tab-btn" data-target="youtube_url">YouTube</button>
-                    <button class="tab-btn" data-target="document">Dokumen</button>
-                    <button class="tab-btn" data-target="local_video">Video Lokal</button>
+                    <button class="tab-btn active" data-target="manual_text" data-i18n="tab_manual">Teks Manual</button>
+                    <button class="tab-btn" data-target="web_url" data-i18n="tab_web">URL Web</button>
+                    <button class="tab-btn" data-target="youtube_url" data-i18n="tab_youtube">YouTube</button>
+                    <button class="tab-btn" data-target="document" data-i18n="tab_document">Dokumen</button>
+                    <button class="tab-btn" data-target="local_video" data-i18n="tab_video">Video Lokal</button>
                 </div>
 
                 <div class="tab-content">
                     <div id="manual_text" class="tab-pane active">
                         <textarea id="input_manual_text"
-                            placeholder="Ketik atau paste teks referensi di sini..."></textarea>
+                            placeholder="Ketik Topik Berita (misal: 'Berita MotoGP Hari Ini') atau paste teks referensi di sini..." data-i18n="placeholder_manual"></textarea>
                     </div>
                     <div id="web_url" class="tab-pane">
                         <input type="url" id="input_web_url" placeholder="https://example.com/artikel" />
@@ -68,29 +68,33 @@
                     <div id="document" class="tab-pane">
                         <div class="file-upload">
                             <input type="file" id="input_document" accept=".pdf,.txt,.md,.docx" />
-                            <label for="input_document">Pilih File</label>
+                            <label for="input_document" data-i18n="label_file">Pilih File</label>
                         </div>
                     </div>
                     <div id="local_video" class="tab-pane">
                         <div class="file-upload">
                             <input type="file" id="input_local_video" accept="video/mp4,video/x-m4v,video/*" />
-                            <label for="input_local_video">Pilih Video (Semua Format)</label>
+                            <label for="input_local_video" data-i18n="label_video">Pilih Video (Semua Format)</label>
                         </div>
                     </div>
                 </div>
 
                 <div class="settings-section">
-                    <h2>Pengaturan Gaya</h2>
-                    <select id="article_style">
-                        <option value="blog">Gaya Blog (Santai & Engaging)</option>
-                        <option value="berita">Gaya Berita (Formal & Objektif)</option>
-                        <option value="akademik">Gaya Akademik (Analitis)</option>
-                        <option value="seo">Gaya SEO (Optimasi Kata Kunci)</option>
+                    <h2 data-i18n="article_settings">Pengaturan Artikel</h2>
+                    <select id="article_style" style="margin-bottom: 0.8rem;">
+                        <option value="blog" data-i18n="opt_style_blog">Gaya Blog (Santai & Engaging)</option>
+                        <option value="berita" data-i18n="opt_style_news">Gaya Berita (Formal & Objektif)</option>
+                        <option value="akademik" data-i18n="opt_style_academic">Gaya Akademik (Analitis)</option>
+                        <option value="seo" data-i18n="opt_style_seo">Gaya SEO (Optimasi Kata Kunci)</option>
+                    </select>
+                    <select id="article_language">
+                        <option value="Indonesia" data-i18n="opt_lang_id">Bahasa Indonesia</option>
+                        <option value="English" data-i18n="opt_lang_en">Bahasa Inggris (English)</option>
                     </select>
                 </div>
 
                 <button id="generateBtn" class="primary-btn">
-                    <span class="btn-text">Generate Artikel</span>
+                    <span class="btn-text" data-i18n="generate_btn">Generate Artikel</span>
                     <span class="loader hidden"></span>
                 </button>
             </section>
@@ -98,7 +102,7 @@
             <!-- Kolom Kanan: Hasil -->
             <section class="result-panel glass-panel">
                 <div class="result-header">
-                    <h2>Hasil Artikel</h2>
+                    <h2 data-i18n="result_header">Hasil Artikel</h2>
                     <div class="header-actions">
                         <button id="uploadFallbackBtn" class="icon-btn hidden" title="Unggah Gambar Cover (Fallback)">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -123,7 +127,7 @@
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                             </svg>
-                            <span>Edit</span>
+                            <span data-i18n="btn_edit">Edit</span>
                         </button>
                         <div class="dropdown hidden" id="exportDropdownContainer">
                             <button id="exportDropdownBtn" class="secondary-btn" title="Ekspor Artikel">
@@ -133,7 +137,7 @@
                                     <polyline points="7 10 12 15 17 10"></polyline>
                                     <line x1="12" y1="15" x2="12" y2="3"></line>
                                 </svg>
-                                <span>Unduh</span>
+                                <span data-i18n="btn_download">Unduh</span>
                             </button>
                             <div class="dropdown-content">
                                 <a href="#" id="exportPdfBtn">PDF (.pdf)</a>
@@ -150,7 +154,7 @@
                                     <polyline points="17 8 12 3 7 8"></polyline>
                                     <line x1="12" y1="3" x2="12" y2="15"></line>
                                 </svg>
-                                <span>Publish</span>
+                                <span data-i18n="btn_publish">Publish</span>
                             </button>
                             <div class="dropdown-content">
                                 <a href="#" id="publishDraftBtn">Simpan sebagai Draft</a>
@@ -170,7 +174,7 @@
                                 <line x1="16" y1="17" x2="8" y2="17"></line>
                                 <polyline points="10 9 9 9 8 9"></polyline>
                             </svg>
-                            <p>Artikel yang dihasilkan akan muncul di sini.</p>
+                            <p data-i18n="empty_state">Artikel yang dihasilkan akan muncul di sini.</p>
                         </div>
                     </div>
                     <div id="editor_wrapper" class="hidden">
@@ -283,7 +287,7 @@
     <div id="settingsModal" class="modal-overlay hidden">
         <div class="modal-content glass-panel">
             <div class="modal-header">
-                <h2>Pengaturan Sistem</h2>
+                <h2 data-i18n="settings_title">Pengaturan Sistem</h2>
                 <button id="closeSettingsBtn" class="icon-btn"><svg width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -293,36 +297,36 @@
 
             <div class="modal-body">
                 <div class="tabs">
-                    <button class="modal-tab-btn active" data-target="setting_ai">Model AI</button>
-                    <button class="modal-tab-btn" data-target="setting_wp">WordPress</button>
-                    <button class="modal-tab-btn" data-target="setting_ui">Tampilan</button>
+                    <button class="modal-tab-btn active" data-target="setting_ai" data-i18n="tab_model_ai">Model AI</button>
+                    <button class="modal-tab-btn" data-target="setting_wp" data-i18n="tab_wp">WordPress</button>
+                    <button class="modal-tab-btn" data-target="setting_ui" data-i18n="tab_ui">Tampilan</button>
                 </div>
 
                 <div class="tab-content">
                     <div id="setting_ai" class="modal-tab-pane active">
                         <div class="form-group">
-                            <label>Penyedia AI (AI Provider)</label>
+                            <label data-i18n="label_ai_provider">Penyedia AI (AI Provider)</label>
                             <select id="setting_ai_provider">
-                                <option value="gemini">Google Gemini (Recommended)</option>
-                                <option value="groq">Groq (Super Cepat & Gratis)</option>
-                                <option value="huggingface">Hugging Face (Teks Saja)</option>
+                                <option value="gemini" data-i18n="opt_prov_gemini">Google Gemini (Recommended)</option>
+                                <option value="groq" data-i18n="opt_prov_groq">Groq (Super Cepat & Gratis)</option>
+                                <option value="huggingface" data-i18n="opt_prov_hf">Hugging Face (Teks Saja)</option>
                             </select>
                         </div>
 
                         <!-- Gemini Settings Group -->
                         <div id="gemini_settings_group">
                             <div class="form-group">
-                                <label>Gemini API Key</label>
+                                <label data-i18n="label_gemini_key">Gemini API Key</label>
                                 <div class="input-with-button">
                                     <input type="password" id="setting_api_key" placeholder="AIzaSy..." />
-                                    <button id="testApiBtn" class="secondary-btn">Test</button>
+                                    <button id="testApiBtn" class="secondary-btn" data-i18n="btn_test">Test</button>
                                 </div>
-                                <small id="testStatusText">Dapatkan key di Google AI Studio.</small>
+                                <small id="testStatusText" data-i18n="hint_gemini_key">Dapatkan key di Google AI Studio.</small>
                             </div>
                             <div class="form-group hidden" id="modelSelectGroup">
-                                <label>Pilih Model Gemini</label>
+                                <label data-i18n="label_gemini_model">Pilih Model Gemini</label>
                                 <select id="setting_ai_model">
-                                    <option value="auto">✨ Otomatis (Rekomendasi Terbaik)</option>
+                                    <option value="auto" data-i18n="opt_model_auto">✨ Otomatis (Rekomendasi Terbaik)</option>
                                     <option value="gemini-2.5-flash">gemini-2.5-flash</option>
                                 </select>
                             </div>
@@ -331,64 +335,71 @@
                         <!-- HuggingFace Settings Group -->
                         <div id="hf_settings_group" class="hidden">
                             <div class="form-group">
-                                <label>Hugging Face Access Token</label>
+                                <label data-i18n="label_hf_key">Hugging Face Access Token</label>
                                 <div class="input-with-button">
                                     <input type="password" id="setting_hf_api_key" placeholder="hf_..." />
-                                    <button id="testHfApiBtn" class="secondary-btn">Test</button>
+                                    <button id="testHfApiBtn" class="secondary-btn" data-i18n="btn_test">Test</button>
                                 </div>
-                                <small id="testHfStatusText">Dapatkan token di huggingface.co/settings/tokens.</small>
+                                <small id="testHfStatusText" data-i18n="hint_hf_key">Dapatkan token di huggingface.co/settings/tokens.</small>
                             </div>
                             <div class="form-group hidden" id="hfModelSelectGroup">
-                                <label>Pilih Model Hugging Face</label>
+                                <label data-i18n="label_hf_model">Pilih Model Hugging Face</label>
                                 <select id="setting_hf_model">
-                                    <option value="auto">✨ Otomatis (Rekomendasi Terbaik)</option>
+                                    <option value="auto" data-i18n="opt_model_auto">✨ Otomatis (Rekomendasi Terbaik)</option>
                                     <option value="mistralai/Mistral-7B-Instruct-v0.3">Mistral 7B Instruct v0.3</option>
                                 </select>
-                                <small>Hanya model yang mendukung Inference API yang didukung.</small>
+                                <small data-i18n="hint_hf_model">Hanya model yang mendukung Inference API yang didukung.</small>
                             </div>
                         </div>
 
                         <!-- Groq Settings Group -->
                         <div id="groq_settings_group" class="hidden">
                             <div class="form-group">
-                                <label>Groq API Key</label>
+                                <label data-i18n="label_groq_key">Groq API Key</label>
                                 <div class="input-with-button">
                                     <input type="password" id="setting_groq_api_key" placeholder="gsk_..." />
-                                    <button id="testGroqApiBtn" class="secondary-btn">Test</button>
+                                    <button id="testGroqApiBtn" class="secondary-btn" data-i18n="btn_test">Test</button>
                                 </div>
-                                <small id="testGroqStatusText">Dapatkan key gratis di console.groq.com/keys.</small>
+                                <small id="testGroqStatusText" data-i18n="hint_groq_key">Dapatkan key gratis di console.groq.com/keys.</small>
                             </div>
                             <div class="form-group hidden" id="groqModelSelectGroup">
-                                <label>Pilih Model Groq</label>
+                                <label data-i18n="label_groq_model">Pilih Model Groq</label>
                                 <select id="setting_groq_model">
-                                    <option value="auto">✨ Otomatis (Rekomendasi Terbaik)</option>
-                                    <option value="llama-3.1-8b-instant">Llama 3.1 (8B) - Sangat Cepat</option>
+                                    <option value="auto" data-i18n="opt_model_auto">✨ Otomatis (Rekomendasi Terbaik)</option>
+                                    <option value="llama-3.1-8b-instant" data-i18n="opt_groq_llama">Llama 3.1 (8B) - Sangat Cepat</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <div id="setting_wp" class="modal-tab-pane">
                         <div class="form-group">
-                            <label>URL Website WordPress</label>
+                            <label data-i18n="label_wp_url">URL Website WordPress</label>
                             <input type="url" id="setting_wp_url" placeholder="https://domain-kamu.com" />
                         </div>
                         <div class="form-group">
-                            <label>Username WordPress</label>
+                            <label data-i18n="label_wp_user">Username WordPress</label>
                             <input type="text" id="setting_wp_user" placeholder="admin" />
                         </div>
                         <div class="form-group">
-                            <label>Application Password</label>
+                            <label data-i18n="label_wp_pwd">Application Password</label>
                             <input type="password" id="setting_wp_pwd" placeholder="xxxx xxxx xxxx xxxx" />
-                            <small>Buat di menu Users > Profile > Application Passwords di dasbor WordPress.</small>
+                            <small data-i18n="hint_wp_pwd">Buat di menu Users > Profile > Application Passwords di dasbor WordPress.</small>
                         </div>
                     </div>
                     <div id="setting_ui" class="modal-tab-pane">
                         <div class="form-group">
-                            <label>Tema Aplikasi</label>
+                            <label data-i18n="label_ui_lang">Bahasa Antarmuka Aplikasi</label>
+                            <select id="ui_language">
+                                <option value="id">Bahasa Indonesia</option>
+                                <option value="en">English (Inggris)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="label_theme">Tema Aplikasi</label>
                             <select id="setting_theme">
-                                <option value="system">Default</option>
-                                <option value="dark">Dark Mode</option>
-                                <option value="light">Light Mode</option>
+                                <option value="system" data-i18n="opt_theme_sys">Default</option>
+                                <option value="dark" data-i18n="opt_theme_dark">Dark Mode</option>
+                                <option value="light" data-i18n="opt_theme_light">Light Mode</option>
                             </select>
                         </div>
                     </div>
@@ -396,7 +407,7 @@
             </div>
 
             <div class="modal-footer">
-                <button id="saveSettingsBtn" class="primary-btn w-full">Simpan Pengaturan</button>
+                <button id="saveSettingsBtn" class="primary-btn w-full" data-i18n="save_settings_btn">Simpan Pengaturan</button>
             </div>
         </div>
     </div>
