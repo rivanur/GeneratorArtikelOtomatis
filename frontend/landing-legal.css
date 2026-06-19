@@ -1,0 +1,76 @@
+/* Legal Pages Specific Styling */
+.legal-header {
+  padding: 100px 5% 30px;
+  text-align: center;
+  background: var(--showcase-bg, rgba(0, 0, 0, 0.02));
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.legal-header h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.legal-header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.legal-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 5%;
+}
+
+.legal-content .glass {
+  padding: 2rem;
+}
+
+.legal-content h2 {
+  font-size: 1.8rem;
+  margin: 2rem 0 1rem;
+  color: var(--text-main);
+}
+
+.legal-content h3 {
+  font-size: 1.4rem;
+  margin: 1.5rem 0 0.8rem;
+  color: var(--text-main);
+}
+
+.legal-content p {
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.legal-content ul {
+  margin-bottom: 1.2rem;
+  padding-left: 1.5rem;
+  color: var(--text-muted);
+}
+
+.legal-content ul li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.legal-content a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.legal-content a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .legal-content .glass {
+    padding: 2rem 1.5rem;
+  }
+}

@@ -348,11 +348,118 @@ body {
 }
 
 /* Footer */
-footer {
-  text-align: center;
-  padding: 2rem;
+.footer {
+  background-color: var(--footer-bg, #0f111a);
+  padding: 3rem 5% 2rem;
+  color: var(--text-main);
+  border-top: 1px solid var(--panel-border);
+}
+
+:root[data-theme="light"] .footer {
+  --footer-bg: #eff4fc;
+}
+
+.footer-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer-brand {
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
+}
+
+.footer-brand .logo {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  display: inline-flex;
+}
+
+.footer-brand p {
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 4rem;
+  flex-wrap: wrap;
+}
+
+.footer-column h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  color: var(--text-main);
+}
+
+.footer-column ul {
+  list-style: none;
+}
+
+.footer-column ul li {
+  margin-bottom: 0.8rem;
+}
+
+.footer-column ul li a {
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: color 0.2s;
+  font-size: 0.95rem;
+}
+
+.footer-column ul li a:hover {
+  color: var(--primary);
+}
+
+.footer-bottom {
+  max-width: 1400px;
+  margin: 0 auto;
+  border-top: 1px solid var(--panel-border);
+  padding-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-bottom-left {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
   color: var(--text-muted);
   font-size: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.footer-bottom-left a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.footer-bottom-left a:hover {
+  color: var(--primary);
+}
+
+.footer-bottom-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.footer-bottom-right:hover {
+  color: var(--text-main);
 }
 
 /* Animations */

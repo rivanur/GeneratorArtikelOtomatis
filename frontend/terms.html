@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syarat dan Ketentuan - LetterWrap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="landing-style.css?v=1.5">
+    <link rel="stylesheet" href="landing-legal.css?v=1.0">
+    <script>
+        // Set theme based on app settings or system preference
+        const savedTheme = localStorage.getItem('app_theme') || 'system';
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else if (savedTheme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" />
+                <path d="M2 17L12 22L22 17" />
+                <path d="M2 12L12 17L22 12" />
+            </svg>
+            <span class="brand-name">Letter<span class="highlight">Wrap</span></span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html" data-i18n="nav_home">HOME</a>
+            <a href="index.html#features" data-i18n="nav_features">FITUR</a>
+            <a href="help.html" data-i18n="nav_help">BANTUAN</a>
+        </div>
+        <div class="nav-actions">
+            <a href="login.html" class="btn-login" data-i18n="btn_login">Masuk</a>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="legal-header">
+        <h1 data-i18n="terms_title">Syarat dan Ketentuan</h1>
+        <p data-i18n="terms_desc">Tanggal Efektif: 19 Juni 2026</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="legal-content">
+        <div class="glass">
+            <h2 data-i18n="terms_intro">1. Pendahuluan</h2>
+            <p data-i18n="terms_intro_desc">Selamat datang di LetterWrap. Syarat dan Ketentuan ini ("Perjanjian") mengatur akses dan penggunaan Anda terhadap layanan, situs web, produk, dan aplikasi kami (secara kolektif disebut "Layanan"). Dengan mengakses atau menggunakan Layanan kami, Anda setuju untuk terikat oleh Perjanjian ini. Jika Anda tidak setuju dengan ketentuan apa pun di sini, mohon untuk tidak menggunakan Layanan kami.</p>
+
+            <h2 data-i18n="terms_h2">2. Lisensi Penggunaan</h2>
+            <p data-i18n="terms_p2">LetterWrap memberikan Anda lisensi terbatas, non-eksklusif, dan tidak dapat dialihkan untuk menggunakan perangkat lunak kami untuk tujuan pribadi dan komersial (yaitu menghasilkan artikel).</p>
+
+            <h2 data-i18n="terms_h3">3. Konten Pengguna</h2>
+            <p data-i18n="terms_p3">Anda mempertahankan semua hak atas input (topik, teks mentah) dan output (artikel yang dihasilkan). Anda setuju untuk tidak menggunakan alat kami untuk tujuan menghasilkan spam, ujaran kebencian, atau konten ilegal.</p>
+
+            <h2 data-i18n="terms_h4">4. API Pihak Ketiga</h2>
+            <p data-i18n="terms_p4">Platform kami bergantung pada penyedia layanan bahasa pihak ketiga. Anda setuju untuk mematuhi ketentuan layanan dari penyedia AI pilihan Anda (misalnya Google, Groq, dll).</p>
+
+            <h2 data-i18n="terms_h5">5. Pembatasan Tanggung Jawab</h2>
+            <p data-i18n="terms_p5">Kami tidak menjamin bahwa layanan kami akan terbebas dari kesalahan, tanpa gangguan, atau bahwa konten yang dihasilkan 100% akurat. Pengguna bertanggung jawab untuk memverifikasi akurasi informasi yang dihasilkan oleh AI sebelum dipublikasikan.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" />
+                        <path d="M2 17L12 22L22 17" />
+                        <path d="M2 12L12 17L22 12" />
+                    </svg>
+                    <span class="brand-name">Letter<span class="highlight">Wrap</span></span>
+                </a>
+                <p data-i18n="footer_desc">Menulis lebih cerdas, berkreasi lebih cepat, dan meraih lebih banyak dengan LetterWrap - Teman menulis terbaik Anda.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4 data-i18n="footer_legal">Legal</h4>
+                    <ul>
+                        <li><a href="terms.html" data-i18n="footer_terms">Syarat dan Ketentuan</a></li>
+                        <li><a href="privacy.html" data-i18n="footer_privacy">Kebijakan Privasi</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 data-i18n="footer_about">Tentang Kami</h4>
+                    <ul>
+                        <li><a href="contact.html" data-i18n="footer_contact">Kontak</a></li>
+                        <li><a href="help.html" data-i18n="footer_faq">Pusat Bantuan</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-left">
+                <a href="terms.html" data-i18n="footer_terms">Syarat dan Ketentuan</a>
+                <span>|</span>
+                <a href="privacy.html" data-i18n="footer_privacy">Kebijakan Privasi</a>
+                <span>|</span>
+                <span data-i18n="footer_rights">&copy; 2026 LetterWrap. All Rights Reserved</span>
+            </div>
+            <div class="footer-bottom-right" style="position: relative; display: flex; align-items: center; gap: 0.5rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                <select class="global-lang-selector" style="background: transparent; border: none; color: inherit; font-size: 0.9rem; cursor: pointer; outline: none; appearance: none; padding-right: 1.5rem;">
+                    <option value="id" style="color: #000;">Bahasa Indonesia</option>
+                    <option value="en" style="color: #000;">English</option>
+                </select>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; right: 0; pointer-events: none;">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Update login button if already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = localStorage.getItem('letterwrap_logged_in');
+            const loginBtn = document.querySelector('.btn-login');
+            if (isLoggedIn && loginBtn) {
+                loginBtn.href = 'app.html';
+                loginBtn.setAttribute('data-i18n', 'btn_dashboard');
+            }
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', () => {
+                const nav = document.querySelector('.navbar');
+                if (window.scrollY > 10) {
+                    nav.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
+                } else {
+                    nav.style.boxShadow = '0 2px 15px rgba(0,0,0,0.05)';
+                }
+            });
+        });
+    </script>
+    <script src="lang.js?v=1"></script>
+</body>
+
+</html>

@@ -215,23 +215,23 @@
             <span class="brand-name">Letter<span class="highlight">Wrap</span></span>
         </a>
 
-        <h1>Buat Akun Baru</h1>
-        <p class="subtitle">Bergabunglah dan mulai hasilkan artikel dengan AI</p>
+        <h1 data-i18n="auth_title_register">Buat Akun Baru</h1>
+        <p class="subtitle" data-i18n="auth_subtitle_register">Bergabunglah dan mulai hasilkan artikel dengan AI</p>
 
         <form id="registerForm">
             <div class="form-group">
-                <label for="name">Nama Lengkap</label>
-                <input type="text" id="name" class="form-control" placeholder="Nama Anda" required>
+                <label for="name" data-i18n="auth_label_name">Nama Lengkap</label>
+                <input type="text" id="name" class="form-control" placeholder="Nama Anda" data-i18n="contact_ph_name" required>
             </div>
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" class="form-control" placeholder="nama@email.com" required>
+                <label for="email" data-i18n="auth_label_email">Email</label>
+                <input type="email" id="email" class="form-control" placeholder="nama@email.com" data-i18n="contact_ph_email" required>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" data-i18n="auth_label_pwd">Password</label>
                 <input type="password" id="password" class="form-control" placeholder="Buat kata sandi" required>
             </div>
-            <button type="submit" class="btn-primary">Daftar Sekarang</button>
+            <button type="submit" class="btn-primary" data-i18n="auth_btn_register">Daftar Sekarang</button>
         </form>
 
         <div class="divider">atau daftar dengan</div>
@@ -242,24 +242,48 @@
             Daftar dengan Google (Segera Hadir)
         </button>
 
-        <p class="footer-link">Sudah punya akun? <a href="login.html">Masuk di sini</a></p>
+        <p class="footer-link"><a href="login.html" data-i18n="auth_link_login">Sudah punya akun? Masuk di sini</a></p>
     </div>
 
     <script>
-        document.getElementById('registerForm').addEventListener('submit', function (e) {
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
             e.preventDefault(); // Mencegah reload halaman
 
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-
-            // Simulasi pendaftaran berhasil
-            alert(`Pendaftaran berhasil!\nSelamat datang, ${name}.\nSilakan masuk dengan akun Anda.`);
+            const submitBtn = document.querySelector('.btn-primary');
             
-            // Arahkan kembali ke halaman login
-            window.location.href = 'login.html';
+            submitBtn.textContent = 'Mendaftar...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:8000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Pendaftaran berhasil!\nSilakan masuk dengan akun Anda.');
+                    window.location.href = 'login.html';
+                } else {
+                    alert('Gagal mendaftar: ' + (data.detail || 'Terjadi kesalahan'));
+                    submitBtn.textContent = 'Daftar Sekarang';
+                    submitBtn.disabled = false;
+                }
+            } catch (err) {
+                alert('Tidak dapat terhubung ke server backend (Pastikan backend berjalan).');
+                submitBtn.textContent = 'Daftar Sekarang';
+                submitBtn.disabled = false;
+            }
         });
     </script>
+    <script src="lang.js?v=1"></script>
 </body>
 
 </html>

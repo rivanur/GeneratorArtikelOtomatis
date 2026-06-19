@@ -11,3 +11,8 @@ yt-dlp
 aiofiles
 python-docx
 huggingface_hub
+sqlalchemy
+pymysql
+passlib[bcrypt]
+python-jose[cryptography]
+email-validator

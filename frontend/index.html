@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,12 +23,14 @@
         }
     </script>
 </head>
+
 <body>
 
     <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 2L2 7L12 12L22 7L12 2Z" />
                 <path d="M2 17L12 22L22 17" />
                 <path d="M2 12L12 17L22 12" />
@@ -35,25 +38,25 @@
             <span class="brand-name">Letter<span class="highlight">Wrap</span></span>
         </div>
         <div class="nav-links">
-            <a href="#">HOME</a>
-            <a href="#features">FITUR</a>
-            <a href="#harga">HARGA</a>
-            <a href="app.html">DASBOR</a>
+            <a href="#" data-i18n="nav_home">HOME</a>
+            <a href="#features" data-i18n="nav_features">FITUR</a>
+            <a href="help.html" data-i18n="nav_help">BANTUAN</a>
         </div>
         <div class="nav-actions">
-            <a href="login.html" class="btn-login">Login</a>
+            <a href="login.html" class="btn-login" data-i18n="btn_login">Masuk</a>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <div class="hero-badge">Versi 1.0 Dirilis</div>
-            <h1>Buat Artikel SEO dalam <span>Hitungan Detik</span></h1>
-            <p>Tingkatkan produktivitas penulisan Anda. Ubah ide, video YouTube, atau dokumen mentah menjadi artikel yang terstruktur rapi, siap dipublikasikan ke blog WordPress Anda.</p>
+            <div class="hero-badge" data-i18n="hero_badge">Versi 1.0 Dirilis</div>
+            <h1 data-i18n="hero_title">Buat Artikel SEO dalam <span class="highlight">Hitungan Detik</span></h1>
+            <p data-i18n="hero_desc">Tingkatkan produktivitas penulisan Anda. Ubah ide, video YouTube, atau dokumen
+                mentah menjadi artikel yang terstruktur rapi, siap dipublikasikan ke blog WordPress Anda.</p>
             <div class="hero-cta">
-                <a href="app.html" class="btn-primary">Mulai Gratis</a>
-                <a href="#features" class="btn-secondary">Lihat Fitur</a>
+                <a href="app.html" class="btn-primary" data-i18n="btn_try_free">Mulai Sekarang</a>
+                <a href="#features" class="btn-secondary" data-i18n="btn_view_demo">Lihat Fitur</a>
             </div>
         </div>
         <div class="hero-image-container">
@@ -68,9 +71,12 @@
                 <img src="articles_image.png" alt="Contoh artikel yang dihasilkan" />
             </div>
             <div class="showcase-content">
-                <h2>Kualitas Penulisan Profesional</h2>
-                <p>Tidak perlu khawatir dengan gaya penulisan yang kaku. AI kami dilatih untuk menghasilkan struktur artikel yang natural, enak dibaca, dan dioptimasi untuk mesin pencari (SEO). Anda juga dapat menyesuaikan gaya penulisan menjadi santai, formal, atau akademis.</p>
-                <p>Semua hasil artikel langsung bisa di-preview, diedit, dan diekspor ke berbagai format profesional seperti PDF, Word, atau Markdown.</p>
+                <h2 data-i18n="showcase_title">Kualitas Penulisan Profesional</h2>
+                <p data-i18n="showcase_desc">Tidak perlu khawatir dengan gaya penulisan yang kaku. AI kami dilatih untuk
+                    menghasilkan struktur artikel yang natural, enak dibaca, dan dioptimasi untuk mesin pencari (SEO).
+                    Anda juga dapat menyesuaikan gaya penulisan menjadi santai, formal, atau akademis. Semua hasil
+                    artikel langsung bisa di-preview, diedit, dan diekspor ke berbagai format profesional seperti PDF,
+                    Word, atau Markdown.</p>
             </div>
         </div>
     </section>
@@ -78,8 +84,10 @@
     <!-- Features Section -->
     <section id="features" class="features">
         <div class="section-header">
-            <h2 class="section-title">Kenapa Memilih <span class="brand-name">Letter<span class="highlight">Wrap</span></span>?</h2>
-            <p class="section-subtitle">Aplikasi yang dirancang khusus untuk mempermudah alur kerja content creator, jurnalis, dan mahasiswa.</p>
+            <h2 class="section-title" data-i18n="feat_title">Kenapa Memilih <span class="brand-name">Letter<span
+                        class="highlight">Wrap</span></span>?</h2>
+            <p class="section-subtitle">Aplikasi yang dirancang khusus untuk mempermudah alur kerja content creator,
+                jurnalis, dan mahasiswa.</p>
         </div>
         <div class="features-grid">
             <div class="feature-card glass">
@@ -88,8 +96,9 @@
                         <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
                     </svg>
                 </div>
-                <h3>Multi-Sumber Konteks</h3>
-                <p>Tidak hanya teks manual, Anda bisa menggunakan URL web, video YouTube, hingga dokumen lokal (PDF/Word) sebagai referensi.</p>
+                <h3 data-i18n="feat_1_title">Multi-Sumber Konteks</h3>
+                <p data-i18n="feat_1_desc">Tidak hanya teks manual, Anda bisa menggunakan URL web, video YouTube, hingga
+                    dokumen lokal (PDF/Word) sebagai referensi.</p>
             </div>
             <div class="feature-card glass">
                 <div class="feature-icon">
@@ -98,8 +107,9 @@
                         <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
                 </div>
-                <h3>Proses Super Cepat</h3>
-                <p>Didukung oleh API AI modern yang teroptimasi, pembuatan artikel panjang hanya membutuhkan waktu beberapa detik saja.</p>
+                <h3 data-i18n="feat_2_title">Proses Super Cepat</h3>
+                <p data-i18n="feat_2_desc">Didukung oleh API AI modern yang teroptimasi, pembuatan artikel panjang hanya
+                    membutuhkan waktu beberapa detik saja.</p>
             </div>
             <div class="feature-card glass">
                 <div class="feature-icon">
@@ -109,8 +119,9 @@
                         <line x1="12" y1="3" x2="12" y2="15"></line>
                     </svg>
                 </div>
-                <h3>Integrasi WordPress</h3>
-                <p>Kirim hasil artikel langsung ke blog WordPress Anda sebagai draf atau publikasikan secara langsung tanpa perlu copy-paste.</p>
+                <h3 data-i18n="feat_3_title">Integrasi WordPress</h3>
+                <p data-i18n="feat_3_desc">Kirim hasil artikel langsung ke blog WordPress Anda sebagai draf atau
+                    publikasikan secara langsung tanpa perlu copy-paste.</p>
             </div>
             <div class="feature-card glass">
                 <div class="feature-icon">
@@ -122,15 +133,76 @@
                         <polyline points="10 9 9 9 8 9"></polyline>
                     </svg>
                 </div>
-                <h3>Ekspor Fleksibel</h3>
-                <p>Simpan dan bagikan karya Anda dengan mudah dengan fitur unduh ke PDF, Word Document (.docx), dan Plain Text.</p>
+                <h3 data-i18n="feat_4_title">Ekspor Fleksibel</h3>
+                <p data-i18n="feat_4_desc">Simpan dan bagikan karya Anda dengan mudah dengan fitur unduh ke PDF, Word
+                    Document (.docx), dan Plain Text.</p>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 <span class="brand-name">Letter<span class="highlight">Wrap</span></span>. Solusi Content Generator Cerdas.</p>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <a href="#" class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" />
+                        <path d="M2 17L12 22L22 17" />
+                        <path d="M2 12L12 17L22 12" />
+                    </svg>
+                    <span class="brand-name">Letter<span class="highlight">Wrap</span></span>
+                </a>
+                <p data-i18n="footer_desc">Menulis lebih cerdas, berkreasi lebih cepat, dan meraih lebih banyak dengan
+                    LetterWrap - Teman menulis terbaik Anda.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4 data-i18n="footer_legal">Legal</h4>
+                    <ul>
+                        <li><a href="terms.html" data-i18n="footer_terms">Syarat dan Ketentuan</a></li>
+                        <li><a href="privacy.html" data-i18n="footer_privacy">Kebijakan Privasi</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 data-i18n="footer_about">Tentang Kami</h4>
+                    <ul>
+                        <li><a href="contact.html" data-i18n="footer_contact">Kontak</a></li>
+                        <li><a href="help.html" data-i18n="footer_faq">Pusat Bantuan</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-left">
+                <a href="terms.html" data-i18n="footer_terms">Syarat dan Ketentuan</a>
+                <span>|</span>
+                <a href="privacy.html" data-i18n="footer_privacy">Kebijakan Privasi</a>
+                <span>|</span>
+                <span data-i18n="footer_rights">&copy; 2026 LetterWrap. All Rights Reserved</span>
+            </div>
+            <div class="footer-bottom-right"
+                style="position: relative; display: flex; align-items: center; gap: 0.5rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path
+                        d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                    </path>
+                </svg>
+                <select class="global-lang-selector"
+                    style="background: transparent; border: none; color: inherit; font-size: 0.9rem; cursor: pointer; outline: none; appearance: none; padding-right: 1.5rem;">
+                    <option value="id" style="color: #000;">Bahasa Indonesia</option>
+                    <option value="en" style="color: #000;">English</option>
+                </select>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="position: absolute; right: 0; pointer-events: none;">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+        </div>
     </footer>
 
     <script>
@@ -143,6 +215,19 @@
                 nav.style.boxShadow = '0 2px 15px rgba(0,0,0,0.05)';
             }
         });
+
+        // Update login button if already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = localStorage.getItem('letterwrap_logged_in');
+            const loginBtn = document.querySelector('.btn-login');
+            if (isLoggedIn && loginBtn) {
+                // Let lang.js handle the dashboard translation, just change href
+                loginBtn.href = 'app.html';
+                loginBtn.setAttribute('data-i18n', 'btn_dashboard');
+            }
+        });
     </script>
+    <script src="lang.js?v=1"></script>
 </body>
+
 </html>

@@ -214,22 +214,22 @@
             <span class="brand-name">Letter<span class="highlight">Wrap</span></span>
         </a>
 
-        <h1>Selamat Datang Kembali</h1>
-        <p class="subtitle">Masuk ke dashboard LetterWrap Anda</p>
+        <h1 data-i18n="auth_title_login">Selamat Datang Kembali</h1>
+        <p class="subtitle" data-i18n="auth_subtitle_login">Masuk ke dashboard LetterWrap Anda</p>
 
         <form id="loginForm">
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" class="form-control" placeholder="masukkan email anda" required>
+                <label for="email" data-i18n="auth_label_email">Email</label>
+                <input type="email" id="email" class="form-control" placeholder="masukkan email anda" data-i18n="contact_ph_email" required>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" data-i18n="auth_label_pwd">Password</label>
                 <input type="password" id="password" class="form-control" placeholder="masukkan password anda" required>
             </div>
             <p id="errorMsg"
                 style="color: #ef4444; font-size: 0.85rem; margin-top: -0.5rem; margin-bottom: 1rem; display: none;">
                 Email atau password salah.</p>
-            <button type="submit" class="btn-primary">Masuk</button>
+            <button type="submit" class="btn-primary" data-i18n="auth_btn_login">Masuk</button>
         </form>
 
         <div class="divider">atau lanjutkan dengan</div>
@@ -240,37 +240,64 @@
             Masuk dengan Google (Segera Hadir)
         </button>
 
-        <p class="footer-link">Belum punya akun? <a href="register.html">Daftar sekarang</a></p>
+        <p class="footer-link"><a href="register.html" data-i18n="auth_link_register">Belum punya akun? Daftar sekarang</a></p>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault(); // Mencegah reload halaman
 
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const errorMsg = document.getElementById('errorMsg');
+            const submitBtn = document.querySelector('.btn-primary');
+            
+            submitBtn.textContent = 'Memproses...';
+            submitBtn.disabled = true;
 
-            // Cek kredensial statis (Simulasi/Mock Login)
-            if (email === 'masukkan email anda' && password === 'masukkan password anda') {
-                // Simpan status login di browser
-                localStorage.setItem('letterwrap_logged_in', 'true');
-                errorMsg.style.display = 'none';
+            try {
+                const response = await fetch('http://localhost:8000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
 
-                // Arahkan ke dashboard
-                window.location.href = 'app.html';
-            } else {
-                // Tampilkan pesan error
+                if (response.ok) {
+                    // Simpan status login di browser
+                    localStorage.setItem('letterwrap_logged_in', 'true');
+                    localStorage.setItem('letterwrap_token', data.access_token);
+                    localStorage.setItem('letterwrap_user', data.user_name);
+                    errorMsg.style.display = 'none';
+                    
+                    // Arahkan ke dashboard
+                    window.location.href = 'app.html';
+                } else {
+                    // Tampilkan pesan error
+                    errorMsg.textContent = data.detail || 'Email atau password salah.';
+                    errorMsg.style.display = 'block';
+                    // Animasi getar kecil saat salah password
+                    const container = document.querySelector('.login-container');
+                    container.style.transform = 'translateX(-5px)';
+                    setTimeout(() => container.style.transform = 'translateX(5px)', 50);
+                    setTimeout(() => container.style.transform = 'translateX(-5px)', 100);
+                    setTimeout(() => container.style.transform = 'translateX(0)', 150);
+                    
+                    submitBtn.textContent = 'Masuk';
+                    submitBtn.disabled = false;
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Tidak dapat terhubung ke server backend (Pastikan backend berjalan).';
                 errorMsg.style.display = 'block';
-                // Animasi getar kecil saat salah password
-                const container = document.querySelector('.login-container');
-                container.style.transform = 'translateX(-5px)';
-                setTimeout(() => container.style.transform = 'translateX(5px)', 50);
-                setTimeout(() => container.style.transform = 'translateX(-5px)', 100);
-                setTimeout(() => container.style.transform = 'translateX(0)', 150);
+                submitBtn.textContent = 'Masuk';
+                submitBtn.disabled = false;
             }
         });
     </script>
+    <script src="lang.js?v=1"></script>
 </body>
 
 </html>

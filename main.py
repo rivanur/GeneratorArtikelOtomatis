@@ -30,8 +30,17 @@ uploads_dir = os.path.join(os.path.dirname(__file__), "data", "uploads")
 os.makedirs(uploads_dir, exist_ok=True)
 app.mount("/api/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 
-# Include API Router
+# Include API Routers
 app.include_router(router, prefix="/api")
+
+# Setup Database & Auth Routes
+from core.database import Base, engine
+from api.auth_routes import router as auth_router
+
+# Buat tabel database secara otomatis jika belum ada
+Base.metadata.create_all(bind=engine)
+
+app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 
 if __name__ == "__main__":
     print("Memulai server di http://localhost:8000")
