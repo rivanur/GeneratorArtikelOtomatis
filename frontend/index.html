@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="landing-style.css?v=1.1">
+    <link rel="stylesheet" href="landing-style.css?v=1.4">
     <script>
         // Set theme based on app settings or system preference
         const savedTheme = localStorage.getItem('app_theme') || 'system';
@@ -32,10 +32,16 @@
                 <path d="M2 17L12 22L22 17" />
                 <path d="M2 12L12 17L22 12" />
             </svg>
-            <span class="logo-text">Letter<span class="logo-highlight">Wrap</span></span>
+            <span class="brand-name">Letter<span class="highlight">Wrap</span></span>
         </div>
-        <div>
-            <a href="app.html" class="btn-primary">Buka Dashboard</a>
+        <div class="nav-links">
+            <a href="#">HOME</a>
+            <a href="#features">FITUR</a>
+            <a href="#harga">HARGA</a>
+            <a href="app.html">DASBOR</a>
+        </div>
+        <div class="nav-actions">
+            <a href="login.html" class="btn-login">Login</a>
         </div>
     </nav>
 
@@ -132,11 +138,9 @@
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('.navbar');
             if (window.scrollY > 10) {
-                nav.style.background = 'var(--navbar-bg)';
-                nav.style.boxShadow = 'var(--panel-shadow)';
+                nav.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
             } else {
-                nav.style.background = 'var(--panel-bg)';
-                nav.style.boxShadow = 'none';
+                nav.style.boxShadow = '0 2px 15px rgba(0,0,0,0.05)';
             }
         });
     </script>

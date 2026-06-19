@@ -72,12 +72,15 @@ Aplikasi akan langsung terbuka di alamat **http://localhost:5500**.
 ## 💻 Cara Menggunakan Aplikasi
 
 1. Pastikan **Langkah 1 (Backend)** dan **Langkah 2 (Frontend)** di atas sudah dijalankan.
-2. Anda akan disambut oleh antarmuka premium "Generator Artikel AI" di layar *browser* Anda.
-3. **Pengaturan API Key & WordPress:** Klik tombol **⚙️ Pengaturan** (ikon roda gigi) di pojok kanan atas.
-   *   Masukkan **Google Gemini API Key**.
+2. Anda akan melihat *Landing Page* (Halaman Utama) dari **LetterWrap**. Klik tombol **Login** di pojok kanan atas.
+3. Untuk masuk ke Dasbor, Anda wajib menggunakan **Kredensial Login Akses Khusus** (Mock Auth) berikut:
+   * **Email:** `admin@letterwrap.com`
+   * **Password:** `admin123`
+4. Setelah berhasil masuk ke Dasbor, klik tombol **⚙️ Pengaturan** (ikon roda gigi) di pojok kanan atas.
+   *   Masukkan **Google Gemini API Key** (atau API dari Provider lain yang didukung).
    *   (Opsional) Masukkan URL WordPress, Username, dan Application Password jika ingin memublikasikan artikel langsung ke *website* Anda.
    *   Klik **Simpan Pengaturan**.
-4. **Pilih Sumber:** Di panel sebelah kiri, pilih tipe sumber data yang ingin diekstrak (Misal: Teks Manual, URL Web, YouTube, Dokumen PDF, atau Video Lokal).
+5. **Pilih Sumber:** Di panel sebelah kiri, pilih tipe sumber data yang ingin diekstrak (Misal: Teks Manual, URL Web, YouTube, Dokumen PDF, atau Video Lokal).
    *   *Fitur Unggulan:* Pilih tab **"YouTube"** dan masukkan *link* video. Sistem akan otomatis mengunduh audionya dengan `yt-dlp` dan didengarkan langsung oleh AI.
 5. **Pilih Gaya:** Pilih gaya penulisan yang diinginkan pada menu *dropdown* (Misal: Gaya Blog, Gaya Berita).
 6. Klik tombol **"Generate Artikel"**.

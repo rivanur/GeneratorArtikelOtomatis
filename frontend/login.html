@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - LetterWrap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00b4d8;
+            --primary-hover: #0077b6;
+            --bg-color: #f8fafc;
+            --panel-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            background: var(--panel-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            text-decoration: none;
+        }
+
+        .logo svg {
+            color: var(--primary);
+            stroke-width: 3;
+            filter: drop-shadow(0 0 8px rgba(0, 180, 216, 0.4));
+        }
+
+        .brand-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-main);
+        }
+
+        .brand-name .highlight {
+            color: var(--primary);
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(90deg, #00b4d8, #0077b6);
+            color: white;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .divider:not(:empty)::before {
+            margin-right: .25em;
+        }
+
+        .divider:not(:empty)::after {
+            margin-left: .25em;
+        }
+
+        .btn-google {
+            width: 100%;
+            background: white;
+            color: #3c4043;
+            padding: 0.8rem;
+            border: 1px solid #dadce0;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: background 0.2s;
+        }
+
+        .btn-google:not(.disabled):hover {
+            background: #f8f9fa;
+        }
+
+        .btn-google.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #f1f3f4;
+        }
+
+        .btn-google img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .footer-link {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .footer-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <a href="index.html" class="logo">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" />
+                <path d="M2 17L12 22L22 17" />
+                <path d="M2 12L12 17L22 12" />
+            </svg>
+            <span class="brand-name">Letter<span class="highlight">Wrap</span></span>
+        </a>
+
+        <h1>Selamat Datang Kembali</h1>
+        <p class="subtitle">Masuk ke dashboard LetterWrap Anda</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" placeholder="masukkan email anda" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" placeholder="masukkan password anda" required>
+            </div>
+            <p id="errorMsg"
+                style="color: #ef4444; font-size: 0.85rem; margin-top: -0.5rem; margin-bottom: 1rem; display: none;">
+                Email atau password salah.</p>
+            <button type="submit" class="btn-primary">Masuk</button>
+        </form>
+
+        <div class="divider">atau lanjutkan dengan</div>
+
+        <button type="button" class="btn-google disabled"
+            onclick="alert('Fitur Login dengan Google saat ini sedang dalam tahap pengembangan dan belum tersedia.')">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo">
+            Masuk dengan Google (Segera Hadir)
+        </button>
+
+        <p class="footer-link">Belum punya akun? <a href="register.html">Daftar sekarang</a></p>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Mencegah reload halaman
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            // Cek kredensial statis (Simulasi/Mock Login)
+            if (email === 'masukkan email anda' && password === 'masukkan password anda') {
+                // Simpan status login di browser
+                localStorage.setItem('letterwrap_logged_in', 'true');
+                errorMsg.style.display = 'none';
+
+                // Arahkan ke dashboard
+                window.location.href = 'app.html';
+            } else {
+                // Tampilkan pesan error
+                errorMsg.style.display = 'block';
+                // Animasi getar kecil saat salah password
+                const container = document.querySelector('.login-container');
+                container.style.transform = 'translateX(-5px)';
+                setTimeout(() => container.style.transform = 'translateX(5px)', 50);
+                setTimeout(() => container.style.transform = 'translateX(-5px)', 100);
+                setTimeout(() => container.style.transform = 'translateX(0)', 150);
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 :root {
-  --primary: #6366f1;
-  --accent: #8b5cf6;
-  --primary-hover: #4f46e5;
+  --primary: #00b4d8;
+  --accent: #2ec4b6;
+  --primary-hover: #0077b6;
   --bg-color: #0f111a;
   --panel-bg: rgba(25, 28, 41, 0.6);
   --navbar-bg: rgba(15, 17, 26, 0.95);
@@ -60,10 +60,8 @@ body {
   top: 0;
   width: 100%;
   z-index: 100;
-  background: var(--navbar-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--panel-border);
+  background: #ffffff; /* Solid white background as requested */
+  box-shadow: 0 2px 15px rgba(0,0,0,0.05);
   transition: all 0.3s ease;
 }
 
@@ -75,16 +73,48 @@ body {
   gap: 0.75rem;
   color: var(--text-main);
   letter-spacing: -0.03em;
+  text-decoration: none;
 }
 
 .logo svg {
-  color: #8b5cf6; /* Match the exact color of the 'Wrap' text */
-  stroke-width: 3; /* Thicker stroke to match the reference image */
-  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));
+  color: var(--primary); /* Uses the primary theme color */
+  stroke-width: 3;
+  filter: drop-shadow(0 0 8px rgba(0, 180, 216, 0.4));
 }
 
-.logo-highlight {
-  color: #8b5cf6; /* Solid purple matching the logo */
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333333;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.nav-links a:hover {
+  color: #00b4d8;
+}
+
+.btn-login {
+  background: linear-gradient(90deg, #00b4d8, #0077b6);
+  color: white;
+  padding: 0.6rem 2rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: inline-block;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
 }
 
 /* Reusable inline brand text style */
@@ -95,7 +125,7 @@ body {
 }
 
 .brand-name .highlight {
-  color: #8b5cf6;
+  color: #00b4d8;
 }
 
 .btn-primary {
@@ -349,5 +379,56 @@ footer {
   }
   .hero-cta {
     justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem;
+  }
+  .hero {
+    padding-top: 100px;
+    padding-bottom: 2rem;
+  }
+  .section-title {
+    font-size: 1.8rem;
+  }
+  .showcase {
+    padding: 3rem 1rem;
+  }
+  .features {
+    padding: 3rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    font-size: 1.2rem;
+  }
+  .logo svg {
+    width: 20px;
+    height: 20px;
+  }
+  .btn-primary, .btn-secondary {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  .hero-cta {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.8rem;
+  }
+  .hero-cta a {
+    width: 100%;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+  .hero-image-container img {
+    max-height: 300px;
+  }
+  .showcase-content h2 {
+    font-size: 1.6rem;
   }
 }
