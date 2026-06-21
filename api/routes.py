@@ -149,7 +149,8 @@ async def generate_article(
                     check=True, capture_output=True
                 )
                 if os.path.exists(thumb_path):
-                    extracted_image_url = f"http://localhost:8000/api/uploads/{thumb_filename}"
+                    backend_url = os.getenv("BACKEND_URL", "http://localhost:8000")
+                    extracted_image_url = f"{backend_url}/api/uploads/{thumb_filename}"
             except:
                 pass
             

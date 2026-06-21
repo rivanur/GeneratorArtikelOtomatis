@@ -3,8 +3,10 @@ from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from typing import Optional
 
+import os
+
 # Konfigurasi Keamanan (Secret Key harus dirahasiakan di produksi)
-SECRET_KEY = "LETTERWRAP_SUPER_SECRET_KEY_FOR_JWT_TOKEN"
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "LETTERWRAP_SUPER_SECRET_KEY_FOR_JWT_TOKEN")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # Token berlaku 7 hari
 

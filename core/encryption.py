@@ -5,6 +5,10 @@ from cryptography.fernet import Fernet
 KEY_FILE = os.path.join(os.path.dirname(__file__), "..", "data", ".encryption_key")
 
 def get_or_create_key():
+    env_key = os.getenv("ENCRYPTION_KEY")
+    if env_key:
+        return env_key.encode('utf-8')
+
     if not os.path.exists(KEY_FILE):
         key = Fernet.generate_key()
         os.makedirs(os.path.dirname(KEY_FILE), exist_ok=True)

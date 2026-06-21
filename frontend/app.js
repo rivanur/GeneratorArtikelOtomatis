@@ -1,3 +1,7 @@
+// [PENTING] Ganti URL di bawah dengan alamat Northflank Anda nanti!
+const CLOUD_BACKEND_URL = 'https://api-arsa-anda.northflank.app';
+const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '5500' ? 'http://localhost:8000' : CLOUD_BACKEND_URL;
+
 // --- Theme Initialization ---
 const savedTheme = localStorage.getItem('app_theme') || 'system';
 
@@ -63,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Fetch User Profile ---
     function loadUserProfile() {
-        fetch('http://localhost:8000/api/auth/me', {
+        fetch(API_BASE_URL + '/api/auth/me', {
             headers: { 'Authorization': `Bearer ${authToken}` }
         })
         .then(res => res.json())
@@ -76,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update Avatar
             const initial = data.name ? data.name.charAt(0).toUpperCase() : 'U';
             if (data.profile_picture) {
-                const imgElement = `<img src="http://localhost:8000${data.profile_picture}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+                const imgElement = `<img src="${API_BASE_URL}${data.profile_picture}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
                 document.getElementById('avatarLarge').innerHTML = imgElement;
                 document.getElementById('accountAvatarPreview').innerHTML = imgElement;
                 document.getElementById('avatarSmall').innerHTML = imgElement;
@@ -95,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let savedHfModel = "mistralai/Mistral-7B-Instruct-v0.3";
     let savedGroqModel = "llama-3.1-8b-instant";
 
-    fetch('http://localhost:8000/api/settings', {
+    fetch(API_BASE_URL + '/api/settings', {
         headers: { 'Authorization': `Bearer ${authToken}` }
     })
     .then(res => res.json())
@@ -402,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const startTime = performance.now();
 
         try {
-            const response = await fetch('http://localhost:8000/api/generate', {
+            const response = await fetch(API_BASE_URL + '/api/generate', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${authToken}` },
                 body: formData
@@ -534,7 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('content', currentMarkdown);
 
         try {
-            const response = await fetch('http://localhost:8000/api/export/word', {
+            const response = await fetch(API_BASE_URL + '/api/export/word', {
                 method: 'POST',
                 body: formData
             });
@@ -599,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
             uploadFallbackBtn.disabled = true;
             uploadFallbackBtn.style.opacity = '0.5';
 
-            const response = await fetch('http://localhost:8000/api/upload-image', {
+            const response = await fetch(API_BASE_URL + '/api/upload-image', {
                 method: 'POST',
                 body: formData
             });
@@ -607,7 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             if (!response.ok) throw new Error(data.detail || 'Gagal upload gambar');
 
-            const markdownImage = `\n![Gambar Cover](http://localhost:8000${data.image_url})\n`;
+            const markdownImage = `\n![Gambar Cover](${API_BASE_URL}${data.image_url})\n`;
 
             const lines = currentMarkdown.split('\n');
             let insertIndex = 0;
@@ -749,7 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
         testStatusText.className = "";
 
         try {
-            const res = await fetch('http://localhost:8000/api/test-key', {
+            const res = await fetch(API_BASE_URL + '/api/test-key', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ api_key: apiKey, provider: "gemini" })
@@ -787,7 +791,7 @@ document.addEventListener('DOMContentLoaded', () => {
         testHfStatusText.className = "";
 
         try {
-            const res = await fetch('http://localhost:8000/api/test-key', {
+            const res = await fetch(API_BASE_URL + '/api/test-key', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ api_key: apiKey, provider: "huggingface" })
@@ -825,7 +829,7 @@ document.addEventListener('DOMContentLoaded', () => {
         testGroqStatusText.className = "";
 
         try {
-            const res = await fetch('http://localhost:8000/api/test-key', {
+            const res = await fetch(API_BASE_URL + '/api/test-key', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ api_key: apiKey, provider: "groq" })
@@ -851,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAvailableModels(apiKey, selectedModel = null, provider = "gemini") {
         try {
-            const res = await fetch('http://localhost:8000/api/models', {
+            const res = await fetch(API_BASE_URL + '/api/models', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ api_key: apiKey, provider: provider })
@@ -910,7 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (newName) {
                 const fdName = new FormData();
                 fdName.append('name', newName);
-                await fetch('http://localhost:8000/api/auth/profile', {
+                await fetch(API_BASE_URL + '/api/auth/profile', {
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${authToken}` },
                     body: fdName
@@ -923,7 +927,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const fdAvatar = new FormData();
                 fdAvatar.append('file', pendingAvatarFile);
                 try {
-                    await fetch('http://localhost:8000/api/auth/avatar', {
+                    await fetch(API_BASE_URL + '/api/auth/avatar', {
                         method: 'POST',
                         headers: { 'Authorization': `Bearer ${authToken}` },
                         body: fdAvatar
@@ -935,7 +939,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            const response = await fetch('http://localhost:8000/api/settings', {
+            const response = await fetch(API_BASE_URL + '/api/settings', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -1012,7 +1016,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fd.append('new_password', newPwd);
 
             try {
-                const res = await fetch('http://localhost:8000/api/auth/change-password', {
+                const res = await fetch(API_BASE_URL + '/api/auth/change-password', {
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${authToken}` },
                     body: fd
@@ -1057,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fd.append('status', status);
 
         try {
-            const response = await fetch('http://localhost:8000/api/publish/wordpress', {
+            const response = await fetch(API_BASE_URL + '/api/publish/wordpress', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${authToken}` },
                 body: fd
