@@ -9,7 +9,8 @@ class WordPressPublisher:
         self.app_password = app_password
 
     def _get_auth_header(self):
-        credentials = f"{self.username}:{self.app_password}"
+        clean_pwd = self.app_password.replace(" ", "").strip()
+        credentials = f"{self.username}:{clean_pwd}"
         token = base64.b64encode(credentials.encode()).decode('utf-8')
         return {"Authorization": f"Basic {token}"}
 
