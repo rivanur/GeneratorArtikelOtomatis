@@ -1,14 +1,14 @@
 :root {
-  --primary: #00b4d8;
-  --accent: #2ec4b6;
-  --primary-hover: #0077b6;
+  --primary: #2F5C4B;
+  --accent: #D47A5A;
+  --primary-hover: #24473a;
   --bg-color: #0f111a;
   --panel-bg: rgba(25, 28, 41, 0.6);
   --navbar-bg: rgba(15, 17, 26, 0.95);
   --panel-border: rgba(255, 255, 255, 0.08);
   --text-main: #f0f2f5;
   --text-muted: #9aa0a6;
-  --bg-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+  --bg-image: radial-gradient(at 0% 0%, rgba(47, 92, 75, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(212, 122, 90, 0.15) 0px, transparent 50%);
   --panel-backdrop: blur(16px);
   --panel-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
@@ -21,7 +21,7 @@
   --panel-border: rgba(0, 0, 0, 0.1);
   --text-main: #0f172a;
   --text-muted: #475569;
-  --bg-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%);
+  --bg-image: radial-gradient(at 0% 0%, rgba(47, 92, 75, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(212, 122, 90, 0.1) 0px, transparent 50%);
   --panel-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
 }
 
@@ -55,7 +55,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 5%;
+  padding: 0.1rem 5%;
   position: fixed;
   top: 0;
   width: 100%;
@@ -79,7 +79,7 @@ body {
 .logo svg {
   color: var(--primary); /* Uses the primary theme color */
   stroke-width: 3;
-  filter: drop-shadow(0 0 8px rgba(0, 180, 216, 0.4));
+  filter: drop-shadow(0 0 8px rgba(47, 92, 75, 0.4));
 }
 
 .nav-links {
@@ -97,11 +97,11 @@ body {
 }
 
 .nav-links a:hover {
-  color: #00b4d8;
+  color: #2F5C4B;
 }
 
 .btn-login {
-  background: linear-gradient(90deg, #00b4d8, #0077b6);
+  background: linear-gradient(90deg, #2F5C4B, #24473a);
   color: white;
   padding: 0.6rem 2rem;
   border-radius: 50px;
@@ -114,7 +114,7 @@ body {
 
 .btn-login:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+  box-shadow: 0 4px 15px rgba(47, 92, 75, 0.4);
 }
 
 /* Reusable inline brand text style */
@@ -125,7 +125,7 @@ body {
 }
 
 .brand-name .highlight {
-  color: #00b4d8;
+  color: #2F5C4B;
 }
 
 .btn-primary {
@@ -145,7 +145,7 @@ body {
 
 .btn-primary:hover {
   background: var(--primary-hover);
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 15px rgba(47, 92, 75, 0.3);
 }
 
 /* Hero Section */
@@ -186,14 +186,14 @@ body {
 
 .hero-badge {
   display: inline-block;
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(47, 92, 75, 0.1);
   color: var(--primary);
   padding: 0.4rem 0.8rem;
   border-radius: 4px;
   font-size: 0.85rem;
   font-weight: 500;
   margin-bottom: 1.5rem;
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(47, 92, 75, 0.2);
 }
 
 .hero h1 {

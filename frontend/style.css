@@ -4,15 +4,15 @@
     --panel-border: rgba(255, 255, 255, 0.08);
     --text-main: #f0f2f5;
     --text-muted: #9aa0a6;
-    --primary: #6366f1;
-    --primary-hover: #4f46e5;
-    --accent: #8b5cf6;
+    --primary: #2F5C4B;
+    --primary-hover: #24473a;
+    --accent: #D47A5A;
     --danger: #ef4444;
     --input-bg: rgba(0,0,0,0.2);
     --surface-light: rgba(255,255,255,0.05);
     --strong-color: #ffffff;
     --toast-bg: var(--panel-bg);
-    --bg-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+    --bg-image: radial-gradient(at 0% 0%, rgba(47, 92, 75, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(212, 122, 90, 0.15) 0px, transparent 50%);
     --panel-backdrop: blur(16px);
     --panel-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
@@ -23,9 +23,9 @@
     --panel-border: #e2e8f0;
     --text-main: #000000;
     --text-muted: #333333;
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --accent: #3b82f6;
+    --primary: #2F5C4B;
+    --primary-hover: #24473a;
+    --accent: #D47A5A;
     --danger: #ef4444;
     --input-bg: #ffffff;
     --surface-light: #f1f5f9;
@@ -77,12 +77,11 @@ body {
     box-shadow: var(--panel-shadow);
 }
 
-/* Header */
 .glass-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1.5rem;
+    padding: 0.1rem 1.5rem;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: 50;
@@ -199,7 +198,7 @@ body {
     background: var(--primary);
     color: white;
     border-color: var(--primary-hover);
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 15px rgba(47, 92, 75, 0.3);
 }
 
 .tab-pane {
@@ -269,7 +268,7 @@ textarea:focus, input[type="url"]:focus, select:focus {
 .file-upload:hover label {
     border-color: var(--primary);
     color: var(--primary);
-    background: rgba(99, 102, 241, 0.05);
+    background: rgba(47, 92, 75, 0.05);
 }
 
 select {
@@ -316,7 +315,7 @@ select option {
 
 .primary-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 4px 20px rgba(47, 92, 75, 0.4);
 }
 
 .primary-btn:active {
@@ -540,7 +539,7 @@ select option {
     background: linear-gradient(90deg, var(--primary), var(--accent));
     border-radius: 2px;
     transition: width 0.3s ease-out;
-    box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+    box-shadow: 0 0 10px rgba(47, 92, 75, 0.5);
 }
 
 .progress-fill.success {

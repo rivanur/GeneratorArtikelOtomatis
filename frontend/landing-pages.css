@@ -61,7 +61,7 @@
 }
 
 .faq-item summary:hover {
-  background: rgba(0, 180, 216, 0.05);
+  background: rgba(47, 92, 75, 0.05);
 }
 
 .faq-item summary::after {

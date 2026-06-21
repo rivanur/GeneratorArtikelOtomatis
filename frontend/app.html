@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LetterWrap Dashboard</title>
+    <title>ARSA Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -18,15 +18,7 @@
         <!-- Header -->
         <header class="glass-header">
             <div class="logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                <h1>Letter<span class="logo-highlight">Wrap</span></h1>
+                <img src="arsa-logo-horizontal.png" alt="ARSA Logo" height="75" style="object-fit: contain;">
             </div>
             <div class="header-actions">
                 <div class="user-profile-menu">
@@ -432,8 +424,8 @@
     <script src="app.js?v=10"></script>
     <script>
         // Verifikasi Login Saat Halaman Dimuat
-        const loggedIn = localStorage.getItem('letterwrap_logged_in');
-        const userEmail = localStorage.getItem('letterwrap_user'); // Menyimpan username atau email
+        const loggedIn = localStorage.getItem('ARSA_logged_in');
+        const userEmail = localStorage.getItem('ARSA_user'); // Menyimpan username atau email
         
         if (!loggedIn && !window.location.href.includes('index.html')) {
             window.location.href = 'login.html';
@@ -464,9 +456,9 @@
         // Logika Tombol Logout
         document.getElementById('logoutDropdownBtn').addEventListener('click', function() {
             if(confirm('Apakah Anda yakin ingin keluar?')) {
-                localStorage.removeItem('letterwrap_logged_in');
-                localStorage.removeItem('letterwrap_token');
-                localStorage.removeItem('letterwrap_user');
+                localStorage.removeItem('ARSA_logged_in');
+                localStorage.removeItem('ARSA_token');
+                localStorage.removeItem('ARSA_user');
                 window.location.href = 'index.html';
             }
         });

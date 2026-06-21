@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar - LetterWrap</title>
+    <title>Daftar - ARSA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00b4d8;
-            --primary-hover: #0077b6;
+            --primary: #2F5C4B;
+            --primary-hover: #24473a;
             --bg-color: #f8fafc;
             --panel-bg: #ffffff;
             --text-main: #0f172a;
@@ -59,7 +59,7 @@
         .logo svg {
             color: var(--primary);
             stroke-width: 3;
-            filter: drop-shadow(0 0 8px rgba(0, 180, 216, 0.4));
+            filter: drop-shadow(0 0 8px rgba(47, 92, 75, 0.4));
         }
 
         .brand-name {
@@ -112,7 +112,7 @@
 
         .btn-primary {
             width: 100%;
-            background: linear-gradient(90deg, #00b4d8, #0077b6);
+            background: linear-gradient(90deg, #2F5C4B, #24473a);
             color: white;
             padding: 0.8rem;
             border: none;
@@ -126,7 +126,7 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+            box-shadow: 0 4px 15px rgba(47, 92, 75, 0.4);
         }
 
         .divider {
@@ -206,17 +206,11 @@
 <body>
     <div class="login-container">
         <a href="index.html" class="logo">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
-                stroke-linejoin="round">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" />
-                <path d="M2 17L12 22L22 17" />
-                <path d="M2 12L12 17L22 12" />
-            </svg>
-            <span class="brand-name">Letter<span class="highlight">Wrap</span></span>
+            <img src="arsa-logo-horizontal.png" alt="ARSA Logo" height="75" style="object-fit: contain; transform: scale(1.8); transform-origin: center center;">
         </a>
 
         <h1 data-i18n="auth_title_register">Buat Akun Baru</h1>
-        <p class="subtitle" data-i18n="auth_subtitle_register">Bergabunglah dan mulai hasilkan artikel dengan AI</p>
+        <p class="subtitle" data-i18n="auth_subtitle_register">Bergabunglah dan mulai buat artikel dengan ARSA</p>
 
         <form id="registerForm">
             <div class="form-group">

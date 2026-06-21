@@ -72,9 +72,9 @@ Aplikasi akan langsung terbuka di alamat **http://localhost:5500**.
 ## 💻 Cara Menggunakan Aplikasi
 
 1. Pastikan **Langkah 1 (Backend)** dan **Langkah 2 (Frontend)** di atas sudah dijalankan.
-2. Anda akan melihat *Landing Page* (Halaman Utama) dari **LetterWrap**. Klik tombol **Login** di pojok kanan atas.
+2. Anda akan melihat *Landing Page* (Halaman Utama) dari **ARSA**. Klik tombol **Login** di pojok kanan atas.
 3. Untuk masuk ke Dasbor, Anda wajib menggunakan **Kredensial Login Akses Khusus** (Mock Auth) berikut:
-   * **Email:** `admin@letterwrap.com`
+   * **Email:** `admin@ARSA.com`
    * **Password:** `admin123`
 4. Setelah berhasil masuk ke Dasbor, klik tombol **⚙️ Pengaturan** (ikon roda gigi) di pojok kanan atas.
    *   Masukkan **Google Gemini API Key** (atau API dari Provider lain yang didukung).

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LetterWrap - Buat Artikel Otomatis dengan AI</title>
+    <title>ARSA - Buat Artikel Otomatis dengan AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -29,13 +29,7 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" />
-                <path d="M2 17L12 22L22 17" />
-                <path d="M2 12L12 17L22 12" />
-            </svg>
-            <span class="brand-name">Letter<span class="highlight">Wrap</span></span>
+            <img src="arsa-logo-horizontal.png" alt="ARSA Logo" height="75" style="object-fit: contain;">
         </div>
         <div class="nav-links">
             <a href="#" data-i18n="nav_home">HOME</a>
@@ -145,16 +139,10 @@
         <div class="footer-container">
             <div class="footer-brand">
                 <a href="#" class="logo">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2L2 7L12 12L22 7L12 2Z" />
-                        <path d="M2 17L12 22L22 17" />
-                        <path d="M2 12L12 17L22 12" />
-                    </svg>
-                    <span class="brand-name">Letter<span class="highlight">Wrap</span></span>
+                    <img src="arsa-logo-horizontal.png" alt="ARSA Logo" height="75" style="object-fit: contain; transform: scale(1.8); transform-origin: left center;">
                 </a>
                 <p data-i18n="footer_desc">Menulis lebih cerdas, berkreasi lebih cepat, dan meraih lebih banyak dengan
-                    LetterWrap - Teman menulis terbaik Anda.</p>
+                    ARSA - Teman menulis terbaik Anda.</p>
             </div>
             <div class="footer-links">
                 <div class="footer-column">
@@ -179,7 +167,7 @@
                 <span>|</span>
                 <a href="privacy.html" data-i18n="footer_privacy">Kebijakan Privasi</a>
                 <span>|</span>
-                <span data-i18n="footer_rights">&copy; 2026 LetterWrap. All Rights Reserved</span>
+                <span data-i18n="footer_rights">&copy; 2026 ARSA. All Rights Reserved</span>
             </div>
             <div class="footer-bottom-right"
                 style="position: relative; display: flex; align-items: center; gap: 0.5rem;">
@@ -218,7 +206,7 @@
 
         // Update login button if already logged in
         document.addEventListener('DOMContentLoaded', () => {
-            const isLoggedIn = localStorage.getItem('letterwrap_logged_in');
+            const isLoggedIn = localStorage.getItem('ARSA_logged_in');
             const loginBtn = document.querySelector('.btn-login');
             if (isLoggedIn && loginBtn) {
                 // Let lang.js handle the dashboard translation, just change href
