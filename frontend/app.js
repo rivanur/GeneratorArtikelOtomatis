@@ -133,6 +133,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabPanes = document.querySelectorAll('.tab-pane');
     let currentSourceType = 'manual_text';
 
+    // [PENTING] Sembunyikan tab YouTube khusus di Production (Cloudflare)
+    // Karena IP server Render sering diblokir oleh YouTube (Bot Protection)
+    const isLocalEnv = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    if (!isLocalEnv) {
+        const ytTabBtn = document.querySelector('.tab-btn[data-target="youtube"]');
+        if (ytTabBtn) {
+            ytTabBtn.style.display = 'none';
+        }
+    }
+
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             // Remove active class from all
