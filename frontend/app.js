@@ -1,5 +1,5 @@
-// [PENTING] Ganti URL di bawah dengan alamat Northflank Anda nanti!
-const CLOUD_BACKEND_URL = 'https://api-arsa-anda.northflank.app';
+// [PENTING] URL Otak/Backend Render kita
+const CLOUD_BACKEND_URL = 'https://generatorartikelotomatis.onrender.com';
 const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '5500' ? 'http://localhost:8000' : CLOUD_BACKEND_URL;
 
 // --- Theme Initialization ---
