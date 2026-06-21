@@ -29,9 +29,12 @@
                         </svg>
                     </button>
                     <div class="profile-dropdown" id="profileDropdown">
-                        <div class="dropdown-header">
-                            <div class="profile-avatar large" id="avatarLarge">U</div>
-                            <span class="dropdown-email" id="dropdownUserEmail">user@email.com</span>
+                        <div class="dropdown-header" style="max-width: 260px;">
+                            <div class="profile-avatar large" id="avatarLarge" style="flex-shrink: 0;">U</div>
+                            <div style="display: flex; flex-direction: column; overflow: hidden;">
+                                <span class="dropdown-name" id="dropdownUserName" style="font-weight: 600; color: var(--text-main); font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Memuat...</span>
+                                <span class="dropdown-email" id="dropdownUserEmail" style="font-size: 12px; color: var(--text-muted); font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">memuat...</span>
+                            </div>
                         </div>
                         <div class="dropdown-divider"></div>
 
@@ -315,6 +318,7 @@
                     <button class="modal-tab-btn active" data-target="setting_ai" data-i18n="tab_model_ai">Model AI</button>
                     <button class="modal-tab-btn" data-target="setting_wp" data-i18n="tab_wp">WordPress</button>
                     <button class="modal-tab-btn" data-target="setting_ui" data-i18n="tab_ui">Tampilan</button>
+                    <button class="modal-tab-btn" data-target="setting_account">Info Akun</button>
                 </div>
 
                 <div class="tab-content">
@@ -410,6 +414,33 @@
                                 <option value="light" data-i18n="opt_theme_light">Light Mode</option>
                             </select>
                         </div>
+                    </div>
+                    <div id="setting_account" class="modal-tab-pane">
+                        <div class="form-group" style="text-align: center; margin-bottom: 2rem;">
+                            <div class="profile-avatar large" id="accountAvatarPreview" style="width: 80px; height: 80px; font-size: 2.5rem; margin: 0 auto 10px; cursor: pointer;">U</div>
+                            <input type="file" id="avatarUploadInput" accept="image/*" style="display: none;">
+                            <button class="secondary-btn" id="uploadAvatarBtn" style="margin: 0 auto;">Ubah Foto Profil</button>
+                            <small id="avatarUploadStatus" style="display: block; margin-top: 5px; color: var(--text-muted);"></small>
+                        </div>
+                        <div class="form-group">
+                            <label>Nama Pengguna</label>
+                            <input type="text" id="account_name" />
+                        </div>
+                        <div class="form-group">
+                            <label>Email Utama (Read-only)</label>
+                            <input type="email" id="account_email" disabled style="background: var(--bg-hover); opacity: 0.7; cursor: not-allowed;" />
+                        </div>
+                        <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid var(--border-color);">
+                        <h3 style="font-size: 1rem; margin-bottom: 1rem;">Ganti Kata Sandi</h3>
+                        <div class="form-group">
+                            <label>Kata Sandi Lama</label>
+                            <input type="password" id="account_old_pwd" placeholder="Masukkan sandi saat ini" />
+                        </div>
+                        <div class="form-group">
+                            <label>Kata Sandi Baru</label>
+                            <input type="password" id="account_new_pwd" placeholder="Masukkan sandi baru" />
+                        </div>
+                        <button class="secondary-btn w-full" id="changePasswordBtn" style="margin-top: 0.5rem; justify-content: center;">Simpan Sandi Baru</button>
                     </div>
                 </div>
             </div>

@@ -40,6 +40,14 @@ from api.auth_routes import router as auth_router
 # Buat tabel database secara otomatis jika belum ada
 Base.metadata.create_all(bind=engine)
 
+# Injeksi otomatis kolom profile_picture tanpa menghapus data lama
+try:
+    with engine.begin() as conn:
+        from sqlalchemy import text
+        conn.execute(text("ALTER TABLE users ADD COLUMN profile_picture VARCHAR(255) NULL"))
+except Exception as e:
+    pass # Mengabaikan error jika kolom sudah ada
+
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 
 if __name__ == "__main__":

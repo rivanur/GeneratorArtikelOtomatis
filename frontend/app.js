@@ -59,6 +59,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    let pendingAvatarFile = null; // Menyimpan file foto sementara sebelum disimpan
+
+    // --- Fetch User Profile ---
+    function loadUserProfile() {
+        fetch('http://localhost:8000/api/auth/me', {
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('dropdownUserName').textContent = data.name || "Pengguna";
+            document.getElementById('dropdownUserEmail').textContent = data.email;
+            document.getElementById('account_email').value = data.email;
+            document.getElementById('account_name').value = data.name;
+            
+            // Update Avatar
+            const initial = data.name ? data.name.charAt(0).toUpperCase() : 'U';
+            if (data.profile_picture) {
+                const imgElement = `<img src="http://localhost:8000${data.profile_picture}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+                document.getElementById('avatarLarge').innerHTML = imgElement;
+                document.getElementById('accountAvatarPreview').innerHTML = imgElement;
+                document.getElementById('avatarSmall').innerHTML = imgElement;
+            } else {
+                document.getElementById('avatarLarge').textContent = initial;
+                document.getElementById('accountAvatarPreview').textContent = initial;
+                document.getElementById('avatarSmall').textContent = initial;
+            }
+        }).catch(err => console.error("Gagal memuat profil", err));
+    }
+    
+    loadUserProfile();
+
     // --- Fetch Initial Settings ---
     let savedAiModel = "gemini-2.5-flash";
     let savedHfModel = "mistralai/Mistral-7B-Instruct-v0.3";
@@ -639,7 +670,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
+    function closeSettingsModal() {
+        settingsModal.classList.add('hidden');
+        if (pendingAvatarFile) {
+            pendingAvatarFile = null;
+            document.getElementById('avatarUploadStatus').textContent = "";
+            loadUserProfile(); // Revert back to original avatar from DB
+        }
+    }
+
+    if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
+    
+    // Tutup modal jika klik di luar kotak (background/overlay)
+    if (settingsModal) {
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                closeSettingsModal();
+            }
+        });
+    }
 
     modalTabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -856,6 +905,36 @@ document.addEventListener('DOMContentLoaded', () => {
         saveSettingsBtn.textContent = 'Menyimpan...';
 
         try {
+            // Update Profile Name if changed
+            const newName = document.getElementById('account_name').value.trim();
+            if (newName) {
+                const fdName = new FormData();
+                fdName.append('name', newName);
+                await fetch('http://localhost:8000/api/auth/profile', {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${authToken}` },
+                    body: fdName
+                });
+                loadUserProfile(); // Refresh avatar & name
+            }
+
+            // Upload Avatar if pending
+            if (pendingAvatarFile) {
+                const fdAvatar = new FormData();
+                fdAvatar.append('file', pendingAvatarFile);
+                try {
+                    await fetch('http://localhost:8000/api/auth/avatar', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${authToken}` },
+                        body: fdAvatar
+                    });
+                    pendingAvatarFile = null; // Clear setelah berhasil
+                    document.getElementById('avatarUploadStatus').textContent = "";
+                } catch (e) {
+                    console.error("Gagal mengunggah foto:", e);
+                }
+            }
+
             const response = await fetch('http://localhost:8000/api/settings', {
                 method: 'POST',
                 headers: { 
@@ -868,6 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 showToast('Pengaturan berhasil disimpan di Database', true);
                 settingsModal.classList.add('hidden');
+                loadUserProfile(); // Refresh semua (avatar, nama, dll)
             } else {
                 showToast(data.detail || 'Gagal menyimpan pengaturan');
             }
@@ -878,6 +958,81 @@ document.addEventListener('DOMContentLoaded', () => {
             saveSettingsBtn.textContent = 'Simpan Pengaturan';
         }
     });
+
+    // --- Avatar Upload Logic ---
+    const uploadAvatarBtn = document.getElementById('uploadAvatarBtn');
+    const avatarUploadInput = document.getElementById('avatarUploadInput');
+    const avatarUploadStatus = document.getElementById('avatarUploadStatus');
+
+    if (uploadAvatarBtn) {
+        uploadAvatarBtn.addEventListener('click', () => {
+            avatarUploadInput.click();
+        });
+    }
+
+    if (avatarUploadInput) {
+        avatarUploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Simpan file ke variabel global
+            pendingAvatarFile = file;
+
+            // Pratinjau gambar secara lokal (tanpa upload)
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imgElement = `<img src="${event.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+                document.getElementById('accountAvatarPreview').innerHTML = imgElement;
+                document.getElementById('avatarLarge').innerHTML = imgElement; // Pratinjau instan di pojok kanan atas juga
+                document.getElementById('avatarSmall').innerHTML = imgElement; // Pratinjau di icon paling atas
+                avatarUploadStatus.textContent = "Foto siap disimpan. Jangan lupa klik 'Simpan Pengaturan'.";
+                avatarUploadStatus.style.color = "var(--primary)";
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // --- Change Password Logic ---
+    const changePasswordBtn = document.getElementById('changePasswordBtn');
+    if (changePasswordBtn) {
+        changePasswordBtn.addEventListener('click', async () => {
+            const oldPwd = document.getElementById('account_old_pwd').value;
+            const newPwd = document.getElementById('account_new_pwd').value;
+
+            if (!oldPwd || !newPwd) {
+                showToast('Harap isi sandi lama dan baru');
+                return;
+            }
+
+            changePasswordBtn.disabled = true;
+            changePasswordBtn.textContent = 'Memproses...';
+
+            const fd = new FormData();
+            fd.append('old_password', oldPwd);
+            fd.append('new_password', newPwd);
+
+            try {
+                const res = await fetch('http://localhost:8000/api/auth/change-password', {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${authToken}` },
+                    body: fd
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast('Kata sandi berhasil diubah!', true);
+                    document.getElementById('account_old_pwd').value = '';
+                    document.getElementById('account_new_pwd').value = '';
+                } else {
+                    showToast(data.detail || 'Gagal mengubah sandi');
+                }
+            } catch (err) {
+                showToast('Kesalahan jaringan');
+            } finally {
+                changePasswordBtn.disabled = false;
+                changePasswordBtn.textContent = 'Simpan Sandi Baru';
+            }
+        });
+    }
 
     // --- WordPress Publish Logic ---
     async function publishToWordPress(status) {

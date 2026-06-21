@@ -467,7 +467,7 @@ select option {
 /* Modal Styles */
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 1; transition: opacity 0.3s; }
 .modal-overlay.hidden { display: none; opacity: 0; pointer-events: none; }
-.modal-content { width: 90%; max-width: 500px; padding: 1.5rem; }
+.modal-content { width: 90%; max-width: 500px; padding: 1.5rem; max-height: 90vh; overflow-y: auto; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
 .modal-header h2 { font-size: 1.25rem; font-weight: 600; }
 .modal-tab-btn { padding: 0.5rem 1rem; border: none; background: none; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; font-weight: 500; font-size: 0.95rem; transition: all 0.2s; }

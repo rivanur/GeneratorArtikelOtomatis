@@ -9,6 +9,7 @@ class User(Base):
     name = Column(String(100), index=True)
     email = Column(String(100), unique=True, index=True)
     hashed_password = Column(String(255))
+    profile_picture = Column(String(255), nullable=True)
     is_active = Column(Boolean, default=True)
 
     settings = relationship("UserSettings", back_populates="user", uselist=False)
