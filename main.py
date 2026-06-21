@@ -6,20 +6,11 @@ from api.routes import router
 
 app = FastAPI(title="Generator Artikel Otomatis", description="Standalone Article Writer System")
 
-# Setup CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 # Konfigurasi CORS agar frontend terpisah bisa mengakses API
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], # Mengizinkan semua origin untuk development
-    allow_credentials=True,
+    allow_credentials=False, # HARUS False jika allow_origins=["*"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
