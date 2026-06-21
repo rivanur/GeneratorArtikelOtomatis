@@ -250,10 +250,8 @@
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const errorMsg = document.getElementById('errorMsg');
-            const submitBtn = document.getElementById('submitBtn');
+            const submitBtn = document.querySelector('.btn-primary');
 
-            errorMsg.style.display = 'none';
             submitBtn.disabled = true;
 
             try {
