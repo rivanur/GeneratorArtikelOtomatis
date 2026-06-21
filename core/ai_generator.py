@@ -27,7 +27,7 @@ class AIGenerator:
     @staticmethod
     def _search_web(query: str, max_results: int = 6) -> str:
         try:
-            from ddgs import DDGS
+            from duckduckgo_search import DDGS
             import requests
             from bs4 import BeautifulSoup
             import concurrent.futures

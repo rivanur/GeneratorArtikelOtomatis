@@ -21,3 +21,4 @@ cryptography>=41.0.0
 groq
 
 Pillow
+duckduckgo-search

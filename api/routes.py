@@ -190,7 +190,7 @@ async def generate_article(
                     break
             
             try:
-                from ddgs import DDGS
+                from duckduckgo_search import DDGS
                 print(f"Mencari gambar ilustrasi untuk: {article_title}")
                 results = list(DDGS().images(article_title, max_results=1))
                 if results and len(results) > 0:
