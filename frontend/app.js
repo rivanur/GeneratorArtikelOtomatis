@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Karena IP server Render sering diblokir oleh YouTube (Bot Protection)
     const isLocalEnv = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
     if (!isLocalEnv) {
-        const ytTabBtn = document.querySelector('.tab-btn[data-target="youtube"]');
+        const ytTabBtn = document.querySelector('.tab-btn[data-target="youtube_url"]');
         if (ytTabBtn) {
             ytTabBtn.style.display = 'none';
         }
