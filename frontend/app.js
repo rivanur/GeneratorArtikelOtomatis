@@ -28,6 +28,12 @@ if (window.matchMedia) {
     });
 }
 
+// --- Token Check ---
+const authToken = localStorage.getItem('ARSA_token');
+if (!authToken) {
+    window.location.href = 'login.html';
+}
+
 // --- UI Localization logic moved to lang.js ---
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -58,32 +64,34 @@ document.addEventListener('DOMContentLoaded', () => {
     let savedHfModel = "mistralai/Mistral-7B-Instruct-v0.3";
     let savedGroqModel = "llama-3.1-8b-instant";
 
-    fetch('http://localhost:8000/api/settings')
-        .then(res => res.json())
-        .then(data => {
-            if (data.ai_provider) {
-                document.getElementById('setting_ai_provider').value = data.ai_provider;
-                toggleProviderSettings(data.ai_provider);
-            }
-            if (data.api_key) {
-                document.getElementById('setting_api_key').value = data.api_key;
-                if (data.ai_model) savedAiModel = data.ai_model;
-                if (data.ai_provider === 'gemini') loadAvailableModels(data.api_key, savedAiModel, 'gemini');
-            }
-            if (data.hf_api_key) {
-                document.getElementById('setting_hf_api_key').value = data.hf_api_key;
-                if (data.hf_model) savedHfModel = data.hf_model;
-                if (data.ai_provider === 'huggingface') loadAvailableModels(data.hf_api_key, savedHfModel, 'huggingface');
-            }
-            if (data.groq_api_key) {
-                document.getElementById('setting_groq_api_key').value = data.groq_api_key;
-                if (data.groq_model) savedGroqModel = data.groq_model;
-                if (data.ai_provider === 'groq') loadAvailableModels(data.groq_api_key, savedGroqModel, 'groq');
-            }
-            if (data.wp_url) document.getElementById('setting_wp_url').value = data.wp_url;
-            if (data.wp_username) document.getElementById('setting_wp_user').value = data.wp_username;
-            if (data.wp_app_password) document.getElementById('setting_wp_pwd').value = data.wp_app_password;
-        }).catch(err => console.error("Gagal memuat pengaturan", err));
+    fetch('http://localhost:8000/api/settings', {
+        headers: { 'Authorization': `Bearer ${authToken}` }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.ai_provider) {
+            document.getElementById('setting_ai_provider').value = data.ai_provider;
+            toggleProviderSettings(data.ai_provider);
+        }
+        if (data.api_key) {
+            document.getElementById('setting_api_key').value = data.api_key;
+            if (data.ai_model) savedAiModel = data.ai_model;
+            if (data.ai_provider === 'gemini') loadAvailableModels(data.api_key, savedAiModel, 'gemini');
+        }
+        if (data.hf_api_key) {
+            document.getElementById('setting_hf_api_key').value = data.hf_api_key;
+            if (data.hf_model) savedHfModel = data.hf_model;
+            if (data.ai_provider === 'huggingface') loadAvailableModels(data.hf_api_key, savedHfModel, 'huggingface');
+        }
+        if (data.groq_api_key) {
+            document.getElementById('setting_groq_api_key').value = data.groq_api_key;
+            if (data.groq_model) savedGroqModel = data.groq_model;
+            if (data.ai_provider === 'groq') loadAvailableModels(data.groq_api_key, savedGroqModel, 'groq');
+        }
+        if (data.wp_url) document.getElementById('setting_wp_url').value = data.wp_url;
+        if (data.wp_username) document.getElementById('setting_wp_user').value = data.wp_username;
+        if (data.wp_app_password) document.getElementById('setting_wp_pwd').value = data.wp_app_password;
+    }).catch(err => console.error("Gagal memuat pengaturan", err));
 
     // --- Tab Switching Logic (Main) ---
     const tabBtns = document.querySelectorAll('.tab-btn');
@@ -365,6 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('http://localhost:8000/api/generate', {
                 method: 'POST',
+                headers: { 'Authorization': `Bearer ${authToken}` },
                 body: formData
             });
 
@@ -849,12 +858,15 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('http://localhost:8000/api/settings', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
                 body: JSON.stringify(payload)
             });
             const data = await response.json();
             if (response.ok) {
-                showToast('Pengaturan berhasil disimpan', true);
+                showToast('Pengaturan berhasil disimpan di Database', true);
                 settingsModal.classList.add('hidden');
             } else {
                 showToast(data.detail || 'Gagal menyimpan pengaturan');
@@ -892,6 +904,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('http://localhost:8000/api/publish/wordpress', {
                 method: 'POST',
+                headers: { 'Authorization': `Bearer ${authToken}` },
                 body: fd
             });
             const data = await response.json();

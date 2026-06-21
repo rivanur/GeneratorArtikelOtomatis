@@ -18,6 +18,7 @@ __pycache__/
 Thumbs.db
 
 # Project Specific
+data/.encryption_key
 data/settings.json
 data/temp/
 data/uploads/

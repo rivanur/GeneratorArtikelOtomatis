@@ -1,9 +1,13 @@
-from fastapi import APIRouter, Form, UploadFile, File, HTTPException, Body
+from fastapi import APIRouter, Form, UploadFile, File, HTTPException, Body, Depends
 from typing import Optional
 from core.extractor import ContentExtractor
 from core.ai_generator import AIGenerator
-from core.settings_manager import SettingsManager
 from core.wordpress_publisher import WordPressPublisher
+from sqlalchemy.orm import Session
+from core.database import get_db
+from core.models import User, UserSettings
+from core.auth import get_current_user
+from core.encryption import CryptoManager
 import os
 import aiofiles
 import uuid
@@ -18,29 +22,36 @@ async def generate_article(
     language: str = Form("Indonesia"),
     manual_text: Optional[str] = Form(None),
     url: Optional[str] = Form(None),
-    file: Optional[UploadFile] = File(None)
+    file: Optional[UploadFile] = File(None),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
     try:
         # 1. Pilih & Konfigurasi API LLM
-        settings = SettingsManager.get_settings()
-        ai_provider = settings.get("ai_provider", "gemini")
+        settings = db.query(UserSettings).filter(UserSettings.user_id == current_user.id).first()
+        if not settings:
+            raise HTTPException(status_code=400, detail="Pengaturan belum disimpan. Silakan isi API Key di menu Pengaturan ⚙️.")
+            
+        ai_provider = settings.ai_provider or "gemini"
+        active_api_key = ""
+        active_model = "auto"
         
         if ai_provider == "gemini":
-            api_key = settings.get("api_key", "")
-            ai_model = settings.get("ai_model", "auto")
+            active_api_key = CryptoManager.decrypt(settings.encrypted_gemini_key) if settings.encrypted_gemini_key else ""
+            active_model = settings.ai_model
         elif ai_provider == "huggingface":
-            api_key = settings.get("hf_api_key", "")
-            ai_model = settings.get("hf_model", "auto")
+            active_api_key = CryptoManager.decrypt(settings.encrypted_hf_key) if settings.encrypted_hf_key else ""
+            active_model = settings.hf_model
         elif ai_provider == "groq":
-            api_key = settings.get("groq_api_key", "")
-            ai_model = settings.get("groq_model", "auto")
+            active_api_key = CryptoManager.decrypt(settings.encrypted_groq_key) if settings.encrypted_groq_key else ""
+            active_model = settings.groq_model
         else:
             raise HTTPException(status_code=400, detail="Provider AI tidak valid.")
             
-        if not api_key:
-            raise HTTPException(status_code=400, detail=f"{ai_provider.capitalize()} API Key belum diatur. Silakan buka menu Pengaturan ⚙️.")
+        if not active_api_key:
+            raise HTTPException(status_code=400, detail=f"{ai_provider.capitalize()} API Key belum diatur. Silakan isi di menu Pengaturan ⚙️.")
             
-        generator = AIGenerator(provider=ai_provider, api_key=api_key, model_name=ai_model)
+        generator = AIGenerator(provider=ai_provider, api_key=active_api_key, model_name=active_model)
         
         # 2. Ekstraksi & Parsing Teks Otomatis
         extracted_text = ""
@@ -215,27 +226,69 @@ async def generate_article(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/settings")
-async def get_settings():
-    return SettingsManager.get_settings()
+async def get_settings(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    settings = db.query(UserSettings).filter(UserSettings.user_id == current_user.id).first()
+    if not settings:
+        return {}
+        
+    return {
+        "ai_provider": settings.ai_provider,
+        "ai_model": settings.ai_model,
+        "api_key": CryptoManager.decrypt(settings.encrypted_gemini_key) if settings.encrypted_gemini_key else "",
+        "hf_model": settings.hf_model,
+        "hf_api_key": CryptoManager.decrypt(settings.encrypted_hf_key) if settings.encrypted_hf_key else "",
+        "groq_model": settings.groq_model,
+        "groq_api_key": CryptoManager.decrypt(settings.encrypted_groq_key) if settings.encrypted_groq_key else "",
+        "wp_url": settings.wp_url,
+        "wp_username": settings.wp_username,
+        "wp_app_password": CryptoManager.decrypt(settings.encrypted_wp_password) if settings.encrypted_wp_password else ""
+    }
 
 @router.post("/settings")
-async def update_settings(settings: dict = Body(...)):
-    success = SettingsManager.save_settings(settings)
-    if success:
-        return {"status": "success", "message": "Pengaturan berhasil disimpan"}
-    raise HTTPException(status_code=500, detail="Gagal menyimpan pengaturan")
+async def update_settings(payload: dict = Body(...), current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    settings = db.query(UserSettings).filter(UserSettings.user_id == current_user.id).first()
+    if not settings:
+        settings = UserSettings(user_id=current_user.id)
+        db.add(settings)
+        
+    if "ai_provider" in payload: settings.ai_provider = payload["ai_provider"]
+    if "ai_model" in payload: settings.ai_model = payload["ai_model"]
+    if "api_key" in payload and payload["api_key"]: settings.encrypted_gemini_key = CryptoManager.encrypt(payload["api_key"])
+    
+    if "hf_model" in payload: settings.hf_model = payload["hf_model"]
+    if "hf_api_key" in payload and payload["hf_api_key"]: settings.encrypted_hf_key = CryptoManager.encrypt(payload["hf_api_key"])
+    
+    if "groq_model" in payload: settings.groq_model = payload["groq_model"]
+    if "groq_api_key" in payload and payload["groq_api_key"]: settings.encrypted_groq_key = CryptoManager.encrypt(payload["groq_api_key"])
+    
+    if "wp_url" in payload: settings.wp_url = payload["wp_url"]
+    if "wp_username" in payload: settings.wp_username = payload["wp_username"]
+    if "wp_app_password" in payload and payload["wp_app_password"]: settings.encrypted_wp_password = CryptoManager.encrypt(payload["wp_app_password"])
+    
+    db.commit()
+    return {"status": "success", "message": "Pengaturan berhasil disimpan di Database"}
 
 @router.post("/publish/wordpress")
-async def publish_to_wordpress(title: str = Form(...), content: str = Form(...), status: str = Form("draft")):
-    settings = SettingsManager.get_settings()
-    wp_url = settings.get("wp_url")
-    username = settings.get("wp_username")
-    app_pwd = settings.get("wp_app_password")
+async def publish_to_wordpress(
+    title: str = Form(...), 
+    content: str = Form(...), 
+    status: str = Form("draft"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     
-    if not wp_url or not username or not app_pwd:
-        raise HTTPException(status_code=400, detail="Kredensial WordPress belum diisi. Silakan cek menu Pengaturan ⚙️.")
+    settings = db.query(UserSettings).filter(UserSettings.user_id == current_user.id).first()
+    if not settings:
+        raise HTTPException(status_code=400, detail="Pengaturan WordPress belum disimpan.")
         
-    publisher = WordPressPublisher(wp_url, username, app_pwd)
+    wp_url = settings.wp_url
+    wp_username = settings.wp_username
+    wp_app_password = CryptoManager.decrypt(settings.encrypted_wp_password) if settings.encrypted_wp_password else ""
+
+    if not wp_url or not wp_username or not wp_app_password:
+        raise HTTPException(status_code=400, detail="Kredensial WordPress belum lengkap diisi. Silakan cek menu Pengaturan ⚙️.")
+        
+    publisher = WordPressPublisher(wp_url, wp_username, wp_app_password)
     result = publisher.publish_article(title=title, markdown_content=content, status=status)
     
     if result.get("success"):
