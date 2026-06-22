@@ -154,9 +154,9 @@ body {
 .hero {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: stretch; /* Memaksa gambar stretch atas-bawah */
   justify-content: space-between;
-  padding-top: 80px;
+  padding-top: 0; /* Dihapus agar gambar menembus ke atap (bawah navbar) */
   padding-left: max(5%, calc((100vw - 1400px) / 2));
   padding-right: 0;
   gap: 4rem;
@@ -165,6 +165,12 @@ body {
 .hero-content {
   flex: 1;
   max-width: 650px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Menjaga teks tetap di tengah secara vertikal */
+  align-items: flex-start; /* Mencegah elemen seperti badge memanjang penuh */
+  padding-top: calc(80px + 5rem); /* Mengamankan teks dari tumpang tindih dengan navbar */
+  padding-bottom: 5rem;
   animation: fadeInLeft 1s ease-out;
 }
 
@@ -172,17 +178,17 @@ body {
   flex: 1;
   display: flex;
   justify-content: flex-end;
-  align-items: center;
+  align-items: stretch; /* Memaksa gambar untuk stretch */
   animation: fadeInRight 1s ease-out;
 }
 
 .hero-image-container img {
   width: 100%;
   max-width: 550px;
-  max-height: 550px;
+  height: 100%; /* Memaksa gambar mengisi penuh dari atas ke bawah */
   object-fit: cover;
   border-radius: 0;
-  border: 1px solid var(--panel-border);
+  border: none; /* Dihapus agar terlihat menyatu bersih dengan layar */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
@@ -307,22 +313,29 @@ body {
 
 /* Showcase Section (For the Articles Image) */
 .showcase {
-  padding: 5rem 5%;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: max(5%, calc((100vw - 1400px) / 2));
   background: var(--showcase-bg, rgba(0,0,0,0.2));
   border-top: 1px solid var(--panel-border);
   border-bottom: 1px solid var(--panel-border);
 }
 
 .showcase-container {
-  max-width: 1400px;
-  margin: 0 auto;
   display: flex;
-  align-items: center;
+  align-items: stretch; /* Agar gambar bisa direntangkan penuh atas-bawah */
   gap: 4rem;
 }
 
 .showcase-content {
   flex: 1;
+  max-width: 650px; /* Menyamakan batas lebar teks dengan bagian atas */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start; /* Mencegah elemen memanjang penuh */
+  padding: 5rem 0;
 }
 
 .showcase-content h2 {
@@ -340,12 +353,17 @@ body {
 
 .showcase-image {
   flex: 1;
+  display: flex;
+  justify-content: flex-start; /* Gambar ditarik ke paling kiri */
 }
 
 .showcase-image img {
   width: 100%;
-  border-radius: 4px;
-  border: 1px solid var(--panel-border);
+  max-width: 550px; /* Menyamakan ukuran dengan gambar atas */
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0; /* Disamakan dengan gambar atas (siku-siku tajam) */
+  border: none;
   box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
@@ -545,19 +563,23 @@ body {
 }
 
 @media (max-width: 900px) {
-  .hero {
+  .hero, .showcase {
     padding-left: 5%;
     padding-right: 5%;
   }
   .hero, .showcase-container {
     flex-direction: column;
     text-align: center;
-    gap: 3rem;
+    gap: 1.5rem; /* Dimampatkan agar tidak buang space */
+  }
+  .showcase-content {
+    padding: 0 0 2rem 0; /* Membuang bantalan atas yang terlalu besar */
   }
   .hero-content {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 1.5rem 0 2rem 0; /* Membuang ruang vertikal raksasa bawaan desktop */
   }
   .hero-cta {
     justify-content: center;
@@ -574,7 +596,7 @@ body {
   .logo img {
     height: 50px !important;
   }
-  .hero-image-container {
+  .hero-image-container, .showcase-image {
     display: flex;
     margin-bottom: 0;
     margin-top: 0;
@@ -582,9 +604,10 @@ body {
     margin-left: -5vw;
     margin-right: -5vw;
   }
-  .hero-image-container img {
+  .hero-image-container img, .showcase-image img {
     border-radius: 0;
     width: 100%;
+    height: auto; /* Mencegah gambar collapse di mobile */
     max-width: 100%;
     border-left: none;
     border-right: none;
@@ -600,9 +623,7 @@ body {
   .section-title {
     font-size: 1.8rem;
   }
-  .showcase {
-    padding: 3rem 1rem;
-  }
+  /* .showcase padding dihapus agar gambar menempel rapat ke batas atas */
   .features {
     padding: 3rem 1rem;
   }
