@@ -60,7 +60,9 @@ body {
   top: 0;
   width: 100%;
   z-index: 100;
-  background: #ffffff; /* Solid white background as requested */
+  background: var(--navbar-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 2px 15px rgba(0,0,0,0.05);
   transition: all 0.3s ease;
 }
@@ -89,7 +91,7 @@ body {
 
 .nav-links a {
   text-decoration: none;
-  color: #333333;
+  color: var(--text-main);
   font-weight: 600;
   font-size: 0.95rem;
   transition: color 0.2s;
