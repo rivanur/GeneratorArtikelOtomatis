@@ -463,6 +463,28 @@ select option {
     }
 }
 
+@media (max-width: 600px) {
+    .result-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    .result-header .header-actions {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+    }
+    .result-header .header-actions::-webkit-scrollbar {
+        height: 4px;
+    }
+    .result-header .header-actions::-webkit-scrollbar-thumb {
+        background: var(--panel-border);
+        border-radius: 4px;
+    }
+}
+
 
 /* Modal Styles */
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 1; transition: opacity 0.3s; }
