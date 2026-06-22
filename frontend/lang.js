@@ -78,7 +78,7 @@ const translations = {
         // Index - Hero
         'hero_badge': 'Versi 1.0 Dirilis',
         'hero_title': 'Buat Artikel SEO dalam <span class="highlight">Hitungan Detik</span>',
-        'hero_desc': 'Tingkatkan produktivitas penulisan Anda. Ubah ide, video YouTube, atau dokumen mentah menjadi artikel blog siap publikasi hanya dengan satu klik.',
+        'hero_desc': 'Tingkatkan produktivitas penulisan Anda. Ubah ide atau dokumen mentah menjadi artikel blog siap publikasi hanya dengan satu klik.',
         'btn_try_free': 'Mulai Sekarang',
         'btn_view_demo': 'Lihat Fitur',
 

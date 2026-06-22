@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="landing-style.css?v=1.4">
+    <link rel="stylesheet" href="landing-style.css?v=2.4">
     <script>
         // Set theme based on app settings or system preference
         const savedTheme = localStorage.getItem('app_theme') || 'system';
@@ -37,16 +37,35 @@
             <a href="help.html" data-i18n="nav_help">BANTUAN</a>
         </div>
         <div class="nav-actions">
-            <a href="login.html" class="btn-login" data-i18n="btn_login">Masuk</a>
+            <a href="login.html" class="btn-login desktop-only" data-i18n="btn_login">Masuk</a>
+            <button class="hamburger-btn mobile-only" id="hamburgerBtn" aria-label="Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
         </div>
     </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <img src="arsa-logo-horizontal.png" alt="ARSA" height="40" style="object-fit: contain;">
+            <button class="close-menu-btn" id="closeMenuBtn">&times;</button>
+        </div>
+        <div class="mobile-nav-links">
+            <a href="#" class="mobile-link" data-i18n="nav_home">HOME</a>
+            <a href="#features" class="mobile-link" data-i18n="nav_features">FITUR</a>
+            <a href="help.html" class="mobile-link" data-i18n="nav_help">BANTUAN</a>
+        </div>
+        <div class="mobile-menu-footer">
+            <a href="login.html" class="btn-login full-width" data-i18n="btn_login">Masuk</a>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
             <div class="hero-badge" data-i18n="hero_badge">Versi 1.0 Dirilis</div>
             <h1 data-i18n="hero_title">Buat Artikel SEO dalam <span class="highlight">Hitungan Detik</span></h1>
-            <p data-i18n="hero_desc">Tingkatkan produktivitas penulisan Anda. Ubah ide, video YouTube, atau dokumen
+            <p data-i18n="hero_desc">Tingkatkan produktivitas penulisan Anda. Ubah ide atau dokumen
                 mentah menjadi artikel yang terstruktur rapi, siap dipublikasikan ke blog WordPress Anda.</p>
             <div class="hero-cta">
                 <a href="app.html" class="btn-primary" data-i18n="btn_try_free">Mulai Sekarang</a>
@@ -91,10 +110,10 @@
                     </svg>
                 </div>
                 <h3 data-i18n="feat_1_title">Multi-Sumber Konteks</h3>
-                <p data-i18n="feat_1_desc">Tidak hanya teks manual, Anda bisa menggunakan URL web, video YouTube, hingga
+                <p data-i18n="feat_1_desc">Tidak hanya teks manual, Anda bisa menggunakan URL web, hingga
                     dokumen lokal (PDF/Word) sebagai referensi.</p>
             </div>
-            <div class="feature-card glass">
+            <div class="feature-card glass" style="display: none;">
                 <div class="feature-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -212,6 +231,32 @@
                 // Let lang.js handle the dashboard translation, just change href
                 loginBtn.href = 'app.html';
                 loginBtn.setAttribute('data-i18n', 'btn_dashboard');
+            }
+            
+            // Mobile Menu Toggle
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const closeMenuBtn = document.getElementById('closeMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+
+            if (hamburgerBtn && closeMenuBtn && mobileMenu) {
+                hamburgerBtn.addEventListener('click', () => {
+                    mobileMenu.classList.add('active');
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling
+                });
+
+                closeMenuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+
+                // Close menu when a link is clicked
+                mobileLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                });
             }
         });
     </script>
