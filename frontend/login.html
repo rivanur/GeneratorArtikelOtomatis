@@ -242,6 +242,13 @@
         const CLOUD_BACKEND_URL = 'https://generatorartikelotomatis.onrender.com';
         const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '5500' ? 'http://localhost:8000' : CLOUD_BACKEND_URL;
 
+        // Bouncer: Cek memori, kalau sudah login, langsung usir kembali ke Dashboard!
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('ARSA_logged_in') === 'true' && localStorage.getItem('ARSA_token')) {
+                window.location.replace('app.html');
+            }
+        });
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;

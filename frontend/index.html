@@ -226,11 +226,13 @@
         // Update login button if already logged in
         document.addEventListener('DOMContentLoaded', () => {
             const isLoggedIn = localStorage.getItem('ARSA_logged_in');
-            const loginBtn = document.querySelector('.btn-login');
-            if (isLoggedIn && loginBtn) {
+            const loginBtns = document.querySelectorAll('.btn-login');
+            if (isLoggedIn && loginBtns.length > 0) {
                 // Let lang.js handle the dashboard translation, just change href
-                loginBtn.href = 'app.html';
-                loginBtn.setAttribute('data-i18n', 'btn_dashboard');
+                loginBtns.forEach(btn => {
+                    btn.href = 'app.html';
+                    btn.setAttribute('data-i18n', 'btn_dashboard');
+                });
             }
             
             // Mobile Menu Toggle
