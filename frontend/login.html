@@ -8,10 +8,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Set theme based on app settings or system preference
+        const savedTheme = localStorage.getItem('app_theme') || 'system';
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else if (savedTheme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
     <style>
         :root {
             --primary: #2F5C4B;
             --primary-hover: #24473a;
+            --bg-color: #0f111a;
+            --panel-bg: #191c29;
+            --text-main: #f0f2f5;
+            --text-muted: #9aa0a6;
+            --border-color: #2a2d3d;
+        }
+
+        :root[data-theme="light"] {
             --bg-color: #f8fafc;
             --panel-bg: #ffffff;
             --text-main: #0f172a;
@@ -101,6 +122,8 @@
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 1rem;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             transition: border-color 0.2s;
         }
 
@@ -205,7 +228,8 @@
 <body>
     <div class="login-container">
         <a href="index.html" class="logo">
-            <img src="arsa-logo-horizontal.png" alt="ARSA Logo" height="75" style="object-fit: contain; transform: scale(1.8); transform-origin: center center;">
+            <img src="arsa-logo-horizontal.png" alt="ARSA Logo" height="75"
+                style="object-fit: contain; transform: scale(1.8); transform-origin: center center;">
         </a>
 
         <h1 data-i18n="auth_title_login">Selamat Datang Kembali</h1>
@@ -214,7 +238,8 @@
         <form id="loginForm">
             <div class="form-group">
                 <label for="email" data-i18n="auth_label_email">Email</label>
-                <input type="email" id="email" class="form-control" placeholder="masukkan email anda" data-i18n="contact_ph_email" required>
+                <input type="email" id="email" class="form-control" placeholder="masukkan email anda"
+                    data-i18n="contact_ph_email" required>
             </div>
             <div class="form-group">
                 <label for="password" data-i18n="auth_label_pwd">Password</label>
@@ -226,15 +251,16 @@
             <button type="submit" class="btn-primary" data-i18n="auth_btn_login">Masuk</button>
         </form>
 
-        <div class="divider">atau lanjutkan dengan</div>
+        <!-- <div class="divider">atau lanjutkan dengan</div>
 
         <button type="button" class="btn-google disabled"
             onclick="alert('Fitur Login dengan Google saat ini sedang dalam tahap pengembangan dan belum tersedia.')">
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo">
             Masuk dengan Google (Segera Hadir)
-        </button>
+        </button> -->
 
-        <p class="footer-link"><a href="register.html" data-i18n="auth_link_register">Belum punya akun? Daftar sekarang</a></p>
+        <p class="footer-link"><a href="register.html" data-i18n="auth_link_register">Belum punya akun? Daftar
+                sekarang</a></p>
     </div>
 
     <script>
@@ -255,7 +281,7 @@
             const password = document.getElementById('password').value;
             const errorMsg = document.getElementById('errorMsg');
             const submitBtn = document.querySelector('.btn-primary');
-            
+
             submitBtn.textContent = 'Memproses...';
             submitBtn.disabled = true;
 
@@ -267,7 +293,7 @@
                     },
                     body: JSON.stringify({ email, password })
                 });
-                
+
                 const data = await response.json();
 
                 if (response.ok) {
@@ -276,7 +302,7 @@
                     localStorage.setItem('ARSA_token', data.access_token);
                     localStorage.setItem('ARSA_user', data.user_name);
                     errorMsg.style.display = 'none';
-                    
+
                     // Arahkan ke dashboard
                     window.location.href = 'app.html';
                 } else {
@@ -289,7 +315,7 @@
                     setTimeout(() => container.style.transform = 'translateX(5px)', 50);
                     setTimeout(() => container.style.transform = 'translateX(-5px)', 100);
                     setTimeout(() => container.style.transform = 'translateX(0)', 150);
-                    
+
                     submitBtn.textContent = 'Masuk';
                     submitBtn.disabled = false;
                 }

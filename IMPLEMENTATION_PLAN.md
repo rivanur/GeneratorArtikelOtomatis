@@ -85,3 +85,14 @@ Mengingat email digunakan sebagai ID sandi utama, pengamanan ekstra untuk proses
     *   **Opsi C (Jinja2 / Server-Side Rendering):**
         Memindahkan tugas *rendering* HTML dari Cloudflare kembali ke mesin Python (FastAPI Render) menggunakan teknologi Jinja2 Templates (`{% extends 'base.html' %}`).
         *Kelebihan:* Sangat rapi ala kerangka kerja Python (Django/Flask), namun membebani mesin Render Anda.
+
+---
+
+## 6. Penyembunyian Fitur Belum Selesai (Google Login)
+
+*   **Latar Belakang Masalah:** Tombol "Masuk/Daftar dengan Google" sudah ada di desain UI (`login.html` dan `register.html`), namun fungsionalitas *backend* (OAuth2 dengan Google) belum dikembangkan. Jika dibiarkan tampil, pengguna mungkin akan kebingungan ketika menekan tombol tersebut.
+*   **Tindakan yang Telah Dilakukan:** 
+    *   Alih-alih menghapus kode secara permanen, kita telah menonaktifkan (*hide*) kode tombol dan garis pembatasnya dengan membungkusnya menggunakan komentar HTML (`<!-- ... -->`).
+    *   Lokasi modifikasi: `frontend/login.html` dan `frontend/register.html`.
+*   **Langkah Lanjutan (Masa Depan):**
+    *   Jika integrasi kredensial Google OAuth2 sudah siap diatur pada sisi *backend*, cukup hapus tanda komentar `<!--` dan `-->` di kedua *file* tersebut untuk langsung mengaktifkan tombolnya kembali tanpa perlu mendesain ulang.

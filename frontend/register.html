@@ -8,10 +8,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Set theme based on app settings or system preference
+        const savedTheme = localStorage.getItem('app_theme') || 'system';
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else if (savedTheme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
     <style>
         :root {
             --primary: #2F5C4B;
             --primary-hover: #24473a;
+            --bg-color: #0f111a;
+            --panel-bg: #191c29;
+            --text-main: #f0f2f5;
+            --text-muted: #9aa0a6;
+            --border-color: #2a2d3d;
+        }
+
+        :root[data-theme="light"] {
             --bg-color: #f8fafc;
             --panel-bg: #ffffff;
             --text-main: #0f172a;
@@ -102,6 +123,8 @@
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 1rem;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             transition: border-color 0.2s;
         }
 
@@ -228,13 +251,13 @@
             <button type="submit" class="btn-primary" data-i18n="auth_btn_register">Daftar Sekarang</button>
         </form>
 
-        <div class="divider">atau daftar dengan</div>
+        <!-- <div class="divider">atau daftar dengan</div>
 
         <button type="button" class="btn-google disabled"
             onclick="alert('Fitur Daftar dengan Google saat ini sedang dalam tahap pengembangan dan belum tersedia.')">
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo">
             Daftar dengan Google (Segera Hadir)
-        </button>
+        </button> -->
 
         <p class="footer-link"><a href="login.html" data-i18n="auth_link_login">Sudah punya akun? Masuk di sini</a></p>
     </div>
