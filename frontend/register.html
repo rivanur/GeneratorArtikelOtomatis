@@ -54,7 +54,7 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            padding: 2rem 0;
+            padding: 2rem 1rem; /* Added 1rem horizontal padding for mobile */
         }
 
         .login-container {
@@ -222,6 +222,22 @@
 
         .footer-link a:hover {
             text-decoration: underline;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.25rem;
+            }
+            .brand-name {
+                font-size: 1.4rem;
+            }
+            .form-control {
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
