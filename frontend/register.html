@@ -312,7 +312,7 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert('Pendaftaran berhasil!\nSilakan masuk dengan akun Anda.');
+                    alert(data.message || 'Pendaftaran berhasil!\nSilakan periksa email Anda untuk verifikasi.');
                     window.location.href = 'login.html';
                 } else {
                     alert('Gagal mendaftar: ' + (data.detail || 'Terjadi kesalahan'));

@@ -1,4 +1,9 @@
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -31,13 +36,21 @@ from api.auth_routes import router as auth_router
 # Buat tabel database secara otomatis jika belum ada
 Base.metadata.create_all(bind=engine)
 
-# Injeksi otomatis kolom profile_picture tanpa menghapus data lama
+# Injeksi otomatis kolom baru tanpa menghapus data lama
 try:
     with engine.begin() as conn:
         from sqlalchemy import text
         conn.execute(text("ALTER TABLE users ADD COLUMN profile_picture VARCHAR(255) NULL"))
-except Exception as e:
-    pass # Mengabaikan error jika kolom sudah ada
+except Exception:
+    pass
+
+try:
+    with engine.begin() as conn:
+        from sqlalchemy import text
+        conn.execute(text("ALTER TABLE users ADD COLUMN is_verified BOOLEAN DEFAULT FALSE"))
+        conn.execute(text("ALTER TABLE users ADD COLUMN verification_token VARCHAR(255) NULL"))
+except Exception:
+    pass
 
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 

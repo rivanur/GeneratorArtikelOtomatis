@@ -287,6 +287,18 @@
 
         // Bouncer: Cek memori, kalau sudah login, langsung usir kembali ke Dashboard!
         document.addEventListener('DOMContentLoaded', () => {
+            // Cek status verifikasi dari URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const verifiedStatus = urlParams.get('verified');
+            if (verifiedStatus === 'success') {
+                alert('Email berhasil diverifikasi! Silakan login.');
+                // Hapus param dari URL agar tidak muncul terus saat direfresh
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (verifiedStatus === 'invalid') {
+                alert('Link verifikasi tidak valid atau sudah kadaluarsa.');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
             if (localStorage.getItem('ARSA_logged_in') === 'true' && localStorage.getItem('ARSA_token')) {
                 window.location.replace('app.html');
             }

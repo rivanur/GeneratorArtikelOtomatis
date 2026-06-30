@@ -14,11 +14,11 @@ def start_server():
         print(f"Error: Folder '{DIRECTORY}' tidak ditemukan!")
         return
 
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    with socketserver.TCPServer(("127.0.0.1", PORT), Handler) as httpd:
         print(f"===================================================")
         print(f"   MEMULAI SERVER FRONTEND (ANTARMUKA WEB)")
         print(f"===================================================")
-        print(f"\nFrontend berjalan di: http://localhost:{PORT}")
+        print(f"\nFrontend berjalan di: http://127.0.0.1:{PORT}")
         print(f"Tekan CTRL+C untuk mematikan.\n")
         try:
             httpd.serve_forever()

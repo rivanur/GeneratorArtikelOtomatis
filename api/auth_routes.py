@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, Request, BackgroundTasks
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
 from core.database import get_db
@@ -8,6 +9,8 @@ from datetime import timedelta
 import os
 import aiofiles
 import uuid
+import secrets
+from core.email_service import send_verification_email
 
 router = APIRouter()
 
@@ -22,7 +25,7 @@ class UserLogin(BaseModel):
     password: str
 
 @router.post("/register")
-def register_user(user: UserCreate, db: Session = Depends(get_db)):
+def register_user(request: Request, user: UserCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     # Cek apakah email sudah terdaftar
     db_user = db.query(User).filter(User.email == user.email).first()
     if db_user:
@@ -31,18 +34,54 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
             detail="Email sudah terdaftar. Silakan gunakan email lain atau masuk."
         )
     
+    # Generate verification token
+    verification_token = secrets.token_urlsafe(32)
+    
     # Enkripsi password dan simpan user baru
     hashed_password = get_password_hash(user.password)
-    new_user = User(name=user.name, email=user.email, hashed_password=hashed_password)
+    new_user = User(
+        name=user.name, 
+        email=user.email, 
+        hashed_password=hashed_password,
+        is_verified=False,
+        verification_token=verification_token
+    )
     
     try:
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        return {"status": "success", "message": "Pendaftaran berhasil!"}
+        
+        # Kirim email verifikasi di latar belakang agar response instan
+        request_url_base = str(request.base_url).rstrip('/')
+        background_tasks.add_task(send_verification_email, user.email, verification_token, request_url_base)
+        
+        return {"status": "success", "message": "Pendaftaran berhasil! Silakan periksa email Anda untuk verifikasi."}
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Gagal mendaftar: {str(e)}")
+
+@router.get("/verify")
+def verify_email(request: Request, token: str, db: Session = Depends(get_db)):
+    # Tentukan base URL frontend
+    frontend_url = os.getenv("FRONTEND_URL")
+    if not frontend_url:
+        host = request.url.hostname
+        if host in ("localhost", "127.0.0.1"):
+            # Asumsi Live Server atau frontend.py
+            frontend_url = "http://127.0.0.1:5500"
+        else:
+            frontend_url = "https://generatorartikelotomatis.onrender.com"
+            
+    user = db.query(User).filter(User.verification_token == token).first()
+    if not user:
+        return RedirectResponse(url=f"{frontend_url}/login.html?verified=invalid")
+        
+    user.is_verified = True
+    user.verification_token = None
+    db.commit()
+    
+    return RedirectResponse(url=f"{frontend_url}/login.html?verified=success")
 
 @router.post("/login")
 def login_user(user: UserLogin, db: Session = Depends(get_db)):
@@ -55,6 +94,13 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Email atau password salah",
             headers={"WWW-Authenticate": "Bearer"},
+        )
+        
+    # Validasi status verifikasi email
+    if not db_user.is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Email belum diverifikasi. Silakan periksa kotak masuk/spam email Anda.",
         )
     
     # Buat JWT Token
