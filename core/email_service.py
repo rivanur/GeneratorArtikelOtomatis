@@ -10,22 +10,15 @@ from email.mime.multipart import MIMEMultipart
 
 def send_verification_email(to_email: str, token: str, request_url_base: str):
     """
-    Kirim email verifikasi menggunakan Gmail SMTP
+    Kirim email verifikasi menggunakan Webhook Google Apps Script
     """
-    sender_email = os.getenv("SMTP_EMAIL", "")
-    sender_password = os.getenv("SMTP_PASSWORD", "")
+    script_url = os.getenv("GOOGLE_SCRIPT_URL")
     
-    if not sender_email or not sender_password:
-        logger.warning(f"Kredensial SMTP tidak dikonfigurasi. Email verifikasi ke {to_email} dilewati.")
+    if not script_url:
+        logger.warning("GOOGLE_SCRIPT_URL belum diatur di .env. Pengiriman email dilewati.")
         return False
-        
-    verification_link = f"{request_url_base}/api/auth/verify?token={token}"
     
-    # Setup pesan email (MIME)
-    msg = MIMEMultipart("alternative")
-    msg['Subject'] = "Verifikasi Email Pendaftaran ARSA"
-    msg['From'] = f"Tim ARSA <{sender_email}>"
-    msg['To'] = to_email
+    verification_link = f"{request_url_base}/api/auth/verify?token={token}"
     
     html_content = f"""
     <html>
@@ -40,19 +33,23 @@ def send_verification_email(to_email: str, token: str, request_url_base: str):
     </html>
     """
     
-    msg.attach(MIMEText(html_content, 'html'))
+    payload = {
+        "to": to_email,
+        "subject": "Verifikasi Email Pendaftaran ARSA",
+        "htmlBody": html_content
+    }
     
     try:
-        # Koneksi ke server Gmail SMTP
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()  # Mengamankan koneksi
-        server.login(sender_email, sender_password)
-        server.send_message(msg)
-        server.quit()
+        response = requests.post(script_url, json=payload)
         
-        logger.info(f"Email verifikasi berhasil dikirim ke {to_email}")
-        return True
+        if response.status_code == 200:
+            logger.info(f"Email verifikasi berhasil dikirim ke {to_email} via Webhook")
+            return True
+        else:
+            logger.error(f"Gagal mengirim email ke {to_email}. Status code: {response.status_code}")
+            return False
+            
     except Exception as e:
-        logger.error(f"Error saat mengirim email ke {to_email}: {str(e)}")
+        logger.error(f"Error saat mengirim email via Webhook ke {to_email}: {str(e)}")
         return False
 

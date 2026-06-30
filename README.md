@@ -87,6 +87,40 @@ Aplikasi akan langsung terbuka di alamat **http://localhost:5500**.
 7. Sistem akan menampilkan animasi *loading* sementara AI sedang bekerja. Dalam beberapa detik, artikel lengkap dengan *formatting* yang rapi (Markdown) akan muncul di panel sebelah kanan!
 8. Anda dapat menyalin (*copy*) hasilnya dengan menekan tombol **Copy** di sudut kanan atas panel hasil artikel.
 
+## 🗄️ Manajemen Database (TiDB Cloud)
+
+Bagi Anda yang menggunakan TiDB Cloud sebagai database serverless di _Production_, Anda dapat mengelola data Anda melalui **SQL Editor** bawaan mereka.
+
+### Cara Melihat Isi Tabel Pengguna
+1. Buka *dashboard* TiDB Cloud Anda lalu pilih **SQL Editor** di panel sebelah kiri.
+2. Di lembar kerja *query* hitam, ketik perintah berikut:
+   ```sql
+   SELECT * FROM users;
+   ```
+3. Klik tombol **Run** di pojok kanan atas.
+4. Anda akan melihat daftar semua pengguna, termasuk status `is_verified` mereka di panel *Result* bawah.
+
+### Cara Mengosongkan/Menghapus Tabel (Hard Reset)
+> **Peringatan:** Lakukan ini HANYA jika Anda ingin mengulang sistem (*testing*) atau jika ada pembaruan arsitektur tabel yang menyebabkan error.
+
+1. Buka **SQL Editor** di TiDB Cloud.
+2. Ketikkan perintah ini (akan menghapus tabel secara permanen):
+   ```sql
+   DROP TABLE user_settings;
+   DROP TABLE users;
+   ```
+3. Klik tombol **Run**.
+4. **PENTING:** Setelah tabel dihapus, Anda WAJIB me-*restart* (menyalakan ulang) server *backend* Anda (misal di Render) agar SQLAlchemy secara otomatis merakit/membangun tabel yang baru.
+
+### Cara Menghapus Satu Akun Tertentu (Jika Nyangkut)
+Jika ada akun yang gagal diverifikasi dan Anda ingin menghapusnya agar orang tersebut bisa mendaftar ulang, gunakan perintah ini:
+1. Buka **SQL Editor** di TiDB Cloud.
+2. Ketikkan perintah berikut (ubah alamat email sesuai target):
+   ```sql
+   DELETE FROM users WHERE email = 'email_target@gmail.com';
+   ```
+3. Klik tombol **Run**. Akun tersebut akan terhapus tanpa mengganggu data pengguna lainnya.
+
 ---
 
 ## 🛑 Cara Menghentikan Aplikasi

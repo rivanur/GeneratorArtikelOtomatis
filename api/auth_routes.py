@@ -71,7 +71,7 @@ def verify_email(request: Request, token: str, db: Session = Depends(get_db)):
             # Asumsi Live Server atau frontend.py
             frontend_url = "http://127.0.0.1:5500"
         else:
-            frontend_url = "https://generatorartikelotomatis.onrender.com"
+            frontend_url = os.getenv("FRONTEND_URL", "https://arsa-27v.pages.dev")
             
     user = db.query(User).filter(User.verification_token == token).first()
     if not user:
