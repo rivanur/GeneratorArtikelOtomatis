@@ -26,6 +26,7 @@ def send_verification_email(to_email: str, token: str, request_url_base: str):
         <h2>Selamat datang di ARSA!</h2>
         <p>Terima kasih telah mendaftar. Untuk mulai membuat artikel otomatis, silakan verifikasi email Anda dengan mengklik tautan di bawah ini:</p>
         <p><a href="{verification_link}" style="display:inline-block;padding:10px 20px;background-color:#4F46E5;color:white;text-decoration:none;border-radius:5px;">Verifikasi Email Saya</a></p>
+        <p style="color:#666;font-size:12px;margin-top:20px;"><em>* Tautan verifikasi ini akan kedaluwarsa dalam waktu 15 menit.</em></p>
         <br>
         <p>Salam,</p>
         <p>Tim ARSA</p>
