@@ -5,7 +5,7 @@ from pydantic import BaseModel, EmailStr
 from core.database import get_db
 from core.models import User
 from core.auth import get_password_hash, verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, get_current_user
-from datetime import timedelta
+from datetime import timedelta, datetime
 import os
 import aiofiles
 import uuid
@@ -28,27 +28,44 @@ class UserLogin(BaseModel):
 def register_user(request: Request, user: UserCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     # Cek apakah email sudah terdaftar
     db_user = db.query(User).filter(User.email == user.email).first()
-    if db_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email sudah terdaftar. Silakan gunakan email lain atau masuk."
-        )
     
-    # Generate verification token
     verification_token = secrets.token_urlsafe(32)
-    
-    # Enkripsi password dan simpan user baru
     hashed_password = get_password_hash(user.password)
-    new_user = User(
-        name=user.name, 
-        email=user.email, 
-        hashed_password=hashed_password,
-        is_verified=False,
-        verification_token=verification_token
-    )
     
-    try:
+    if db_user:
+        if db_user.is_verified:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email sudah terdaftar. Silakan gunakan email lain atau masuk."
+            )
+        else:
+            # Belum diverifikasi, cek apakah token masih aktif
+            if db_user.verification_expires and db_user.verification_expires > datetime.utcnow():
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Email sedang dalam proses verifikasi. Silakan cek inbox Anda, atau tunggu 15 menit untuk mendaftar ulang."
+                )
+            else:
+                # Token sudah kedaluwarsa, timpa (overwrite) data lama
+                db_user.name = user.name
+                db_user.hashed_password = hashed_password
+                db_user.verification_token = verification_token
+                db_user.verification_expires = datetime.utcnow() + timedelta(minutes=15)
+                
+                new_user = db_user # Re-use existing row
+    else:
+        # Akun benar-benar baru
+        new_user = User(
+            name=user.name, 
+            email=user.email, 
+            hashed_password=hashed_password,
+            is_verified=False,
+            verification_token=verification_token,
+            verification_expires=datetime.utcnow() + timedelta(minutes=15)
+        )
         db.add(new_user)
+        
+    try:
         db.commit()
         db.refresh(new_user)
         
@@ -77,8 +94,12 @@ def verify_email(request: Request, token: str, db: Session = Depends(get_db)):
     if not user:
         return RedirectResponse(url=f"{frontend_url}/login.html?verified=invalid")
         
+    if user.verification_expires and user.verification_expires < datetime.utcnow():
+        return RedirectResponse(url=f"{frontend_url}/login.html?verified=expired")
+        
     user.is_verified = True
     user.verification_token = None
+    user.verification_expires = None
     db.commit()
     
     return RedirectResponse(url=f"{frontend_url}/login.html?verified=success")

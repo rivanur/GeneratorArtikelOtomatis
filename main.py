@@ -52,6 +52,13 @@ try:
 except Exception:
     pass
 
+try:
+    with engine.begin() as conn:
+        from sqlalchemy import text
+        conn.execute(text("ALTER TABLE users ADD COLUMN verification_expires DATETIME NULL"))
+except Exception:
+    pass
+
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 
 if __name__ == "__main__":
