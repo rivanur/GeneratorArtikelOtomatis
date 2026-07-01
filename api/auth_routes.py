@@ -162,7 +162,9 @@ def change_password(
         raise HTTPException(status_code=400, detail="Password lama salah")
         
     current_user.hashed_password = get_password_hash(new_password)
+    db.add(current_user)
     db.commit()
+    db.refresh(current_user)
     return {"status": "success", "message": "Password berhasil diubah"}
 
 @router.post("/avatar")

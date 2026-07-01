@@ -96,3 +96,20 @@ Mengingat email digunakan sebagai ID sandi utama, pengamanan ekstra untuk proses
     *   Lokasi modifikasi: `frontend/login.html` dan `frontend/register.html`.
 *   **Langkah Lanjutan (Masa Depan):**
     *   Jika integrasi kredensial Google OAuth2 sudah siap diatur pada sisi *backend*, cukup hapus tanda komentar `<!--` dan `-->` di kedua *file* tersebut untuk langsung mengaktifkan tombolnya kembali tanpa perlu mendesain ulang.
+
+## 7. Sistem Keamanan Ekstra (Anti-Bot & Anti-Hacker)
+
+Untuk menutup celah keamanan dari serangan robot maupun peretas amatir, berikut adalah fitur pertahanan tingkat lanjut yang diimplementasikan:
+
+### A. Pertahanan Database (Models & Migrations)
+- [x] Menambahkan kolom `verification_expires` (DateTime) untuk membatasi umur link email.
+- [ ] Menambahkan kolom `failed_login_attempts` (Integer) untuk menghitung berapa kali gagal login.
+- [ ] Menambahkan kolom `lockout_until` (DateTime) untuk mencatat jam berapa akun dibuka kembali jika diblokir.
+- [x] Menambahkan perintah `ALTER TABLE` otomatis di *startup* (`main.py`) untuk kolom `verification_expires`.
+- [ ] Menambahkan perintah `ALTER TABLE` otomatis di *startup* untuk kolom `failed_login_attempts` dan `lockout_until`.
+
+### B. Rem & Gembok Otomatis di API
+- [x] **Kedaluwarsa Token**: Memasang timer kedaluwarsa 15 menit untuk token verifikasi di API `/register`.
+- [x] **Validasi Kedaluwarsa**: Mengecek waktu saat link diklik di API `/verify`. Jika sudah lewat 15 menit, verifikasi ditolak dan pengguna diminta mendaftar ulang.
+- [ ] **Pelindung Kecepatan (Rate Limiter)**: Memasang `slowapi` untuk membatasi maksimum 5 pendaftaran/login per menit per IP.
+- [ ] **Sistem Lockout (Gembok)**: Jika salah *password* 5 kali berturut-turut di API `/login`, akun akan otomatis terkunci selama 15 menit dan tidak bisa login sama sekali.
