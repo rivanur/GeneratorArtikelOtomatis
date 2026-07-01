@@ -103,8 +103,8 @@
 
             <div class="contact-info">
                 <p data-i18n="contact_or_email">Atau hubungi kami langsung via email:</p>
-                <a href="mailto:supportARSA@gmail.com"
-                    style="color: var(--primary); font-weight: 600; text-decoration: none;">supportARSA@gmail.com</a>
+                <a href="mailto:adminarsa55@gmail.com"
+                    style="color: var(--primary); font-weight: 600; text-decoration: none;">adminarsa55@gmail.com</a>
             </div>
         </div>
     </main>
@@ -212,6 +212,53 @@
                         mobileMenu.classList.remove('active');
                         document.body.style.overflow = '';
                     });
+                });
+            }
+
+            // Contact Form Submission
+            const contactForm = document.querySelector('.contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const submitBtn = contactForm.querySelector('button[type="submit"]');
+                    const originalBtnText = submitBtn.innerHTML;
+                    
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = 'Mengirim...';
+                    
+                    const payload = {
+                        name: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        subject: document.getElementById('subject').value,
+                        message: document.getElementById('message').value
+                    };
+                    
+                    // Kita akan menggunakan origin URL saat ini karena bisa berjalan di localhost atau cloudflare
+                    let apiUrl = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                                 ? 'http://127.0.0.1:8000/api/contact'
+                                 : 'https://generatorartikelotomatis.onrender.com/api/contact';
+                    
+                    try {
+                        const res = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        
+                        const data = await res.json();
+                        if (res.ok) {
+                            alert('Pesan berhasil terkirim! Tim kami akan membalas ke email Anda.');
+                            contactForm.reset();
+                        } else {
+                            alert(data.detail || 'Gagal mengirim pesan. Silakan coba lagi.');
+                        }
+                    } catch (error) {
+                        alert('Terjadi kesalahan jaringan saat mengirim pesan.');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                    }
                 });
             }
         });

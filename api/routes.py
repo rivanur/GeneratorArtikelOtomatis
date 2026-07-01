@@ -370,3 +370,25 @@ async def export_word(background_tasks: BackgroundTasks, title: str = Form(...),
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+from pydantic import BaseModel
+from core.email_service import send_contact_email
+
+class ContactPayload(BaseModel):
+    name: str
+    email: str
+    subject: str
+    message: str
+
+@router.post("/contact")
+async def submit_contact_form(payload: ContactPayload, background_tasks: BackgroundTasks):
+    # Kirim email ke admin secara asinkron di background agar respons API cepat
+    background_tasks.add_task(
+        send_contact_email,
+        user_name=payload.name,
+        user_email=payload.email,
+        subject=payload.subject,
+        message=payload.message
+    )
+    
+    return {"status": "success", "message": "Pesan Anda telah diterima. Tim kami akan segera menghubungi Anda."}
