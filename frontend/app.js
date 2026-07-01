@@ -35,7 +35,7 @@ if (window.matchMedia) {
 // --- Token Check ---
 const authToken = localStorage.getItem('ARSA_token');
 if (!authToken) {
-    window.location.href = 'login.html';
+    window.location.replace('login.html');
 }
 
 // --- UI Localization logic moved to lang.js ---

@@ -223,19 +223,8 @@
             }
         });
 
-        // Update login button if already logged in
+        // Mobile Menu Toggle
         document.addEventListener('DOMContentLoaded', () => {
-            const isLoggedIn = localStorage.getItem('ARSA_logged_in');
-            const loginBtns = document.querySelectorAll('.btn-login');
-            if (isLoggedIn && loginBtns.length > 0) {
-                // Let lang.js handle the dashboard translation, just change href
-                loginBtns.forEach(btn => {
-                    btn.href = 'app.html';
-                    btn.setAttribute('data-i18n', 'btn_dashboard');
-                });
-            }
-            
-            // Mobile Menu Toggle
             const hamburgerBtn = document.getElementById('hamburgerBtn');
             const closeMenuBtn = document.getElementById('closeMenuBtn');
             const mobileMenu = document.getElementById('mobileMenu');

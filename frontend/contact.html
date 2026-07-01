@@ -170,15 +170,7 @@
     </footer>
 
     <script>
-        // Update login button if already logged in
         document.addEventListener('DOMContentLoaded', () => {
-            const isLoggedIn = localStorage.getItem('ARSA_logged_in');
-            const loginBtn = document.querySelector('.btn-login');
-            if (isLoggedIn && loginBtn) {
-                loginBtn.href = 'app.html';
-                loginBtn.setAttribute('data-i18n', 'btn_dashboard');
-            }
-
             // Navbar scroll effect
             window.addEventListener('scroll', () => {
                 const nav = document.querySelector('.navbar');

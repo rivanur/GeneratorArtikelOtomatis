@@ -400,4 +400,18 @@ document.addEventListener('DOMContentLoaded', () => {
             // location.reload();
         });
     });
+
+    // --- Global UI Auth State ---
+    const isLoggedIn = localStorage.getItem('ARSA_logged_in') === 'true';
+    if (isLoggedIn) {
+        const loginBtns = document.querySelectorAll('.btn-login');
+        loginBtns.forEach(btn => {
+            btn.href = 'app.html';
+            btn.setAttribute('data-i18n', 'btn_dashboard');
+            // Fallback text if i18n not yet applied
+            if (btn.textContent.trim() === 'Masuk' || btn.textContent.trim() === 'Login') {
+                btn.textContent = 'Dashboard';
+            }
+        });
+    }
 });

@@ -333,7 +333,7 @@
                     errorMsg.style.display = 'none';
 
                     // Arahkan ke dashboard
-                    window.location.href = 'app.html';
+                    window.location.replace('app.html');
                 } else {
                     // Tampilkan pesan error
                     errorMsg.textContent = data.detail || 'Email atau password salah.';

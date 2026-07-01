@@ -313,7 +313,7 @@
 
                 if (response.ok) {
                     alert(data.message || 'Pendaftaran berhasil!\nSilakan periksa email Anda untuk verifikasi.');
-                    window.location.href = 'login.html';
+                    window.location.replace('login.html');
                 } else {
                     alert('Gagal mendaftar: ' + (data.detail || 'Terjadi kesalahan'));
                     submitBtn.textContent = 'Daftar Sekarang';
