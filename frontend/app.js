@@ -1022,6 +1022,15 @@ document.addEventListener('DOMContentLoaded', () => {
             changePasswordBtn.textContent = 'Memproses...';
 
             const fd = new FormData();
+            const confirmPwd = document.getElementById('account_new_pwd_confirm').value;
+            
+            if (newPwd !== confirmPwd) {
+                showToast('Kata sandi baru tidak cocok. Silakan ulangi.');
+                changePasswordBtn.disabled = false;
+                changePasswordBtn.textContent = 'Simpan Sandi Baru';
+                return;
+            }
+
             fd.append('old_password', oldPwd);
             fd.append('new_password', newPwd);
 
@@ -1036,6 +1045,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     showToast('Kata sandi berhasil diubah!', true);
                     document.getElementById('account_old_pwd').value = '';
                     document.getElementById('account_new_pwd').value = '';
+                    document.getElementById('account_new_pwd_confirm').value = '';
                 } else {
                     showToast(data.detail || 'Gagal mengubah sandi');
                 }
